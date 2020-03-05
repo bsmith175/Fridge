@@ -5,11 +5,16 @@
 **Team Strengths and Weaknesses:** _Fill this in!_
 
 **Project Idea(s):** _Fill this in with three unique ideas! (Due by March 2)_
-### Idea 1
+### Idea 1 
+Rejected - simple buy and sell transaction app with no interesting complexity
 
 ### Idea 2
+Approved - algorithm for combining ingredients and ranking dishes should be the main component
 
 ### Idea 3
+Rejected - simple query and search app that does not provide interesting design decisions
+
+Note: You do not need to resubmit your final project ideas.
 
 **Mentor TA:** _Put your mentor TA's name and email here once you're assigned one!_
 
