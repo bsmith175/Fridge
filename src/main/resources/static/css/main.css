@@ -1,0 +1,18 @@
+input[type="number"] {
+  width: 3em;
+}
+body {
+  background-color: #E3A6EC;
+}
+
+h1 {
+  color: white;
+
+}
+
+#ID {
+  color: #455cff;
+}
+.class {
+  color: green;
+}
