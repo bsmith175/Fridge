@@ -24,6 +24,9 @@ public class Main {
         result[i] += currArr[i];
       }
     }
+    for (int i = 0; i < result.length; i ++) {
+      result[i] /= arrays.length;
+    }
     return result;
   }
 
