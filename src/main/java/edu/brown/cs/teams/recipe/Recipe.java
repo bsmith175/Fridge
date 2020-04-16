@@ -1,9 +1,13 @@
 package src.main.java.edu.brown.cs.teams.kdtree;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Recipe extends CartesianPoint {
   private int id;
+  private Set<String> ingredients;
 
   /**
    * Constructor for Cartesian point.
@@ -11,9 +15,10 @@ public class Recipe extends CartesianPoint {
    * @param embedding double array storing position of point
    * @param id a String
    */
-  public Recipe(double[] embedding, int id) {
+  public Recipe(double[] embedding, int id, Set<String> ingredients) {
     super(embedding);
     this.id = id;
+    this.ingredients = ingredients;
   }
 
   public int getId() {
