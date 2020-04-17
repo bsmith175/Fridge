@@ -1,5 +1,4 @@
 package src.main.java.edu.brown.cs.teams;
-import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -11,8 +10,7 @@ import java.util.List;
 
 import com.google.gson.*;
 import src.main.java.edu.brown.cs.teams.kdtree.KDTree;
-import src.main.java.edu.brown.cs.teams.kdtree.KDTreeNode;
-import src.main.java.edu.brown.cs.teams.kdtree.Recipe;
+import src.main.java.edu.brown.cs.teams.recipe.Recipe;
 
 
 public class Main {
