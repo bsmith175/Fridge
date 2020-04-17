@@ -7,8 +7,17 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="com.google.code.gson:gson:2.8.6" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../libs/json-simple-1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="library" exported="" name="org.json:json:20190722" level="project" />
-    <orderEntry type="library" name="json-simple-1.1" level="project" />
+    <orderEntry type="library" exported="" name="com.google.code.gson:gson:2.8.6" level="project" />
+    <orderEntry type="library" exported="" name="com.github.cliftonlabs:json-simple:3.1.1" level="project" />
   </component>
 </module>
