@@ -1,4 +1,4 @@
-package src.main.java.edu.brown.cs.teams.ingredient;
+package src.main.java.edu.brown.cs.teams.ingredientParse;
 
 import src.main.java.edu.brown.cs.teams.utils.Pair;
 

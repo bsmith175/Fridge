@@ -1,4 +1,4 @@
-package src.main.java.edu.brown.cs.teams.ingredient;
+package src.main.java.edu.brown.cs.teams.ingredientParse;
 
 import src.main.java.edu.brown.cs.teams.utils.Pair;
 
@@ -11,6 +11,7 @@ public class IngredientSuggest {
     private AutoCorrect ac;
     private Stubs stub;
     private HashMap<String, List<String>> termToIngredients;
+
     public IngredientSuggest(String filepath) {
         ac = new AutoCorrect(filepath, true, false);
         Stubs stub = new Stubs();
@@ -23,6 +24,9 @@ public class IngredientSuggest {
             correctedTokens.add(ac.suggest(token).peek());
         }
 
+        if (correctedTokens.size() == 0) {
+            return null;
+        }
         List<String> ret = new ArrayList();
 
         PriorityQueue<Pair<String, Integer>> pq = StringMatch.findClosest(correctedTokens, stub.getTermIngredientsMap());

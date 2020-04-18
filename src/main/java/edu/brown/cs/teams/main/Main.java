@@ -1,6 +1,6 @@
 package src.main.java.edu.brown.cs.teams.main;
 
-import src.main.java.edu.brown.cs.teams.ingredient.IngredientSuggest;
+import src.main.java.edu.brown.cs.teams.ingredientParse.IngredientSuggest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
