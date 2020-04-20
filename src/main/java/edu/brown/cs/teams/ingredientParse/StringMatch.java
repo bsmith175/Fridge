@@ -1,6 +1,6 @@
-package src.main.java.edu.brown.cs.teams.ingredientParse;
+package edu.brown.cs.teams.ingredientParse;
 
-import src.main.java.edu.brown.cs.teams.utils.Pair;
+import edu.brown.cs.teams.utils.Pair;
 
 import java.util.*;
 
@@ -33,7 +33,11 @@ import java.util.*;
 
         @Override
         public int compare(Pair<String, Integer> o1, Pair<String, Integer> o2) {
-            return o2.getSecond() - o1.getSecond();
+            int indicator = o2.getSecond() - o1.getSecond();
+            if (indicator == 0) {
+                return o1.getFirst().length() - o2.getFirst().length();
+            }
+            return indicator;
         }
     }
 }

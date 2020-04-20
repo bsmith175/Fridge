@@ -1,13 +1,15 @@
-package src.main.java.edu.brown.cs.teams.ingredientParse;
+package edu.brown.cs.teams.ingredientParse;
 
-import com.google.common.collect.Lists;
-
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 /**
  * Temporary class to use before database classes are finished
  */
- class Stubs {
+class Stubs {
     private HashMap<String, Set<String>> termIngredientsMap;
 
     public HashMap<String, Set<String>> getTermIngredientsMap() {
@@ -15,12 +17,25 @@ import java.util.*;
     }
 
     public Stubs() {
-        String[] ingredients = {"350g short pasta shapes (we used orzo )", "1 chicken stock cube",
+        String[] ingredients = {"white rice", "brown rice", "rice", "rice noodles", "1 chicken stock cube",
                 "1 tsp turmeric or a large pinch of saffron strands", "85g chorizo, diced",
-                "200g pack mixed cooked seafood", "2 roasted red peppers,from a jar, sliced",
-                "100g frozen pea", "2 tbsp chopped parsley"};
+                "200g pack mixed cooked seafood", "2 roasted red peppers", "spaghetti noodles",
+                "100g frozen pea", "2 tbsp chopped parsley", "300g cooked rice noodles",
+                "400g/14oz mixed vegetables", "140g cooked prawns",
+                "100g cooked chicken or duck, shredded", "2 garlic cloves, finely chopped",
+                "small piece ginger, finely chopped", "splash light soy sauce", "soy sauce",
+                "Chinese five-spice powder, for sprinkling", " brik or filo pastry (see tips)",
+                "1 egg, beaten", "sesame seeds, for sprinkling if you want", "100g reduced salt and sugar ketchup",
+                "1 tbsp white wine vinegar", "small piece ginger, grated", "pinch of caster sugar"};
+
+        String filePath = "data/trie-data.txt";
         List<String> asList = Arrays.asList(ingredients);
         List<String> parsed = parseIngredients(asList);
+        try {
+            writeTrieData(parsed, filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         termIngredientsMap = createTermMap(parsed);
     }
     /**
@@ -65,5 +80,20 @@ import java.util.*;
             }
         }
         return ret;
+    }
+
+    private void writeTrieData(List<String> ingredients, String filePath) throws IOException {
+        File data = new File(filePath);
+
+        if (!data.createNewFile()) {
+            new PrintWriter(filePath).close();
+        }
+
+        FileWriter fw = new FileWriter(filePath);
+        for (String ingredient : ingredients) {
+            fw.write(ingredient.replaceAll("\\s+", "\n") + "\n");
+        }
+        fw.close();
+
     }
 }

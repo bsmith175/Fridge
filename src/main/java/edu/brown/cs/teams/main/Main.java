@@ -1,6 +1,6 @@
-package src.main.java.edu.brown.cs.teams.main;
+package edu.brown.cs.teams.main;
 
-import src.main.java.edu.brown.cs.teams.ingredientParse.IngredientSuggest;
+import edu.brown.cs.teams.ingredientParse.IngredientSuggest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.util.List;
 public final class Main {
 
     public static void main(String[] args) {
-        IngredientSuggest ig = new IngredientSuggest("data/ingredients.txt");
+        IngredientSuggest ig = new IngredientSuggest("data/trie-data.txt");
 
         PrintWriter pw = new PrintWriter(System.out);
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -28,9 +28,12 @@ public final class Main {
         // repl loop
         while (input != null) {
             List<String> ingredients = ig.suggest(input);
-            for (String ingredient : ingredients) {
-                pw.println(ingredient);
-            pw.flush();
+            if (ingredients != null) {
+                for (String ingredient : ingredients) {
+                    pw.println(ingredient);
+                    pw.flush();
+                }
+            }
             try {
                 input = reader.readLine();
 
@@ -41,7 +44,7 @@ public final class Main {
         }
         pw.close();
 
-    }
+
     }
 
 }

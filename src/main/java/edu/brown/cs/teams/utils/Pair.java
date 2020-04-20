@@ -1,4 +1,4 @@
-package src.main.java.edu.brown.cs.teams.utils;
+package edu.brown.cs.teams.utils;
 
 
 /**

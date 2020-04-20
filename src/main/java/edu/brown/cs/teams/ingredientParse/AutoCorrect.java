@@ -1,4 +1,5 @@
-package src.main.java.edu.brown.cs.teams.ingredientParse;
+package edu.brown.cs.teams.ingredientParse;
+
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -95,6 +96,7 @@ import java.util.*;
 
             return suggestions;
         }
+
 
         private class ledComparator implements Comparator<String> {
             private String dest;

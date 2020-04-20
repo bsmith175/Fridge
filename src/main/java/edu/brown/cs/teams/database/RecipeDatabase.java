@@ -1,4 +1,4 @@
-package src.main.java.edu.brown.cs.teams.database;
+package edu.brown.cs.teams.database;
 
 public class RecipeDatabase {
 }
