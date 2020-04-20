@@ -12,7 +12,6 @@ public class Ingredient {
 
   public Ingredient(String id, double[] vector) {
     this.id = id;
-    this.category = category;
     this.vector = vector;
   }
 
