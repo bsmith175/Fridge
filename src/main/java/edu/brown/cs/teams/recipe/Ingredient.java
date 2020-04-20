@@ -10,7 +10,7 @@ public class Ingredient {
   private double distance;
 
 
-  public Ingredient(String id, String category, double[] vector) {
+  public Ingredient(String id, double[] vector) {
     this.id = id;
     this.category = category;
     this.vector = vector;

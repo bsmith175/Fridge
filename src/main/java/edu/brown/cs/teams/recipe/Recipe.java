@@ -16,7 +16,7 @@ public class Recipe extends CartesianPoint {
    * @param embedding double array storing position of point
    * @param id        a String
    */
-  public Recipe(double[] embedding, String id, HashSet<Ingredient> ingredients) {
+  public Recipe(double[] embedding, String id, Set<Ingredient> ingredients) {
     super(embedding);
     this.id = id;
     this.ingredients = ingredients;
@@ -61,11 +61,11 @@ public class Recipe extends CartesianPoint {
    * @return an approximation of the recipe within the user ingredients
    */
   public List<Ingredient> compareToIngredients(
-          ArrayList<Ingredient> ingredients) {
+          List<Ingredient> ingredients) {
     double[] candidatesVec = new double[]{this.ingredients.size()};
     List<Ingredient> candidates = new ArrayList<>();
     for (Ingredient ing : this.ingredients) {
-      Ingredient candidate = generateCandidate(ingredients, ing);
+      Ingredient candidate = Config.generateCandidate(ingredients, ing);
       candidatesVec = Config.arrayAdd(new double[][]{candidatesVec, candidate.getVec()});
       candidates.add(candidate);
     }
@@ -73,26 +73,6 @@ public class Recipe extends CartesianPoint {
     return candidates;
   }
 
-  /**
-   * Gives the most likely candidate to represent a recipe ingredient in
-   * the user ingredient list.
-   * @param ingredients the user ingredient list
-   * @param ingr an recipe ingredient
-   * @return the closest vector ingredient to the recipe ingredient
-   */
-  private Ingredient generateCandidate(
-          ArrayList<Ingredient> ingredients, Ingredient ingr) {
-    Ingredient best = null;
-    double closest = Double.POSITIVE_INFINITY;
-    for (Ingredient i : ingredients) {
-      double similarity = Config.cosineSimilarity(ingr.getVec(), i.getVec());
-      if (similarity > closest) {
-        best = i;
-        closest = similarity;
-      }
-    }
-    return best;
-  }
 
   /**
    * gets the similarity score of this recipe

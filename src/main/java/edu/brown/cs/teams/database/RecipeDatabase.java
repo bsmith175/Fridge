@@ -2,12 +2,14 @@ package src.main.java.edu.brown.cs.teams.database;
 
 import org.json.simple.parser.JSONParser;
 import src.main.java.edu.brown.cs.teams.io.CommandException;
+import src.main.java.edu.brown.cs.teams.recipe.Ingredient;
 import src.main.java.edu.brown.cs.teams.recipe.MinimalRecipe;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.channels.SelectableChannel;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -21,6 +23,7 @@ import java.util.Set;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import com.google.gson.*;
+import src.main.java.edu.brown.cs.teams.recipe.Recipe;
 import src.main.java.edu.brown.cs.teams.state.Config;
 
 
@@ -123,6 +126,8 @@ public class RecipeDatabase {
     return recipes;
   }
 
+
+
   public String getRecipe(String id) throws CommandException {
     String query = "SELECT * FROM recipe WHERE recipe.id = ?";
     try (PreparedStatement prep = conn.prepareStatement(query)) {
@@ -139,5 +144,45 @@ public class RecipeDatabase {
       throw new CommandException("Recipe " + id + " does not exist.");
     }
 
+  }
+
+
+
+  public List<Recipe> getFullRecipes(String vectorFileName) throws SQLException{
+    String query = "SELECT id, tokens FROM recipe";
+    JSONParser parser = new JSONParser();
+    Gson gson = new Gson();
+    List<Recipe> recipes = new ArrayList<>();
+    try (FileReader reader = new FileReader(vectorFileName)) {
+      JSONObject object = (JSONObject) parser.parse(reader);
+      try (PreparedStatement prep = conn.prepareStatement(query)) {
+        try (ResultSet rs = prep.executeQuery()) {
+          while (rs.next()) {
+            String[] tokens = rs.getString(1)
+                    .substring(1, rs.getString(1).length()-1)
+                    .replaceAll("\"", "")
+                    .split(",");
+            Set<Ingredient> newTokens = new HashSet<>();
+            double[][] embeddings = new double[tokens.length][300];
+            for (int i = 0; i < tokens.length; i++) {
+              embeddings[i] = gson.fromJson(object.get(tokens[i]).toString(), double[].class);
+              newTokens.add(new Ingredient(tokens[i], embeddings[i]));
+            }
+            double[] totalEmbedding = Config.arrayAdd(embeddings);
+            String id = rs.getString(1);
+            Recipe recipe = new Recipe(totalEmbedding, id, newTokens);
+            recipes.add(recipe);
+          }
+        }
+      }
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+    return recipes;
   }
 }
