@@ -6,7 +6,7 @@ import java.util.Map;
 public class Config {
 
   private Map<String, Double> catToVal = new HashMap();
-  private int embedLength = 0;
+  private static int embedLength = 0;
   private Map<String, double[]> recToVec = new HashMap<>();
 
   public Config(){
@@ -31,7 +31,7 @@ public class Config {
     return catToVal;
   }
 
-  public double cosineSimilarity(double[] vec1, double[] vec2) {
+  public static double cosineSimilarity(double[] vec1, double[] vec2) {
     double dotProduct = 0.0;
     double normA = 0.0;
     double normB = 0.0;
@@ -43,14 +43,20 @@ public class Config {
     return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
   }
 
-  public double[] arrayAdd (double[] v1, double[] v2) {
-    for (int i = 0;  i < v1.length; i++) {
-      v2[i] = v1[i] + v2[i];
+  public static double[] arrayAdd(double[][] arrays) {
+    double[] result = new double[300];
+    for (int i = 0; i < result.length; i ++){
+      for (double[] currArr: arrays) {
+        result[i] += currArr[i];
+      }
     }
-    return v2;
+    for (int i = 0; i < result.length; i ++) {
+      result[i] /= arrays.length;
+    }
+    return result;
   }
 
-  public int getEmbedLength() {
+  public static int getEmbedLength() {
     return embedLength;
   }
 

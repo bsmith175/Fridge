@@ -7,8 +7,7 @@ import java.util.*;
 
 public class Recipe extends CartesianPoint {
   private String id;
-  private Set<Ingredient> ingredients = new HashSet<>();
-  private Config config;
+  private Set<Ingredient> ingredients;
   private double similarity;
 
   /**
@@ -17,12 +16,10 @@ public class Recipe extends CartesianPoint {
    * @param embedding double array storing position of point
    * @param id        a String
    */
-  public Recipe(double[] embedding, String id, HashSet<Ingredient> ingredients,
-                Config config) {
+  public Recipe(double[] embedding, String id, HashSet<Ingredient> ingredients) {
     super(embedding);
     this.id = id;
     this.ingredients = ingredients;
-    this.config = config;
     this.similarity = 0.0;
   }
 
@@ -49,8 +46,8 @@ public class Recipe extends CartesianPoint {
    * @return the vector of concatenated ingredient vectors in this recipe
    */
   public double[] genRecipeVec() {
-    double[] recipeVec = new double[]{config.getEmbedLength()};
-    for (int dim = 0; dim < config.getEmbedLength(); dim++) {
+    double[] recipeVec = new double[]{Config.getEmbedLength()};
+    for (int dim = 0; dim < Config.getEmbedLength(); dim++) {
       for (Ingredient ingr : this.ingredients)
       recipeVec[dim] = recipeVec[dim] + ingr.getVec()[dim];
     }
@@ -69,11 +66,10 @@ public class Recipe extends CartesianPoint {
     List<Ingredient> candidates = new ArrayList<>();
     for (Ingredient ing : this.ingredients) {
       Ingredient candidate = generateCandidate(ingredients, ing);
-      candidatesVec = config.arrayAdd(candidatesVec, candidate.getVec());
+      candidatesVec = Config.arrayAdd(new double[][]{candidatesVec, candidate.getVec()});
       candidates.add(candidate);
     }
-    this.similarity = config.cosineSimilarity(candidatesVec,
-            config.getRecVec(this.id));
+    this.similarity = this.getDistance(candidatesVec);
     return candidates;
   }
 
@@ -89,7 +85,7 @@ public class Recipe extends CartesianPoint {
     Ingredient best = null;
     double closest = Double.POSITIVE_INFINITY;
     for (Ingredient i : ingredients) {
-      double similarity = config.cosineSimilarity(ingr.getVec(), i.getVec());
+      double similarity = Config.cosineSimilarity(ingr.getVec(), i.getVec());
       if (similarity > closest) {
         best = i;
         closest = similarity;
