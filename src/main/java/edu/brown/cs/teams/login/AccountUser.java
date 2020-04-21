@@ -21,6 +21,7 @@ public class AccountUser implements User {
     private String profile;
 
     //list of recipe IDs that user has favorited
+    //Idk if we actually need this, since we have to query the db anyway
     private List<Integer> favorites;
 
     public AccountUser(String id, String firstName, String pfp) {
