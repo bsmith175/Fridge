@@ -158,12 +158,13 @@ public class RecipeDatabase {
       try (PreparedStatement prep = conn.prepareStatement(query)) {
         try (ResultSet rs = prep.executeQuery()) {
           while (rs.next()) {
-            String[] tokens = rs.getString(1)
-                    .substring(1, rs.getString(1).length()-1)
+            String[] tokens = rs.getString(2)
+                    .substring(1, rs.getString(2).length()-1)
                     .replaceAll("\"", "")
                     .split(",");
             Set<Ingredient> newTokens = new HashSet<>();
             double[][] embeddings = new double[tokens.length][300];
+
             for (int i = 0; i < tokens.length; i++) {
               embeddings[i] = gson.fromJson(object.get(tokens[i]).toString(), double[].class);
               newTokens.add(new Ingredient(tokens[i], embeddings[i]));

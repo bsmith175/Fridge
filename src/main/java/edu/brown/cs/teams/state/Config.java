@@ -17,7 +17,8 @@ public final class Config {
           new PriorityQueue<>(new RecipeDistanceComparator());
   private static RecipeDatabase db;
 
-  public Config(){
+  public Config() throws SQLException {
+
 //    catToVal.put("meat", Double.POSITIVE_INFINITY);
 //    catToVal.put("fish", 100.0);
 //    catToVal.put("seafood", 100.0);
@@ -92,6 +93,17 @@ public final class Config {
     }
     for (int i = 0; i < result.length; i ++) {
       result[i] /= arrays.length;
+    }
+    return result;
+  }
+
+  public static double[] ingredAdd(Collection<Ingredient> ingreds) {
+    double[] result = new double[300];
+    for (int i = 0; i < result.length; i ++){
+      for (Ingredient ingr : ingreds) {
+        double[] embedding = ingr.getVec();
+        result[i] += embedding[i];
+      }
     }
     return result;
   }

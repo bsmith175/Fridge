@@ -25,10 +25,9 @@ public class RunSuperiorAlg implements Command {
       FileReader reader = new FileReader("data/ingredient_vectors.json");
       JSONParser parser = new JSONParser();
       JSONObject object = (JSONObject) parser.parse(reader);
-
-
       List<Ingredient> ingredients = new ArrayList<>();
       for (String word : Arrays.copyOfRange(command, 1, command.length)) {
+        word.replaceAll("\"", "");
         double[] embedding = gson.fromJson(object.get(word).toString(),
                 double[].class);
         Ingredient ingredient = new Ingredient(word, embedding);
@@ -39,7 +38,16 @@ public class RunSuperiorAlg implements Command {
         recipe.compareToIngredients(ingredients);
       }
       Recipe first = Config.getFullRecipes().peek();
-      System.out.println(first.getId());
+      System.out.println(first.getSimilarity());
+      Config.getFullRecipes().poll();
+      System.out.println(Config.getFullRecipes().peek().getSimilarity());
+      Config.getFullRecipes().poll();
+      System.out.println(Config.getFullRecipes().peek().getSimilarity());
+      Config.getFullRecipes().poll();
+      System.out.println(Config.getFullRecipes().peek().getSimilarity());
+      Config.getFullRecipes().poll();
+      System.out.println(Config.getFullRecipes().peek().getSimilarity());
+      Config.getFullRecipes();
       return first.getId();
     } catch (IOException | ParseException e) {
       throw new CommandException(e.getMessage());

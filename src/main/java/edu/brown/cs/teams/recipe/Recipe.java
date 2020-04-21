@@ -9,6 +9,7 @@ public class Recipe extends CartesianPoint {
   private String id;
   private Set<Ingredient> ingredients;
   private double similarity;
+  private double[] recipeVec;
 
   /**
    * Constructor for Cartesian point.
@@ -21,6 +22,7 @@ public class Recipe extends CartesianPoint {
     this.id = id;
     this.ingredients = ingredients;
     this.similarity = 0.0;
+    this.genRecipeVec();
   }
 
   public String getId() {
@@ -45,13 +47,8 @@ public class Recipe extends CartesianPoint {
    * Makes a vector for this recipe.
    * @return the vector of concatenated ingredient vectors in this recipe
    */
-  public double[] genRecipeVec() {
-    double[] recipeVec = new double[]{Config.getEmbedLength()};
-    for (int dim = 0; dim < Config.getEmbedLength(); dim++) {
-      for (Ingredient ingr : this.ingredients)
-      recipeVec[dim] = recipeVec[dim] + ingr.getVec()[dim];
-    }
-    return recipeVec;
+  public void genRecipeVec() {
+    this.recipeVec = Config.ingredAdd(this.ingredients);
   }
 
   /**
@@ -62,14 +59,13 @@ public class Recipe extends CartesianPoint {
    */
   public List<Ingredient> compareToIngredients(
           List<Ingredient> ingredients) {
-    double[] candidatesVec = new double[]{this.ingredients.size()};
     List<Ingredient> candidates = new ArrayList<>();
     for (Ingredient ing : this.ingredients) {
       Ingredient candidate = Config.generateCandidate(ingredients, ing);
-      candidatesVec = Config.arrayAdd(new double[][]{candidatesVec, candidate.getVec()});
       candidates.add(candidate);
     }
-    this.similarity = this.getDistance(candidatesVec);
+    double[] candidatesVec = Config.ingredAdd(ingredients);
+    this.similarity = Config.cosineSimilarity(this.recipeVec, candidatesVec);
     return candidates;
   }
 
