@@ -11,6 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Holds functionality for user database. We could move all this to the recipeDatabase class
+ * since they're both using the same database.
+ * Chose to make them in the same database so we can do cross relations and make queries much easier
+ */
 public class UserDatabase extends RecipeDatabase {
 
     //TODO: get rid of this and use RecipeDatabase's conn
@@ -33,7 +38,7 @@ public class UserDatabase extends RecipeDatabase {
     }
 
     /**
-     * The favorite table is a junction table between recipes and users. It link every recipe
+     * The favorite table is a junction table between recipes and users. It links every recipe
      * that is a favorite to each of the users that have it as a favorite.
      *
      * @throws SQLException
@@ -45,6 +50,12 @@ public class UserDatabase extends RecipeDatabase {
         prep.executeUpdate();
     }
 
+    /**
+     * Adds a new user to the database.
+     * @param user - the User to be added to the database
+     * @throws SQLException - if user could not be added
+     *                      - if user already exists
+     */
     public void addNewUser(AccountUser user) throws SQLException {
         String uid = user.getUid();
         String name = user.getName();
@@ -58,6 +69,12 @@ public class UserDatabase extends RecipeDatabase {
         prep.executeUpdate();
     }
 
+    /**
+     * Queries a user's favorite recipe list, given a user ID.
+     * @param uid - User ID
+     * @return - A List of recipe IDs
+     * @throws SQLException - if exception occurs during query
+     */
     public List<Integer> getFavorites(String uid) throws SQLException{
         PreparedStatement prep = conn.prepareStatement("SELECT recipeId FROM favorite WHERE uid="
                 + uid + ";");
@@ -70,12 +87,19 @@ public class UserDatabase extends RecipeDatabase {
         return ret;
     }
 
-    public JsonObject getRecipeFromID(String id) throws SQLException {
+    /**
+     * Gets the content needed to display the recipe in labeld form, given its ID.
+     * @param id  - the recipe ID.
+     * @return - JsonObject of the recipe's content (everything except tokens)
+     * @throws SQLException - if exception occurs while querying database
+     */
+    public JsonObject getRecipeContentFromID(String id) throws SQLException {
         String query = "SELECT * FROM recipe WHERE recipe.id=" + "id" + ";";
         PreparedStatement prep = conn.prepareStatement(query);
         ResultSet rs = prep.executeQuery();
         if (rs.next()) {
             JsonObject recipe = new JsonObject();
+            recipe.addProperty("id", rs.getString(2));
             recipe.addProperty("name", rs.getString(2));
             recipe.addProperty("author", rs.getString(3));
             recipe.addProperty("description", rs.getString(4));

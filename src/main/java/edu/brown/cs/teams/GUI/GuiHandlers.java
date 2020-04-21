@@ -14,6 +14,7 @@ import java.util.List;
 //can have more objects for different types of handlers
 public class GuiHandlers {
 
+    //Handles a user login. Takes user data from the Google User and adds to the database if possible.
     private static class userLoginHandler implements Route {
 
         @Override
@@ -31,17 +32,18 @@ public class GuiHandlers {
 
             try {
                 StubAlgMain.getDB().addNewUser(user);
-                responseJSON.addProperty("newUser", false);
-            } catch (SQLException e) {
                 responseJSON.addProperty("newUser", true);
+            } catch (SQLException e) {
+                responseJSON.addProperty("newUser", false);
+                List<Integer> recipeIDs = StubAlgMain.getDB().getFavorites(uid);
             }
 
             return responseJSON;
         }
     }
 
+    //handles a request to the favorites page. Queries db for the user's favorited recipes.
     private static class favoritesHandler implements Route {
-
 
         @Override
         public Object handle(Request request, Response response) throws Exception {
@@ -51,7 +53,7 @@ public class GuiHandlers {
             List<Integer> recipeIDs = StubAlgMain.getDB().getFavorites(uid);
             JsonArray responseJSON = new JsonArray();
             for (Integer curID : recipeIDs) {
-                JsonObject obj = StubAlgMain.getDB().getRecipeFromID(Integer.toString(curID));
+                JsonObject obj = StubAlgMain.getDB().getRecipeContentFromID(Integer.toString(curID));
                 responseJSON.add(obj);
             }
             return responseJSON;

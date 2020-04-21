@@ -1,5 +1,6 @@
 package edu.brown.cs.teams.login;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
  * @author bensmith
  */
 public class AccountUser implements User {
-    static final String DEFAULT_PICTURE = "TODO";
+    static final String DEFAULT_PICTURE = "path/to/image";
 
     //the user's unique ID
     private String uid;
@@ -26,6 +27,7 @@ public class AccountUser implements User {
         uid = id;
         name = firstName;
         profile = pfp;
+        favorites = new ArrayList<>();
     }
     /**
      * Getter for uid.
@@ -86,6 +88,14 @@ public class AccountUser implements User {
      */
     public List<Integer> getFavorites() {
         return favorites;
+    }
+
+    /**
+     * Sets the user's favorite list.
+     * @param favs - A list of recipe IDs to set as favorites list
+     */
+    public void setFavorites(List<Integer> favs) {
+        favorites = favs;
     }
 
     @Override
