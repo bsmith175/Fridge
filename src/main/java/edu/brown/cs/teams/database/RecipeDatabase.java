@@ -131,13 +131,12 @@ public class RecipeDatabase {
         String result = "";
         while (rs.next()) {
           result += rs.getString(1) + " " + rs.getString(2) +
-              rs.getString(4) + " " + rs.getString(5) + "\n";
+              " " + rs.getString(6) + "\n";
         }
         return result;
       }
     } catch (SQLException e) {
       throw new CommandException("Recipe " + id + " does not exist.");
     }
-
   }
 }

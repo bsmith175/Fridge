@@ -34,12 +34,15 @@ public class RunKDAlg implements Command {
         embeddings[i-1] = embedding;
       }
       double[] queryEmbedding = Config.arrayAdd(embeddings);
-      List<MinimalRecipe> neighbors = AlgMain.getTree().getNeighbors(10, queryEmbedding);
+      List<MinimalRecipe> neighbors = AlgMain.getTree().radiusSearch(1, queryEmbedding);
       String result = "";
-      for (MinimalRecipe recipe : neighbors) {
-        System.out.println(AlgMain.getDb().getRecipe(recipe.getId()));
-      }
-      return neighbors.toString();
+      int count = 0;
+        for (MinimalRecipe recipe : neighbors) {
+          if (count == 50) {break;}
+          result += AlgMain.getDb().getRecipe(recipe.getId());
+          count += 1;
+        }
+      return result;
     }catch (IOException | ParseException e) {
       throw new CommandException(e.getMessage());
     }
