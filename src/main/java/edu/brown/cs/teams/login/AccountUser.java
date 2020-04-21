@@ -22,6 +22,11 @@ public class AccountUser implements User {
     //list of recipe IDs that user has favorited
     private List<Integer> favorites;
 
+    public AccountUser(String id, String firstName, String pfp) {
+        uid = id;
+        name = firstName;
+        profile = pfp;
+    }
     /**
      * Getter for uid.
      * @return - the User's user ID
