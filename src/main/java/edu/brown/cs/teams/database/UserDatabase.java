@@ -91,6 +91,7 @@ public class UserDatabase extends RecipeDatabase {
      * Gets the content needed to display the recipe in labeld form, given its ID.
      * @param id  - the recipe ID.
      * @return - JsonObject of the recipe's content (everything except tokens)
+     *         - null if the recipe was not in the database
      * @throws SQLException - if exception occurs while querying database
      */
     public JsonObject getRecipeContentFromID(String id) throws SQLException {

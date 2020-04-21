@@ -54,6 +54,9 @@ public class GuiHandlers {
             JsonArray responseJSON = new JsonArray();
             for (Integer curID : recipeIDs) {
                 JsonObject obj = StubAlgMain.getDB().getRecipeContentFromID(Integer.toString(curID));
+                if (obj == null) {
+                    throw new IllegalArgumentException("ERROR in favoritesHandler:  recipe doesn't exist");
+                }
                 responseJSON.add(obj);
             }
             return responseJSON;
