@@ -4,9 +4,12 @@ import src.main.java.edu.brown.cs.teams.io.CommandException;
 import src.main.java.edu.brown.cs.teams.database.RecipeDatabase;
 import src.main.java.edu.brown.cs.teams.kdtree.KDTree;
 import src.main.java.edu.brown.cs.teams.recipe.MinimalRecipe;
+import src.main.java.edu.brown.cs.teams.recipe.Recipe;
+import src.main.java.edu.brown.cs.teams.recipe.RecipeDistanceComparator;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.PriorityQueue;
 
 /**
  * Class to store the information relevant to the algorithms being run.
@@ -15,6 +18,7 @@ public class AlgMain {
   private static KDTree<MinimalRecipe> tree;
   private static List<MinimalRecipe> recipeList;
   private static RecipeDatabase db;
+
 
   /**
    * Constructor for AlgMain.
@@ -56,6 +60,7 @@ public class AlgMain {
 
   /**
    * Setter method for the kd tree
+   *
    * @param tree
    */
   public static void setTree(KDTree<MinimalRecipe> tree) {
@@ -64,6 +69,7 @@ public class AlgMain {
 
   /**
    * Setter method for the recipe list
+   *
    * @param recipeList
    */
   public static void setRecipeList(List<MinimalRecipe> recipeList) {
@@ -72,9 +78,10 @@ public class AlgMain {
 
   /**
    * Setter method for the database querier
+   *
    * @param db
    */
-  public static void setDb(RecipeDatabase db) {
+  public static void setDb(RecipeDatabase db) throws SQLException {
     AlgMain.db = db;
   }
 }
