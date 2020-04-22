@@ -40,11 +40,7 @@ public class Main {
     commands.put("KDAlg", new RunKDAlg());
 ///////////////////////////////
     //DO NOT DELETE THIS PLEASE OR IM GONNA FORGET ITS HERE
-
-    System.out.println("the cavalry has arrived");
     commands.put("recommend", new RunSuperiorAlg());
-    System.out.println("gg nate (jk this is gonna be extremely buggy right " +
-            "now)");
 
     Main.repl = new REPL(commands);
     Main.repl.runREPL();

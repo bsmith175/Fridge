@@ -8,6 +8,7 @@ import src.main.java.edu.brown.cs.teams.io.Command;
 import src.main.java.edu.brown.cs.teams.io.CommandException;
 import src.main.java.edu.brown.cs.teams.recipe.Ingredient;
 import src.main.java.edu.brown.cs.teams.recipe.Recipe;
+import src.main.java.edu.brown.cs.teams.recipe.RecipeDistanceComparator;
 import src.main.java.edu.brown.cs.teams.state.Config;
 
 import java.io.FileReader;
@@ -27,7 +28,8 @@ public class RunSuperiorAlg implements Command {
       JSONObject object = (JSONObject) parser.parse(reader);
       List<Ingredient> ingredients = new ArrayList<>();
       for (String word : Arrays.copyOfRange(command, 1, command.length)) {
-        word.replaceAll("\"", "");
+        word = word.replaceAll("\"", "");
+        System.out.println(word);
         double[] embedding = gson.fromJson(object.get(word).toString(),
                 double[].class);
         Ingredient ingredient = new Ingredient(word, embedding);
@@ -37,17 +39,18 @@ public class RunSuperiorAlg implements Command {
       for (Recipe recipe : Config.getFullRecipes()) {
         recipe.compareToIngredients(ingredients);
       }
-      Recipe first = Config.getFullRecipes().peek();
-      System.out.println(first.getSimilarity());
-      Config.getFullRecipes().poll();
-      System.out.println(Config.getFullRecipes().peek().getSimilarity());
-      Config.getFullRecipes().poll();
-      System.out.println(Config.getFullRecipes().peek().getSimilarity());
-      Config.getFullRecipes().poll();
-      System.out.println(Config.getFullRecipes().peek().getSimilarity());
-      Config.getFullRecipes().poll();
-      System.out.println(Config.getFullRecipes().peek().getSimilarity());
-      Config.getFullRecipes();
+      List<Recipe> reclist = Config.getFullRecipes();
+      PriorityQueue<Recipe> recpq =
+              new PriorityQueue<>(new RecipeDistanceComparator());
+      recpq.addAll(reclist);
+      Recipe first = recpq.poll();
+      Config.printRecIngreds(first);
+      first = recpq.poll();
+      Config.printRecIngreds(first);
+      first = recpq.poll();
+      Config.printRecIngreds(first);
+      first = recpq.poll();
+      Config.printRecIngreds(first);
       return first.getId();
     } catch (IOException | ParseException e) {
       throw new CommandException(e.getMessage());

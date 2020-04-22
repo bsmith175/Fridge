@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import com.google.gson.*;
@@ -35,17 +36,18 @@ public class RecipeDatabase {
   /**
    * Constructor for RecipeDatabase. Establishes a connection to the db and
    * verifies format.
+   *
    * @param dbFileName the path to the database
    * @throws SQLException
    * @throws ClassNotFoundException
    * @throws CommandException
    */
   public RecipeDatabase(String dbFileName)
-      throws SQLException, ClassNotFoundException, CommandException {
+          throws SQLException, ClassNotFoundException, CommandException {
     File db = new File(dbFileName);
     if (!db.exists()) {
       throw new CommandException("ERROR: database file does not exist: "
-          + dbFileName);
+              + dbFileName);
     }
 
     this.dbFileName = dbFileName;
@@ -61,31 +63,36 @@ public class RecipeDatabase {
       verifyTables();
     } catch (SQLException e) {
       throw new CommandException("ERROR: SQL database is malformed: "
-          + this.dbFileName);
+              + this.dbFileName);
     }
   }
 
   /**
    * Dummy method to verify all the columns in the recipe table are there.
+   *
    * @throws SQLException
    * @throws CommandException
    */
   public void verifyTables() throws SQLException, CommandException {
-    String query = "SELECT recipe.id, recipe.name, recipe.author, recipe.description,"
-        + " recipe.ingredients, recipe.tokens, recipe.time, recipe.servings"
-        + " FROM recipe "
-        + "LIMIT 1;";
+    String query =
+            "SELECT recipe.id, recipe.name, recipe.author, recipe.description,"
+                    +
+                    " recipe.ingredients, recipe.tokens, recipe.time, recipe.servings"
+                    + " FROM recipe "
+                    + "LIMIT 1;";
 
     try (PreparedStatement prep = conn.prepareStatement(query)) {
       try (ResultSet rs = prep.executeQuery()) {
         if (!rs.next()) {
-          throw new CommandException("ERROR: database has no recipes: " + dbFileName);
+          throw new CommandException(
+                  "ERROR: database has no recipes: " + dbFileName);
         }
       }
     }
   }
 
-  public List<MinimalRecipe> getRecipes(String vectorFileName) throws SQLException{
+  public List<MinimalRecipe> getRecipes(String vectorFileName)
+          throws SQLException {
     String query = "SELECT * FROM recipe";
     JSONParser parser = new JSONParser();
     Gson gson = new Gson();
@@ -96,16 +103,17 @@ public class RecipeDatabase {
         try (ResultSet rs = prep.executeQuery()) {
           while (rs.next()) {
             String[] tokens = rs.getString(6)
-                .substring(1, rs.getString(6).length()-1)
-                .replaceAll("\"", "")
-                .split(",");
+                    .substring(1, rs.getString(6).length() - 1)
+                    .replaceAll("\"", "")
+                    .split(",");
             Set<String> newTokens = new HashSet<>();
             double[][] embeddings = new double[tokens.length][300];
             for (int i = 0; i < tokens.length; i++) {
               if (object.get(tokens[i]) == null) {
                 embeddings[i] = new double[300];
-              }else {
-                embeddings[i] = gson.fromJson(object.get(tokens[i]).toString(), double[].class);
+              } else {
+                embeddings[i] = gson.fromJson(object.get(tokens[i]).toString(),
+                        double[].class);
               }
               newTokens.add(tokens[i]);
             }
@@ -127,7 +135,6 @@ public class RecipeDatabase {
   }
 
 
-
   public String getRecipe(String id) throws CommandException {
     String query = "SELECT * FROM recipe WHERE recipe.id = ?";
     try (PreparedStatement prep = conn.prepareStatement(query)) {
@@ -136,7 +143,7 @@ public class RecipeDatabase {
         String result = "";
         while (rs.next()) {
           result += rs.getString(1) + " " + rs.getString(2) +
-              " " + rs.getString(6) + "\n";
+                  " " + rs.getString(6) + "\n";
         }
         return result;
       }
@@ -146,8 +153,8 @@ public class RecipeDatabase {
   }
 
 
-
-  public List<Recipe> getFullRecipes(String vectorFileName) throws SQLException{
+  public List<Recipe> getFullRecipes(String vectorFileName)
+          throws SQLException {
     String query = "SELECT id, tokens FROM recipe";
     JSONParser parser = new JSONParser();
     Gson gson = new Gson();
@@ -158,15 +165,18 @@ public class RecipeDatabase {
         try (ResultSet rs = prep.executeQuery()) {
           while (rs.next()) {
             String[] tokens = rs.getString(2)
-                    .substring(1, rs.getString(2).length()-1)
+                    .substring(1, rs.getString(2).length() - 1)
                     .replaceAll("\"", "")
                     .split(",");
             Set<Ingredient> newTokens = new HashSet<>();
             double[][] embeddings = new double[tokens.length][300];
 
             for (int i = 0; i < tokens.length; i++) {
-              embeddings[i] = gson.fromJson(object.get(tokens[i]).toString(), double[].class);
-              newTokens.add(new Ingredient(tokens[i], embeddings[i]));
+              embeddings[i] = gson.fromJson(object.get(tokens[i]).toString(),
+                      double[].class);
+              if (tokens[i] != "") {
+                newTokens.add(new Ingredient(tokens[i], embeddings[i]));
+              }
             }
             double[] totalEmbedding = Config.arrayAdd(embeddings);
             String id = rs.getString(1);

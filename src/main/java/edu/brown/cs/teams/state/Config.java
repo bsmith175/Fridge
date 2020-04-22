@@ -13,8 +13,8 @@ public final class Config {
   private Map<String, Double> catToVal = new HashMap();
   private static int embedLength = 0;
   private Map<String, double[]> recToVec = new HashMap<>();
-  private static PriorityQueue<Recipe> fullRecipes =
-          new PriorityQueue<>(new RecipeDistanceComparator());
+  private static List<Recipe> fullRecipes =
+          new ArrayList<>();
   private static RecipeDatabase db;
 
   public Config() throws SQLException {
@@ -42,7 +42,7 @@ public final class Config {
   }
 
 
-  public static PriorityQueue<Recipe> getFullRecipes() {
+  public static List<Recipe> getFullRecipes() {
     return fullRecipes;
   }
 
@@ -57,7 +57,7 @@ public final class Config {
   public static Ingredient generateCandidate(
           List<Ingredient> ingredients, Ingredient ingr) {
     Ingredient best = null;
-    double closest = Double.POSITIVE_INFINITY;
+    double closest = 0.0;
     for (Ingredient i : ingredients) {
       double similarity = cosineSimilarity(ingr.getVec(), i.getVec());
       if (similarity > closest) {
@@ -104,6 +104,7 @@ public final class Config {
         double[] embedding = ingr.getVec();
         result[i] += embedding[i];
       }
+      result[i] /= ingreds.size();
     }
     return result;
   }
@@ -118,5 +119,13 @@ public final class Config {
 
   public static void setDb(RecipeDatabase newDB) {
     db = newDB;
+  }
+
+  public static void printRecIngreds(Recipe r) {
+    System.out.println();
+    System.out.println(r.getId() + "   ->     ");
+    for (Ingredient i : r.getIngredients()) {
+      System.out.print(i.getId() + " ");
+    }
   }
 }
