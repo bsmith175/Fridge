@@ -38,7 +38,7 @@ public class GuiHandlers {
                 List<Integer> recipeIDs = StubAlgMain.getDB().getFavorites(uid);
             }
 
-            return responseJSON;
+            return responseJSON.toString();
         }
     }
 
@@ -59,7 +59,7 @@ public class GuiHandlers {
                 }
                 responseJSON.add(obj);
             }
-            return responseJSON;
+            return responseJSON.toString();
         }
     }
 }

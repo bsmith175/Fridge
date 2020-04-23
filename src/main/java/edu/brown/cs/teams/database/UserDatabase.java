@@ -88,7 +88,7 @@ public class UserDatabase extends RecipeDatabase {
     }
 
     /**
-     * Gets the content needed to display the recipe in labeld form, given its ID.
+     * Gets the content needed to display the recipe in labeled form, given its ID.
      * @param id  - the recipe ID.
      * @return - JsonObject of the recipe's content (everything except tokens)
      *         - null if the recipe was not in the database
@@ -107,7 +107,7 @@ public class UserDatabase extends RecipeDatabase {
             recipe.addProperty("ingredients", rs.getString(5));
             recipe.addProperty("time", rs.getString(7));
             recipe.addProperty("servings", rs.getString(8));
-            recipe.addProperty("imageURL", rs.getString(9));
+            recipe.addProperty("img_url", rs.getString(9));
             return recipe;
         } else {
             return null;
