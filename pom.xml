@@ -20,12 +20,6 @@
   <!-- Dependencies section for libraries put all of your libraries in here -->
   <dependencies>
 
-    <dependency>
-      <groupId>com.googlecode.json-simple</groupId>
-      <artifactId>json-simple</artifactId>
-      <version>1.1.1</version>
-    </dependency>
-
 
     <!--
         jopt-simple is a command line parser.
@@ -108,11 +102,6 @@
       <version>20090211</version>
     </dependency>
 
-    <dependency>
-      <groupId>com.googlecode.json-simple</groupId>
-      <artifactId>json-simple</artifactId>
-      <version>1.1</version>
-    </dependency>
     <!--
         Spark is a web framework for java.
         http://sparkjava.com/.
