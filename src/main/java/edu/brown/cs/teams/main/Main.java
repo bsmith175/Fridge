@@ -40,6 +40,8 @@ public final class Main {
 
     OptionParser parser = new OptionParser();
     parser.accepts("gui");
+    parser.accepts("port").withRequiredArg().ofType(Integer.class)
+            .defaultsTo(DEFAULT_PORT);
     parser.accepts("database");
     parser.accepts("ben");
 
