@@ -1,4 +1,4 @@
-package src.main.java.edu.brown.cs.teams.state;
+package edu.brown.cs.teams.state;
 
 public class FindRecipe implements Page {
 }
