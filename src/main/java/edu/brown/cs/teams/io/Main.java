@@ -35,6 +35,7 @@ public class Main {
     System.out.println("Building KD Tree");
     AlgMain.setTree(AlgMain.getTree().buildKDTree(recipes));
     System.out.println("Success! KD Tree is ready for querying.");
+    System.out.println("Generating recipes:");
     HashMap<String, Command> commands = new HashMap<>();
     commands.put("KDAlg", new RunKDAlg());
 ///////////////////////////////
@@ -44,6 +45,7 @@ public class Main {
 //    commands.put("recommend", new RunSuperiorAlg());
 //    System.out.println("gg nate (jk this is gonna be extremely buggy right " +
 //            "now)");
+    commands.put("recommend", new RunSuperiorAlg());
 
     Main.repl = new REPL(commands);
     Main.repl.runREPL();

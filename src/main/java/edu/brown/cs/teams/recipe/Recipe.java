@@ -25,6 +25,18 @@ public class Recipe extends CartesianPoint {
     this.genRecipeVec();
   }
 
+  /**
+   * getter method for ingredients
+   * @return the set of ingredients in the recipe
+   */
+  public Set<Ingredient> getIngredients() {
+    return this.ingredients;
+  }
+
+  /**
+   * getter method for id
+   * @return the set of ingredients in the recipe
+   */
   public String getId() {
     return id;
   }
@@ -45,6 +57,7 @@ public class Recipe extends CartesianPoint {
 
   /**
    * Makes a vector for this recipe.
+   *
    * @return the vector of concatenated ingredient vectors in this recipe
    */
   public void genRecipeVec() {
@@ -53,25 +66,35 @@ public class Recipe extends CartesianPoint {
 
   /**
    * Generates the closest list of ingredients to a recipe from an ingredient
-   * list.
+   * list, as well as assigns similarity scores to each recipe.
+   *
    * @param ingredients a user list of ingredients
    * @return an approximation of the recipe within the user ingredients
    */
   public List<Ingredient> compareToIngredients(
           List<Ingredient> ingredients) {
-    List<Ingredient> candidates = new ArrayList<>();
+    List<Ingredient> candidateList = new ArrayList<>();
+    //generate user candidate for every recipe ingredient
     for (Ingredient ing : this.ingredients) {
       Ingredient candidate = Config.generateCandidate(ingredients, ing);
-      candidates.add(candidate);
+      if (candidate != null) {
+        candidateList.add(candidate);
+      }
     }
-    double[] candidatesVec = Config.ingredAdd(ingredients);
-    this.similarity = Config.cosineSimilarity(this.recipeVec, candidatesVec);
-    return candidates;
+    //approxmating a reicpe vector from user candidate ingredients
+    double[] candidatesVec = Config.ingredAdd(candidateList);
+    //distance from recipe to user approximated recipe
+    double distance = Config.euclidDistance(this.recipeVec, candidatesVec);
+    //penalizing based on number of missing ingredients
+    this.similarity =
+            distance * ((this.recipeVec.length - candidatesVec.length)*0.1 + 1);
+    return candidateList;
   }
 
 
   /**
    * gets the similarity score of this recipe
+   *
    * @return the double score
    */
   public double getSimilarity() {

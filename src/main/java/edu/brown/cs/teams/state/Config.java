@@ -1,10 +1,11 @@
 package src.main.java.edu.brown.cs.teams.state;
 
+import com.google.gson.JsonObject;
 import src.main.java.edu.brown.cs.teams.database.RecipeDatabase;
 import src.main.java.edu.brown.cs.teams.recipe.Ingredient;
 import src.main.java.edu.brown.cs.teams.recipe.Recipe;
 import src.main.java.edu.brown.cs.teams.recipe.RecipeDistanceComparator;
-
+import org.json.simple.JSONObject;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -13,8 +14,8 @@ public final class Config {
   private Map<String, Double> catToVal = new HashMap();
   private static int embedLength = 0;
   private Map<String, double[]> recToVec = new HashMap<>();
-  private static PriorityQueue<Recipe> fullRecipes =
-          new PriorityQueue<>(new RecipeDistanceComparator());
+  private static List<Recipe> fullRecipes =
+          new ArrayList<>();
   private static RecipeDatabase db;
 
   public Config() throws SQLException {
@@ -42,7 +43,7 @@ public final class Config {
   }
 
 
-  public static PriorityQueue<Recipe> getFullRecipes() {
+  public static List<Recipe> getFullRecipes() {
     return fullRecipes;
   }
 
@@ -57,7 +58,7 @@ public final class Config {
   public static Ingredient generateCandidate(
           List<Ingredient> ingredients, Ingredient ingr) {
     Ingredient best = null;
-    double closest = Double.POSITIVE_INFINITY;
+    double closest = 0.0;
     for (Ingredient i : ingredients) {
       double similarity = cosineSimilarity(ingr.getVec(), i.getVec());
       if (similarity > closest) {
@@ -65,12 +66,15 @@ public final class Config {
         closest = similarity;
       }
     }
-    return best;
+    if (closest > 0.8) {
+      return best;
+    }
+    else {
+      return null;
+    }
   }
 
-  public Map getCatToVal() {
-    return catToVal;
-  }
+
 
   public static double cosineSimilarity(double[] vec1, double[] vec2) {
     double dotProduct = 0.0;
@@ -82,6 +86,15 @@ public final class Config {
       normB += Math.pow(vec2[i], 2);
     }
     return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+  }
+
+  public static double euclidDistance(double[] vec1, double[] vec2) {
+    double d = 0.0;
+    for(int n = 0 ; n < vec1.length ; n++) {
+      d += Math.pow(vec1[n] - vec2[n], 2.0);
+    }
+    d = Math.sqrt(d);
+    return d;
   }
 
   public static double[] arrayAdd(double[][] arrays) {
@@ -104,6 +117,7 @@ public final class Config {
         double[] embedding = ingr.getVec();
         result[i] += embedding[i];
       }
+      result[i] /= ingreds.size();
     }
     return result;
   }
@@ -118,5 +132,17 @@ public final class Config {
 
   public static void setDb(RecipeDatabase newDB) {
     db = newDB;
+  }
+
+  public static void printRecIngreds(Recipe r) {
+    System.out.println();
+    System.out.println(r.getId() + "   ->     ");
+    for (Ingredient i : r.getIngredients()) {
+      System.out.print(i.getId() + " ");
+    }
+  }
+
+  public JsonObject getRecipeJSON(String id) throws SQLException {
+    return db.getRecipeContentFromID(id);
   }
 }
