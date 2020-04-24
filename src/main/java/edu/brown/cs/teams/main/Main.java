@@ -22,6 +22,11 @@ import org.json.simple.parser.ParseException;
 import spark.*;
 import spark.template.freemarker.FreeMarkerEngine;
 
+
+/**
+ * The Main class of our project. This is where execution begins.
+ *
+ */
 public final class Main {
   private static final int DEFAULT_PORT = 4567;
   private static final Gson GSON = new Gson();
@@ -69,8 +74,7 @@ public final class Main {
 
     }
     if (options.has("ben")) {
-
-
+        
       IngredientSuggest ig = new IngredientSuggest("data/trie-data.txt");
 
       PrintWriter pw = new PrintWriter(System.out);
@@ -122,12 +126,14 @@ public final class Main {
     return new FreeMarkerEngine(config);
   }
 
+
   private void runSparkServer(int port) {
     Spark.port(port);
     Spark.externalStaticFileLocation("src/main/resources/static");
     Spark.exception(Exception.class, new ExceptionPrinter());
     FreeMarkerEngine freeMarker = createEngine();
 
+<<<<<<< HEAD
     // Setup Spark Routes
     //TODO: create a call to Spark.post to make a post request to a url which
     // will handle getting autocorrect results for the input
@@ -151,6 +157,7 @@ public final class Main {
         pw.println("</pre>");
       }
       res.body(stacktrace.toString());
+
     }
   }
 

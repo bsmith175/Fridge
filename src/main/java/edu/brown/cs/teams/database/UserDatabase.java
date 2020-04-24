@@ -18,6 +18,8 @@ import java.util.Map;
  */
 public class UserDatabase {
 
+    public static final int ERR_CODE_UNIQUE = 23505;
+
     //TODO: get rid of this and use RecipeDatabase's conn
     private Connection conn;
 
@@ -100,18 +102,48 @@ public class UserDatabase {
         ResultSet rs = prep.executeQuery();
         if (rs.next()) {
             JsonObject recipe = new JsonObject();
-            recipe.addProperty("id", rs.getString(2));
+            recipe.addProperty("id", rs.getInt(1));
             recipe.addProperty("name", rs.getString(2));
             recipe.addProperty("author", rs.getString(3));
             recipe.addProperty("description", rs.getString(4));
             recipe.addProperty("ingredients", rs.getString(5));
-            recipe.addProperty("time", rs.getString(7));
-            recipe.addProperty("servings", rs.getString(8));
-            recipe.addProperty("img_url", rs.getString(9));
+            recipe.addProperty("method", rs.getString(7));
+            recipe.addProperty("time", rs.getString(8));
+            recipe.addProperty("servings", rs.getString(9));
+            recipe.addProperty("imageURL", rs.getString(10));
             return recipe;
         } else {
             return null;
         }
     }
+
+    /**
+     * Attemps to add a recipe to the user's favorites list.
+     * @param rid - ID of recipe
+     * @param uid - ID of user
+     * @return  True
+     *             -if recipe was successfully added to favorites list
+     *          False
+     *              - if recipe was already in user's favorites list
+     * @throws SQLException - if exception occurs while updating database
+     */
+    public Boolean addToFavorites(String rid, String uid) throws SQLException {
+        String check = "SELECT EXISTS(SELECT * FROM favorite WHERE recipeId=" +
+                rid + " AND uid=" + uid + ");";
+        PreparedStatement prep = conn.prepareStatement(check);
+        ResultSet rs = prep.executeQuery();
+        rs.next();
+
+        if (rs.getBoolean(1)) {
+            return false;
+        }
+        prep  = conn.prepareStatement("INSERT INTO favorite VALUES(?, ?)");
+        prep.setString(1, rid);
+        prep.setString(2, uid);
+        prep.addBatch();
+        prep.executeUpdate();
+        return true;
+    }
+
 
 }

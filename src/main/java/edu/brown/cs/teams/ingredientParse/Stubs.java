@@ -61,7 +61,7 @@ class Stubs {
         return ret;
     }
 
-    //Takes in a list of parsed ingredients (eg "brown rice", "green chili" and creates)
+    //Takes in a list of parsed ingredients (eg "brown rice", "green chili" and creates
     //a map of each term in any ingredient ("brown", "rice", "green", "chili") to a list
     //of full ingredient names that contain the term.
     private HashMap<String, Set<String>> createTermMap(List<String> ingredients) {

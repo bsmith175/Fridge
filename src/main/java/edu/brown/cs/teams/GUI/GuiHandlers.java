@@ -1,5 +1,6 @@
 package edu.brown.cs.teams.GUI;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import edu.brown.cs.teams.login.AccountUser;
@@ -43,7 +44,7 @@ public class GuiHandlers {
     }
 
     //handles a request to the favorites page. Queries db for the user's favorited recipes.
-    private static class favoritesHandler implements Route {
+    private static class favoritesPageHandler implements Route {
 
         @Override
         public Object handle(Request request, Response response) throws Exception {
@@ -62,6 +63,48 @@ public class GuiHandlers {
                 responseJSON.add(obj);
             }
             return responseJSON.toString();
+        }
+    }
+
+    //handles a user "favoriting" a recipe
+    //returns JSON object with properties:
+    //                          added - true, if recipe was added to favorites list
+    //                                  false, if recipe was already in favorites list
+    //                          error: true, if SQLException occured, false otherwise
+    private static class favoriteButtonHandler implements Route {
+
+        @Override
+        public Object handle(Request request, Response response)  {
+            QueryParamsMap qm = request.queryMap();
+            String rid = qm.value("recipe_id");
+            String uid = qm.value("user_id");
+            JsonObject responseJSON = new JsonObject();
+            try {
+                if (StubAlgMain.getDB().addToFavorites(rid, uid)) {
+                    responseJSON.addProperty("added", true);
+                } else {
+                    responseJSON.addProperty("added", false);
+                }
+            } catch (SQLException throwables) {
+                responseJSON.addProperty("error", true);
+                return responseJSON.toString();
+            }
+            responseJSON.addProperty("error", false);
+            return responseJSON;
+        }
+    }
+
+    private static class ingredientSuggestHandler implements Route {
+
+        //returns a json list of ingredient strings, ordered from most relevant to least relevant
+        @Override
+        public Object handle(Request request, Response response) throws Exception {
+            QueryParamsMap qm = request.queryMap();
+            String input = qm.value("input");
+            List<String> ingredients = StubAlgMain.getIngredientSuggest().suggest(input);
+            Gson gson = new Gson();
+            String json = gson.toJson(ingredients);
+            return json;
         }
     }
 }

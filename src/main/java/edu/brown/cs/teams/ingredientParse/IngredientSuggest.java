@@ -29,6 +29,7 @@ public class IngredientSuggest {
      * Matches user input to closest valid ingredients.
      * @param input - input from user ingredients search
      * @return - A list of ingredient tokens (eg "white rice")
+     *          null if no ingredient matched the input
      */
     public List<String> suggest(String input) {
         if ( input.equals("")) {
