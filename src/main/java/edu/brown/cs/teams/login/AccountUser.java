@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author bensmith
  */
-public class AccountUser implements User {
+public class AccountUser {
     static final String DEFAULT_PICTURE = "path/to/image";
 
     //the user's unique ID

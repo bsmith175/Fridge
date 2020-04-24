@@ -1,24 +1,18 @@
 package edu.brown.cs.teams.main;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
+
+import edu.brown.cs.teams.GUI.GuiHandlers;
 import edu.brown.cs.teams.database.RecipeDatabase;
 import edu.brown.cs.teams.ingredientParse.IngredientSuggest;
+import edu.brown.cs.teams.io.CommandException;
 import freemarker.template.Configuration;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
 import org.json.JSONException;
-
 import java.io.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import spark.*;
 import spark.template.freemarker.FreeMarkerEngine;
 
@@ -29,7 +23,6 @@ import spark.template.freemarker.FreeMarkerEngine;
  */
 public final class Main {
   private static final int DEFAULT_PORT = 4567;
-  private static final Gson GSON = new Gson();
 
   public static void main(String[] args) {
     new Main(args).run();
@@ -66,9 +59,9 @@ public final class Main {
         e.printStackTrace();
       } catch (SQLException e) {
         e.printStackTrace();
-      } catch (FileNotFoundException e) {
+      }  catch (JSONException e) {
         e.printStackTrace();
-      } catch (JSONException e) {
+      } catch (CommandException e) {
         e.printStackTrace();
       }
 
@@ -136,9 +129,8 @@ public final class Main {
     // Setup Spark Routes
     //TODO: create a call to Spark.post to make a post request to a url which
     // will handle getting autocorrect results for the input
-    Spark.get("/fridge", new FridgeHandler(), freeMarker);
-    Spark.post("/recipe", new RecipeHandler());
-
+    GuiHandlers handler = new GuiHandlers();
+    handler.setHandlers(freeMarker);
 
   }
 
@@ -157,43 +149,6 @@ public final class Main {
       }
       res.body(stacktrace.toString());
 
-    }
-  }
-
-  private static class FridgeHandler implements TemplateViewRoute {
-    @Override
-    public ModelAndView handle(Request req, Response res) {
-      Map<String, Object> variables = ImmutableMap.of("title",
-              "Fridge: Whats in Your Fridge", "message", "");
-      return new ModelAndView(variables, "fridge.ftl");
-    }
-  }
-
-
-  /**
-   * A handler to produce our autocorrect service site.
-   *
-   * @return ModelAndView to render.
-   * (autocorrect.ftl).
-   */
-  private static class RecipeHandler implements Route {
-    @Override
-    public String handle(Request req, Response res) throws ParseException {
-      try (FileReader reader = new FileReader("data/smallJ.json")) {
-        JSONParser parser = new JSONParser();
-        JSONArray array = (JSONArray) parser.parse(reader);
-        List<String> result = new ArrayList<>();
-
-        result = new Gson().fromJson(String.valueOf(array), ArrayList.class);
-        Map<String, Object> variables = ImmutableMap.of("results", result);
-        return GSON.toJson(variables);
-
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      return null;
     }
   }
 

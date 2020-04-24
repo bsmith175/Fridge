@@ -1,20 +1,32 @@
 package edu.brown.cs.teams.GUI;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import edu.brown.cs.teams.login.AccountUser;
-import spark.QueryParamsMap;
-import spark.Request;
-import spark.Response;
-import spark.Route;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import spark.*;
+import spark.template.freemarker.FreeMarkerEngine;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 //can have more objects for different types of handlers
 public class GuiHandlers {
+    private static final Gson GSON = new Gson();
 
+    public void setHandlers(FreeMarkerEngine freeMarker) {
+        Spark.get("/fridge", new FridgeHandler(), freeMarker);
+        Spark.post("/recipe", new RecipeHandler());
+    }
     //Handles a user login. Takes user data from the Google User and adds to the database if possible.
     private static class userLoginHandler implements Route {
 
@@ -107,4 +119,42 @@ public class GuiHandlers {
             return json;
         }
     }
+
+    private static class FridgeHandler implements TemplateViewRoute {
+        @Override
+        public ModelAndView handle(Request req, Response res) {
+            Map<String, Object> variables = ImmutableMap.of("title",
+                    "Fridge: Whats in Your Fridge", "message", "");
+            return new ModelAndView(variables, "fridge.ftl");
+        }
+    }
+
+
+    /**
+     * A handler to produce our autocorrect service site.
+     *
+     * @return ModelAndView to render.
+     * (autocorrect.ftl).
+     */
+    private static class RecipeHandler implements Route {
+        @Override
+        public String handle(Request req, Response res) throws ParseException {
+            try (FileReader reader = new FileReader("data/smallJ.json")) {
+                JSONParser parser = new JSONParser();
+                JSONArray array = (JSONArray) parser.parse(reader);
+                List<String> result = new ArrayList<>();
+
+                result = new Gson().fromJson(String.valueOf(array), ArrayList.class);
+                Map<String, Object> variables = ImmutableMap.of("results", result);
+                return GSON.toJson(variables);
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
 }
