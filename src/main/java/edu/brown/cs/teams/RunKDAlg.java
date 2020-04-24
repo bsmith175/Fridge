@@ -30,20 +30,22 @@ public class RunKDAlg implements Command {
       double[][] embeddings = new double[command.length - 1][300];
       for (int i = 1; i < command.length; i++) {
         String ingredient = REPL.removeQuotes(command[i]);
-        double[] embedding = gson.fromJson(object.get(ingredient).toString(), double[].class);
-        embeddings[i-1] = embedding;
+        double[] embedding;
+        if (object.get(ingredient) == null){
+          embedding = new double[300];
+        }else{
+          embedding = gson.fromJson(object.get(ingredient).toString(), double[].class);
+        }
+        embeddings[i - 1] = embedding;
       }
       double[] queryEmbedding = Config.arrayAdd(embeddings);
-      List<MinimalRecipe> neighbors = AlgMain.getTree().radiusSearch(1, queryEmbedding);
+      List<MinimalRecipe> neighbors = AlgMain.getTree().getNeighbors(50, queryEmbedding);
       String result = "";
-      int count = 0;
-        for (MinimalRecipe recipe : neighbors) {
-          if (count == 50) {break;}
-          result += AlgMain.getDb().getRecipe(recipe.getId());
-          count += 1;
-        }
+      for (MinimalRecipe recipe : neighbors) {
+        result += AlgMain.getDb().getRecipe(recipe.getId());
+      }
       return result;
-    }catch (IOException | ParseException e) {
+    } catch (IOException | ParseException e) {
       throw new CommandException(e.getMessage());
     }
   }

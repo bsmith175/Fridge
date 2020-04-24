@@ -31,20 +31,19 @@ public class Main {
     AlgMain.setDb(db);
     Config.setDb(db);
     Config.buildRecList();
-//    List<MinimalRecipe> recipes = AlgMain.getDb().getRecipes("data/ingredient_vectors.json");
-//    AlgMain.setRecipeList(recipes);
-//    System.out.println("Building KD Tree");
-//    AlgMain.setTree(AlgMain.getTree().buildKDTree(recipes));
+    List<MinimalRecipe> recipes = AlgMain.getDb().getRecipes("data/ingredient_vectors.json");    AlgMain.setRecipeList(recipes);
+    System.out.println("Building KD Tree");
+    AlgMain.setTree(AlgMain.getTree().buildKDTree(recipes));
     System.out.println("Success! KD Tree is ready for querying.");
     HashMap<String, Command> commands = new HashMap<>();
     commands.put("KDAlg", new RunKDAlg());
 ///////////////////////////////
     //DO NOT DELETE THIS PLEASE OR IM GONNA FORGET ITS HERE
 
-    System.out.println("the cavalry has arrived");
-    commands.put("recommend", new RunSuperiorAlg());
-    System.out.println("gg nate (jk this is gonna be extremely buggy right " +
-            "now)");
+//    System.out.println("the cavalry has arrived");
+//    commands.put("recommend", new RunSuperiorAlg());
+//    System.out.println("gg nate (jk this is gonna be extremely buggy right " +
+//            "now)");
 
     Main.repl = new REPL(commands);
     Main.repl.runREPL();

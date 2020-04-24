@@ -163,7 +163,6 @@ public class RecipeDatabase {
                     .split(",");
             Set<Ingredient> newTokens = new HashSet<>();
             double[][] embeddings = new double[tokens.length][300];
-
             for (int i = 0; i < tokens.length; i++) {
               embeddings[i] = gson.fromJson(object.get(tokens[i]).toString(), double[].class);
               newTokens.add(new Ingredient(tokens[i], embeddings[i]));
