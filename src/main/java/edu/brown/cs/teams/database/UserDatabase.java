@@ -96,7 +96,7 @@ public class UserDatabase extends RecipeDatabase {
      *         - null if the recipe was not in the database
      * @throws SQLException - if exception occurs while querying database
      */
-    public JsonObject getRecipeContentFromID(String id) throws SQLException {
+    public String getRecipeContentFromID(String id) throws SQLException {
         String query = "SELECT * FROM recipe WHERE recipe.id=" + "id" + ";";
         PreparedStatement prep = conn.prepareStatement(query);
         ResultSet rs = prep.executeQuery();
@@ -111,7 +111,7 @@ public class UserDatabase extends RecipeDatabase {
             recipe.addProperty("time", rs.getString(8));
             recipe.addProperty("servings", rs.getString(9));
             recipe.addProperty("imageURL", rs.getString(10));
-            return recipe;
+            return recipe.toString();
         } else {
             return null;
         }
