@@ -4,6 +4,7 @@ import org.json.simple.parser.JSONParser;
 import src.main.java.edu.brown.cs.teams.io.CommandException;
 import src.main.java.edu.brown.cs.teams.recipe.Ingredient;
 import src.main.java.edu.brown.cs.teams.recipe.MinimalRecipe;
+import org.json.simple.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,12 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.json.simple.JSONObject;
+import java.util.*;
 import org.json.simple.parser.ParseException;
 import com.google.gson.*;
 import src.main.java.edu.brown.cs.teams.recipe.Recipe;
@@ -152,7 +148,14 @@ public class RecipeDatabase {
     }
   }
 
-
+  /**
+   * Method to get a "full recipe" (ingredients and not just vector) from the
+   * recipe database.
+   *
+   * @param vectorFileName the json mapping words to vectors.
+   * @return a list of all the recipes with their ingredients mapped.
+   * @throws SQLException
+   */
   public List<Recipe> getFullRecipes(String vectorFileName)
           throws SQLException {
     String query = "SELECT id, tokens FROM recipe";
@@ -183,8 +186,11 @@ public class RecipeDatabase {
             Recipe recipe = new Recipe(totalEmbedding, id, newTokens);
             recipes.add(recipe);
           }
+          rs.close();
         }
+        prep.close();
       }
+
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
@@ -195,4 +201,38 @@ public class RecipeDatabase {
 
     return recipes;
   }
+
+
+  /**
+   * Gets the content needed to display the recipe in labeled form, given its ID.
+   * @param id  - the recipe ID.
+   * @return - JsonObject of the recipe's content (everything except tokens)
+   *         - null if the recipe was not in the database
+   * @throws SQLException - if exception occurs while querying database
+   */
+  public JsonObject getRecipeContentFromID(String id) throws SQLException {
+    String query = "SELECT id, name, author, description, ingredients, " +
+            "method, time, servings, imageURL" +
+            " FROM recipe WHERE recipe.id=" + "id" +
+            ";";
+    PreparedStatement prep = conn.prepareStatement(query);
+    ResultSet rs = prep.executeQuery();
+    if (rs.next()) {
+      JsonObject recipe = new JsonObject();
+      recipe.addProperty("id", rs.getInt(1));
+      recipe.addProperty("name", rs.getString(2));
+      recipe.addProperty("author", rs.getString(3));
+      recipe.addProperty("description", rs.getString(4));
+      recipe.addProperty("ingredients", rs.getString(5));
+      recipe.addProperty("method", rs.getString(6));
+      recipe.addProperty("time", rs.getString(7));
+      recipe.addProperty("servings", rs.getString(8));
+      recipe.addProperty("imageURL", rs.getString(9));
+      return recipe;
+    } else {
+      return null;
+    }
+  }
+
+
 }

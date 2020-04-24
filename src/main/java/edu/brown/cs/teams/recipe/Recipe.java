@@ -66,7 +66,7 @@ public class Recipe extends CartesianPoint {
 
   /**
    * Generates the closest list of ingredients to a recipe from an ingredient
-   * list.
+   * list, as well as assigns similarity scores to each recipe.
    *
    * @param ingredients a user list of ingredients
    * @return an approximation of the recipe within the user ingredients
@@ -74,14 +74,20 @@ public class Recipe extends CartesianPoint {
   public List<Ingredient> compareToIngredients(
           List<Ingredient> ingredients) {
     List<Ingredient> candidateList = new ArrayList<>();
+    //generate user candidate for every recipe ingredient
     for (Ingredient ing : this.ingredients) {
       Ingredient candidate = Config.generateCandidate(ingredients, ing);
       if (candidate != null) {
         candidateList.add(candidate);
       }
     }
+    //approxmating a reicpe vector from user candidate ingredients
     double[] candidatesVec = Config.ingredAdd(candidateList);
-    this.similarity = Config.cosineSimilarity(this.recipeVec, candidatesVec);
+    //distance from recipe to user approximated recipe
+    double distance = Config.euclidDistance(this.recipeVec, candidatesVec);
+    //penalizing based on number of missing ingredients
+    this.similarity =
+            distance * ((this.recipeVec.length - candidatesVec.length)*0.1 + 1);
     return candidateList;
   }
 

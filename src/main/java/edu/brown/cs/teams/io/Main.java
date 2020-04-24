@@ -30,12 +30,13 @@ public class Main {
     RecipeDatabase db = new RecipeDatabase("data/recipe.sqlite3");
     AlgMain.setDb(db);
     Config.setDb(db);
-    Config.buildRecList();
 //    List<MinimalRecipe> recipes = AlgMain.getDb().getRecipes("data/ingredient_vectors.json");
 //    AlgMain.setRecipeList(recipes);
 //    System.out.println("Building KD Tree");
 //    AlgMain.setTree(AlgMain.getTree().buildKDTree(recipes));
+    Config.buildRecList();
     System.out.println("Success! KD Tree is ready for querying.");
+    System.out.println("Generating recipes:");
     HashMap<String, Command> commands = new HashMap<>();
     commands.put("KDAlg", new RunKDAlg());
 ///////////////////////////////
