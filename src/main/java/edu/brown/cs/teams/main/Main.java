@@ -74,7 +74,7 @@ public final class Main {
 
     }
     if (options.has("ben")) {
-        
+
       IngredientSuggest ig = new IngredientSuggest("data/trie-data.txt");
 
       PrintWriter pw = new PrintWriter(System.out);
@@ -133,7 +133,6 @@ public final class Main {
     Spark.exception(Exception.class, new ExceptionPrinter());
     FreeMarkerEngine freeMarker = createEngine();
 
-<<<<<<< HEAD
     // Setup Spark Routes
     //TODO: create a call to Spark.post to make a post request to a url which
     // will handle getting autocorrect results for the input
