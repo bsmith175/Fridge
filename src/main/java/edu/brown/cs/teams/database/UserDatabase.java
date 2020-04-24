@@ -16,7 +16,7 @@ import java.util.Map;
  * since they're both using the same database.
  * Chose to make them in the same database so we can do cross relations and make queries much easier
  */
-public class UserDatabase extends RecipeDatabase {
+public class UserDatabase {
 
     //TODO: get rid of this and use RecipeDatabase's conn
     private Connection conn;
