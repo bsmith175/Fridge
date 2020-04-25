@@ -1,4 +1,4 @@
-package edu.brown.cs.teams;
+package edu.brown.cs.teams.algorithms;
 
 import com.google.gson.Gson;
 import org.json.simple.JSONObject;
@@ -9,7 +9,6 @@ import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.recipe.Ingredient;
 import edu.brown.cs.teams.recipe.Recipe;
 import edu.brown.cs.teams.recipe.RecipeDistanceComparator;
-import edu.brown.cs.teams.state.Config;
 
 import java.io.FileReader;
 import java.io.IOException;

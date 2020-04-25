@@ -1,7 +1,7 @@
 package edu.brown.cs.teams.recipe;
 
 import edu.brown.cs.teams.kdtree.CartesianPoint;
-import edu.brown.cs.teams.state.Config;
+import edu.brown.cs.teams.algorithms.Config;
 
 import java.util.*;
 

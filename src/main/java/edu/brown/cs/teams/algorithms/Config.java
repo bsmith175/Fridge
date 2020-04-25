@@ -1,4 +1,4 @@
-package edu.brown.cs.teams.state;
+package edu.brown.cs.teams.algorithms;
 
 import edu.brown.cs.teams.database.RecipeDatabase;
 import edu.brown.cs.teams.io.CommandException;

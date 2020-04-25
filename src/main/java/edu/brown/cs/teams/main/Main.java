@@ -2,15 +2,16 @@ package edu.brown.cs.teams.main;
 
 
 import edu.brown.cs.teams.GUI.GuiHandlers;
-import edu.brown.cs.teams.RunKDAlg;
-import edu.brown.cs.teams.RunSuperiorAlg;
+import edu.brown.cs.teams.algorithms.RunKDAlg;
+import edu.brown.cs.teams.algorithms.RunSuperiorAlg;
 import edu.brown.cs.teams.algorithms.AlgMain;
+import edu.brown.cs.teams.constants.Constants;
 import edu.brown.cs.teams.database.RecipeDatabase;
 import edu.brown.cs.teams.io.Command;
 import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.io.REPL;
 import edu.brown.cs.teams.recipe.MinimalRecipe;
-import edu.brown.cs.teams.state.Config;
+import edu.brown.cs.teams.algorithms.Config;
 import freemarker.template.Configuration;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -27,6 +28,7 @@ import spark.template.freemarker.FreeMarkerEngine;
 
 /**
  * The Main class of our project. This is where execution begins.
+ *
  */
 public final class Main {
   private static final int DEFAULT_PORT = 4567;
@@ -43,30 +45,52 @@ public final class Main {
   }
 
   private void run() {
+
     OptionParser parser = new OptionParser();
     parser.accepts("gui");
     parser.accepts("port").withRequiredArg().ofType(Integer.class)
         .defaultsTo(DEFAULT_PORT);
     parser.accepts("database");
+
     parser.accepts("ben");
     parser.accepts("alg1");
     parser.accepts("alg2");
     parser.accepts("repl");
+    parser.accepts("sqlite_init");
+    parser.accepts("postgres_init");
     OptionSet options = parser.parse(args);
     RecipeDatabase r = null;
 
-    if (options.has("database")) {
-      try {
-        r = new RecipeDatabase("data/recipe.sqlite3");
-        r.makeTable();
-        r.parseJson();
-      } catch (SQLException e) {
-        e.printStackTrace();
-      } catch (JSONException e) {
-        e.printStackTrace();
-      } catch (CommandException e) {
-        System.out.println(e.getMessage());
-      }
+      if (options.has("sqlite_init")) {
+          try {
+              r = new RecipeDatabase(Constants.DATABASE_FILE, true);
+              r.makeTable();
+              r.parseJson();
+          } catch (ClassNotFoundException e) {
+              e.printStackTrace();
+          } catch (SQLException e) {
+              e.printStackTrace();
+          }  catch (JSONException e) {
+              e.printStackTrace();
+          } catch (CommandException e) {
+              e.printStackTrace();
+          }
+      }else if (options.has("postgres_init")) {
+        try {
+            String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
+                    ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
+             r = new RecipeDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, true);
+            r.makeTable();
+            r.parseJson();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }  catch (JSONException e) {
+            e.printStackTrace();
+        } catch (CommandException e) {
+            e.printStackTrace();
+        }
     }
     if (options.has("alg1")) {
       try {
@@ -98,7 +122,12 @@ public final class Main {
     }
 
     if (options.has("gui")) {
-      runSparkServer((int) options.valueOf("port"));
+        try {
+            runSparkServer((int) options.valueOf("port"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
   }//run
 
@@ -117,7 +146,7 @@ public final class Main {
   }
 
 
-  private void runSparkServer(int port) {
+  private void runSparkServer(int port) throws Exception {
     Spark.port(port);
     Spark.externalStaticFileLocation("src/main/resources/static");
     Spark.exception(Exception.class, new ExceptionPrinter());
