@@ -2,6 +2,7 @@ package edu.brown.cs.teams.main;
 
 
 import edu.brown.cs.teams.GUI.GuiHandlers;
+import edu.brown.cs.teams.constants.Constants;
 import edu.brown.cs.teams.database.RecipeDatabase;
 import edu.brown.cs.teams.ingredientParse.IngredientSuggest;
 import edu.brown.cs.teams.io.CommandException;
@@ -41,18 +42,22 @@ public final class Main {
     parser.accepts("port").withRequiredArg().ofType(Integer.class)
             .defaultsTo(DEFAULT_PORT);
     parser.accepts("database");
-    parser.accepts("ben");
-
 
     OptionSet options = parser.parse(args);
 
     if (options.has("gui")) {
-      runSparkServer((int) options.valueOf("port"));
+      try {
+        runSparkServer((int) options.valueOf("port"));
+      } catch (Exception e) {
+        e.printStackTrace();
+        System.exit(1);
+      }
     }
-    if (options.has("database")) {
+
+    if (options.has("sqlite_init")) {
       RecipeDatabase r = null;
       try {
-        r = new RecipeDatabase("data/recipe.sqlite3");
+        r = new RecipeDatabase(Constants.DATABASE_FILE, true);
         r.makeTable();
         r.parseJson();
       } catch (ClassNotFoundException e) {
@@ -64,46 +69,24 @@ public final class Main {
       } catch (CommandException e) {
         e.printStackTrace();
       }
-
-    }
-    if (options.has("ben")) {
-
-      IngredientSuggest ig = new IngredientSuggest("data/trie-data.txt");
-
-      PrintWriter pw = new PrintWriter(System.out);
-      BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-      String input = "";
-
-      pw.flush();
+    } else if (options.has("postgres_init")) {
       try {
-        input = reader.readLine();
-
-      } catch (
-              IOException e) {
-        pw.println("ERROR: error reading input");
+        String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
+                ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
+        RecipeDatabase r = new RecipeDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, true);
+        r.makeTable();
+        r.parseJson();
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }  catch (JSONException e) {
+        e.printStackTrace();
+      } catch (CommandException e) {
+        e.printStackTrace();
       }
-
-      // repl loop
-      while (input != null) {
-        List<String> ingredients = ig.suggest(input);
-        if (ingredients != null) {
-          for (String ingredient : ingredients) {
-            pw.println(ingredient);
-            pw.flush();
-          }
-        }
-        try {
-          input = reader.readLine();
-
-        } catch (IOException e) {
-          pw.println("ERROR: error reading input");
-        }
-
-      }
-      pw.close();
-
-    }//if
-  }//run
+    }
+  }
 
 
   private static FreeMarkerEngine createEngine() {
@@ -120,7 +103,7 @@ public final class Main {
   }
 
 
-  private void runSparkServer(int port) {
+  private void runSparkServer(int port) throws Exception {
     Spark.port(port);
     Spark.externalStaticFileLocation("src/main/resources/static");
     Spark.exception(Exception.class, new ExceptionPrinter());

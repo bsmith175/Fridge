@@ -4,6 +4,11 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import edu.brown.cs.teams.algorithms.AlgMain;
+import edu.brown.cs.teams.constants.Constants;
+import edu.brown.cs.teams.database.RecipeDatabase;
+import edu.brown.cs.teams.ingredientParse.IngredientSuggest;
+import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.login.AccountUser;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
@@ -21,9 +26,19 @@ import java.util.Map;
 
 //can have more objects for different types of handlers
 public class GuiHandlers {
-    private static final Gson GSON = new Gson();
 
-    public void setHandlers(FreeMarkerEngine freeMarker) {
+    private static final Gson GSON = new Gson();
+    private static IngredientSuggest suggest;
+
+
+    public GuiHandlers() throws Exception {
+        suggest = new IngredientSuggest();
+        String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
+                ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
+        AlgMain.setDb(new RecipeDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, false));
+
+    }
+    public void setHandlers(FreeMarkerEngine freeMarker) throws Exception {
         Spark.get("/fridge", new FridgeHandler(), freeMarker);
         Spark.post("/recipe", new RecipeHandler());
     }
@@ -44,11 +59,11 @@ public class GuiHandlers {
             responseJSON.addProperty("profilePicture", pfp);
 
             try {
-                StubAlgMain.getDB().addNewUser(user);
+                AlgMain.getDb().addNewUser(user);
                 responseJSON.addProperty("newUser", true);
             } catch (SQLException e) {
                 responseJSON.addProperty("newUser", false);
-                List<Integer> recipeIDs = StubAlgMain.getDB().getFavorites(uid);
+                List<Integer> recipeIDs = AlgMain.getDb().getFavorites(uid);
             }
 
             return responseJSON.toString();
@@ -63,12 +78,12 @@ public class GuiHandlers {
             QueryParamsMap qm = request.queryMap();
             String uid = qm.value("uid");
 
-            List<Integer> recipeIDs = StubAlgMain.getDB().getFavorites(uid);
+            List<Integer> recipeIDs = AlgMain.getDb().getFavorites(uid);
             JsonArray responseJSON = new JsonArray();
             for (Integer curID : recipeIDs) {
 
                 //this is where the json array is created
-                JsonObject obj = StubAlgMain.getDB().getRecipeContentFromID(Integer.toString(curID));
+                JsonObject obj = AlgMain.getDb().getRecipeContentFromID(Integer.toString(curID));
                 if (obj == null) {
                     throw new IllegalArgumentException("ERROR in favoritesHandler:  recipe doesn't exist");
                 }
@@ -92,12 +107,12 @@ public class GuiHandlers {
             String uid = qm.value("user_id");
             JsonObject responseJSON = new JsonObject();
             try {
-                if (StubAlgMain.getDB().addToFavorites(rid, uid)) {
+                if (AlgMain.getDb().addToFavorites(rid, uid)) {
                     responseJSON.addProperty("added", true);
                 } else {
                     responseJSON.addProperty("added", false);
                 }
-            } catch (SQLException throwables) {
+            } catch (SQLException throwable) {
                 responseJSON.addProperty("error", true);
                 return responseJSON.toString();
             }
@@ -113,9 +128,8 @@ public class GuiHandlers {
         public Object handle(Request request, Response response) throws Exception {
             QueryParamsMap qm = request.queryMap();
             String input = qm.value("input");
-            List<String> ingredients = StubAlgMain.getIngredientSuggest().suggest(input);
-            Gson gson = new Gson();
-            String json = gson.toJson(ingredients);
+            List<String> ingredients = suggest.suggest(input);
+            String json = GSON.toJson(ingredients);
             return json;
         }
     }

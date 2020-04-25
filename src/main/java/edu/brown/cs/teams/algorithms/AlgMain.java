@@ -4,12 +4,9 @@ import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.database.RecipeDatabase;
 import edu.brown.cs.teams.kdtree.KDTree;
 import edu.brown.cs.teams.recipe.MinimalRecipe;
-import edu.brown.cs.teams.recipe.Recipe;
-import edu.brown.cs.teams.recipe.RecipeDistanceComparator;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.PriorityQueue;
 
 /**
  * Class to store the information relevant to the algorithms being run.

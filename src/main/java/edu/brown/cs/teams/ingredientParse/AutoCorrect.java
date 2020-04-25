@@ -8,7 +8,7 @@ import java.util.*;
 
 /**
      * Class to create autocorrect suggestions given input.
-     * Adapted from Autocorrect from lab-git-testing, by cs0320 course staff
+     * Adapted from Autocorrect from lab-git-testing written by cs32 course staff
      */
      class AutoCorrect {
 
