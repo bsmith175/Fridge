@@ -13,7 +13,6 @@ import com.google.gson.JsonObject;
 
 public final class Config {
 
-  private Map<String, Double> catToVal = new HashMap();
   private static int embedLength = 0;
   private Map<String, double[]> recToVec = new HashMap<>();
   private static List<Recipe> fullRecipes =
@@ -21,22 +20,6 @@ public final class Config {
   private static RecipeDatabase db;
 
   public Config() throws SQLException {
-
-//    catToVal.put("meat", Double.POSITIVE_INFINITY);
-//    catToVal.put("fish", 100.0);
-//    catToVal.put("seafood", 100.0);
-//    catToVal.put("leaf", 10.0);
-//    catToVal.put("vegmain", 80.0);
-//    catToVal.put("vegflav", 70.0);
-//    catToVal.put("fruits", 60.0);
-//    catToVal.put("carbs", 200.0);
-//    catToVal.put("dairy", 40.0);
-//    catToVal.put("beans", 10.0);
-//    catToVal.put("baking", 500.0);
-//    catToVal.put("fats", 30.0);
-//    catToVal.put("spices", 5.0);
-//    catToVal.put("nuts", 15.0);
-//    catToVal.put("sauces", 100.0);
   }
 
   public static void buildRecList() throws SQLException {
@@ -90,14 +73,7 @@ public final class Config {
     return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
   }
 
-  public static double euclidDistance(double[] vec1, double[] vec2) {
-    double d = 0.0;
-    for(int n = 0 ; n < vec1.length ; n++) {
-      d += Math.pow(vec1[n] - vec2[n], 2.0);
-    }
-    d = Math.sqrt(d);
-    return d;
-  }
+
 
   public static double[] arrayAdd(double[][] arrays) {
     double[] result = new double[300];
