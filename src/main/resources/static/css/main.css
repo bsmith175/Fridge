@@ -1,13 +1,25 @@
 input[type="number"] {
-  width: 3em;
+    width: 3em;
 }
 
 * {
-.border-radius(0) !important;
+. border-radius(0) !important;
 }
 
 #field {
-  margin-bottom:20px;
+    margin-bottom: 20px;
 }
 
 
+
+
+.button:focus {
+    background-color: #afffc3;
+
+}
+
+
+.heart {
+    font-size: 25px;
+    color:red;
+}
