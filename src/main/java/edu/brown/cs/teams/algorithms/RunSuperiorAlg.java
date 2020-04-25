@@ -28,11 +28,16 @@ public class RunSuperiorAlg implements Command {
       List<Ingredient> ingredients = new ArrayList<>();
       for (String word : Arrays.copyOfRange(command, 1, command.length)) {
         word = word.replaceAll("\"", "");
-        System.out.println(word);
-        double[] embedding = gson.fromJson(object.get(word).toString(),
-                double[].class);
-        Ingredient ingredient = new Ingredient(word, embedding);
-        ingredients.add(ingredient);
+        try {
+          double[] embedding = gson.fromJson(object.get(word).toString(),
+                  double[].class);
+
+          Ingredient ingredient = new Ingredient(word, embedding);
+          ingredients.add(ingredient);
+        } catch (NullPointerException e) {
+          System.out.println(word + " is not a valid ingredient in our " +
+                  "database. It will be ignored");
+        }
       }
 
       for (Recipe recipe : Config.getFullRecipes()) {
