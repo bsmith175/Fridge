@@ -2,15 +2,23 @@ package edu.brown.cs.teams.main;
 
 
 import edu.brown.cs.teams.GUI.GuiHandlers;
+import edu.brown.cs.teams.RunKDAlg;
+import edu.brown.cs.teams.RunSuperiorAlg;
+import edu.brown.cs.teams.algorithms.AlgMain;
 import edu.brown.cs.teams.database.RecipeDatabase;
-import edu.brown.cs.teams.ingredientParse.IngredientSuggest;
+import edu.brown.cs.teams.io.Command;
 import edu.brown.cs.teams.io.CommandException;
+import edu.brown.cs.teams.io.REPL;
+import edu.brown.cs.teams.recipe.MinimalRecipe;
+import edu.brown.cs.teams.state.Config;
 import freemarker.template.Configuration;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.json.JSONException;
+
 import java.io.*;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 import spark.*;
@@ -19,10 +27,10 @@ import spark.template.freemarker.FreeMarkerEngine;
 
 /**
  * The Main class of our project. This is where execution begins.
- *
  */
 public final class Main {
   private static final int DEFAULT_PORT = 4567;
+  private static REPL REPL = null;
 
   public static void main(String[] args) {
     new Main(args).run();
@@ -35,74 +43,63 @@ public final class Main {
   }
 
   private void run() {
-
     OptionParser parser = new OptionParser();
     parser.accepts("gui");
     parser.accepts("port").withRequiredArg().ofType(Integer.class)
-            .defaultsTo(DEFAULT_PORT);
+        .defaultsTo(DEFAULT_PORT);
     parser.accepts("database");
     parser.accepts("ben");
-
-
+    parser.accepts("alg1");
+    parser.accepts("alg2");
+    parser.accepts("repl");
     OptionSet options = parser.parse(args);
+    RecipeDatabase r = null;
 
-    if (options.has("gui")) {
-      runSparkServer((int) options.valueOf("port"));
-    }
     if (options.has("database")) {
-      RecipeDatabase r = null;
       try {
         r = new RecipeDatabase("data/recipe.sqlite3");
         r.makeTable();
         r.parseJson();
-      } catch (ClassNotFoundException e) {
-        e.printStackTrace();
       } catch (SQLException e) {
         e.printStackTrace();
-      }  catch (JSONException e) {
+      } catch (JSONException e) {
         e.printStackTrace();
       } catch (CommandException e) {
-        e.printStackTrace();
+        System.out.println(e.getMessage());
       }
-
     }
-    if (options.has("ben")) {
-
-      IngredientSuggest ig = new IngredientSuggest("data/trie-data.txt");
-
-      PrintWriter pw = new PrintWriter(System.out);
-      BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-      String input = "";
-
-      pw.flush();
+    if (options.has("alg1")) {
       try {
-        input = reader.readLine();
-
-      } catch (
-              IOException e) {
-        pw.println("ERROR: error reading input");
+        new AlgMain();
+        System.out.println("Getting recipes");
+        AlgMain.setDb(r);
+        Config.setDb(r);
+        Config.buildRecList();
+        List<MinimalRecipe> recipes = AlgMain.getDb().getRecipes("data/ingredient_vectors.json");
+        AlgMain.setRecipeList(recipes);
+        System.out.println("Building KD Tree");
+        AlgMain.setTree(AlgMain.getTree().buildKDTree(recipes));
+        System.out.println("Success! Ready for querying.");
+      } catch (CommandException e) {
+        System.out.println(e.getMessage());
       }
+    }
+    if (options.has("alg2")) {
+      // Eyal set up your thing here
+    }
 
-      // repl loop
-      while (input != null) {
-        List<String> ingredients = ig.suggest(input);
-        if (ingredients != null) {
-          for (String ingredient : ingredients) {
-            pw.println(ingredient);
-            pw.flush();
-          }
-        }
-        try {
-          input = reader.readLine();
+    if (options.has("repl")) {
+      // Allow the repl to run both commands
+      HashMap<String, Command> commands = new HashMap<>();
+      commands.put("alg1", new RunKDAlg());
+      commands.put("alg2", new RunSuperiorAlg());
+      REPL = new REPL(commands);
+      REPL.runREPL();
+    }
 
-        } catch (IOException e) {
-          pw.println("ERROR: error reading input");
-        }
-
-      }
-      pw.close();
-
-    }//if
+    if (options.has("gui")) {
+      runSparkServer((int) options.valueOf("port"));
+    }
   }//run
 
 
@@ -113,7 +110,7 @@ public final class Main {
       config.setDirectoryForTemplateLoading(templates);
     } catch (IOException ioe) {
       System.out.printf("ERROR: Unable use %s for template loading.%n",
-              templates);
+          templates);
       System.exit(1);
     }
     return new FreeMarkerEngine(config);

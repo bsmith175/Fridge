@@ -81,7 +81,7 @@ public class AlgMain {
    *
    * @param db
    */
-  public static void setDb(RecipeDatabase db) throws SQLException {
+  public static void setDb(RecipeDatabase db) {
     AlgMain.db = db;
   }
 }

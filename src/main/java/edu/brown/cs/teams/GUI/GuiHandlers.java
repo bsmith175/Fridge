@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import edu.brown.cs.teams.RunKDAlg;
+import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.login.AccountUser;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
@@ -116,6 +118,24 @@ public class GuiHandlers {
             List<String> ingredients = StubAlgMain.getIngredientSuggest().suggest(input);
             Gson gson = new Gson();
             String json = gson.toJson(ingredients);
+            return json;
+        }
+    }
+
+    private static class RecipeSuggestHandler implements Route {
+
+        // Returns the suggested recipes
+        @Override
+        public Object handle(Request request, Response response) throws CommandException {
+            QueryParamsMap qm = request.queryMap();
+            String input = qm.value("input");
+            String[] ingredients = input.split("\n"); // not sure if we can do this
+            String[] argmuments = new String[ingredients.length];
+            for (int i = 0; i < ingredients.length; i ++) {
+                argmuments[i] = "\"" + ingredients + "\"";
+            }
+            Gson gson = new Gson();
+            String json = gson.toJson(RunKDAlg.runForGui(argmuments));
             return json;
         }
     }

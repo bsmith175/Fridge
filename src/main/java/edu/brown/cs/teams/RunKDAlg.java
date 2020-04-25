@@ -1,6 +1,9 @@
 package edu.brown.cs.teams;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import edu.brown.cs.teams.GUI.StubAlgMain;
+import edu.brown.cs.teams.database.UserDatabase;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -14,6 +17,8 @@ import edu.brown.cs.teams.state.Config;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RunKDAlg implements Command {
@@ -31,19 +36,40 @@ public class RunKDAlg implements Command {
       for (int i = 1; i < command.length; i++) {
         String ingredient = REPL.removeQuotes(command[i]);
         double[] embedding = gson.fromJson(object.get(ingredient).toString(), double[].class);
-        embeddings[i-1] = embedding;
+        embeddings[i - 1] = embedding;
       }
       double[] queryEmbedding = Config.arrayAdd(embeddings);
-      List<MinimalRecipe> neighbors = AlgMain.getTree().radiusSearch(1, queryEmbedding);
+      List<MinimalRecipe> neighbors = AlgMain.getTree().getNeighbors(1, queryEmbedding);
       String result = "";
-      int count = 0;
-        for (MinimalRecipe recipe : neighbors) {
-          if (count == 50) {break;}
-          result += AlgMain.getDb().getRecipe(recipe.getId());
-          count += 1;
-        }
+      for (MinimalRecipe recipe : neighbors) {
+        result += AlgMain.getDb().getRecipe(recipe.getId());
+      }
       return result;
-    }catch (IOException | ParseException e) {
+    } catch (IOException | ParseException e) {
+      throw new CommandException(e.getMessage());
+    }
+  }
+
+  public static List<JsonObject> runForGui(String[] command) throws CommandException {
+    try {
+      Gson gson = new Gson();
+      FileReader reader = new FileReader("data/ingredient_vectors.json");
+      JSONParser parser = new JSONParser();
+      JSONObject object = (JSONObject) parser.parse(reader);
+      double[][] embeddings = new double[command.length - 1][300];
+      for (int i = 1; i < command.length; i++) {
+        double[] embedding = gson.fromJson(object.get(command[i]).toString(), double[].class);
+        embeddings[i - 1] = embedding;
+      }
+      double[] queryEmbedding = Config.arrayAdd(embeddings);
+      List<MinimalRecipe> neighbors = AlgMain.getTree().getNeighbors(1, queryEmbedding);
+      List<JsonObject> results = new ArrayList<>();
+      UserDatabase db = StubAlgMain.getDB();
+      for (MinimalRecipe recipe : neighbors) {
+        results.add(db.getRecipeContentFromID(recipe.getId()));
+      }
+      return results;
+    } catch (IOException | ParseException | SQLException e) {
       throw new CommandException(e.getMessage());
     }
   }

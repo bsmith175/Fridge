@@ -1,6 +1,7 @@
 package edu.brown.cs.teams.state;
 
 import edu.brown.cs.teams.database.RecipeDatabase;
+import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.recipe.Ingredient;
 import edu.brown.cs.teams.recipe.Recipe;
 import edu.brown.cs.teams.recipe.RecipeDistanceComparator;
@@ -36,9 +37,13 @@ public final class Config {
 //    catToVal.put("sauces", 100.0);
   }
 
-  public static void buildRecList() throws SQLException {
-    fullRecipes.addAll(db.getFullRecipes("data/ingredient_vectors" +
-            ".json"));
+  public static void buildRecList() throws CommandException {
+    try {
+      fullRecipes.addAll(db.getFullRecipes("data/ingredient_vectors" +
+          ".json"));
+    } catch (SQLException e) {
+      throw new CommandException(e.getMessage());
+    }
   }
 
 
