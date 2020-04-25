@@ -9,6 +9,8 @@ import edu.brown.cs.teams.recipe.RecipeDistanceComparator;
 import java.sql.SQLException;
 import java.util.*;
 
+import com.google.gson.JsonObject;
+
 public final class Config {
 
   private Map<String, Double> catToVal = new HashMap();
@@ -37,13 +39,9 @@ public final class Config {
 //    catToVal.put("sauces", 100.0);
   }
 
-  public static void buildRecList() throws CommandException {
-    try {
-      fullRecipes.addAll(db.getFullRecipes("data/ingredient_vectors" +
-          ".json"));
-    } catch (SQLException e) {
-      throw new CommandException(e.getMessage());
-    }
+  public static void buildRecList() throws SQLException {
+    fullRecipes.addAll(db.getFullRecipes("data/ingredient_vectors" +
+            ".json"));
   }
 
 
@@ -70,12 +68,15 @@ public final class Config {
         closest = similarity;
       }
     }
-    return best;
+    if (closest > 0.9) {
+      return best;
+    }
+    else {
+      return null;
+    }
   }
 
-  public Map getCatToVal() {
-    return catToVal;
-  }
+
 
   public static double cosineSimilarity(double[] vec1, double[] vec2) {
     double dotProduct = 0.0;
@@ -87,6 +88,15 @@ public final class Config {
       normB += Math.pow(vec2[i], 2);
     }
     return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+  }
+
+  public static double euclidDistance(double[] vec1, double[] vec2) {
+    double d = 0.0;
+    for(int n = 0 ; n < vec1.length ; n++) {
+      d += Math.pow(vec1[n] - vec2[n], 2.0);
+    }
+    d = Math.sqrt(d);
+    return d;
   }
 
   public static double[] arrayAdd(double[][] arrays) {
@@ -132,5 +142,9 @@ public final class Config {
     for (Ingredient i : r.getIngredients()) {
       System.out.print(i.getId() + " ");
     }
+  }
+
+  public JsonObject getRecipeJSON(String id) throws SQLException {
+    return db.getRecipeContentFromID(id);
   }
 }
