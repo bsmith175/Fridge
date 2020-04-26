@@ -48,7 +48,7 @@
             <div class="form-group ">
 
                 <input type="text" class="form-control" id="field1" name="field1"
-                       placeholder="Ingredient"/>
+                       placeholder="Ingredient" autocomplete="on"/>
                 <button id="b1" class="btn add-more" type="button">+</button>
             </div>
             <button type="submit" class="btn btn-outline-success ">Find Recipes</button>

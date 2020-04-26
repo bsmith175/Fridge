@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import edu.brown.cs.teams.algorithms.RunSuperiorAlg;
 import edu.brown.cs.teams.io.Command;
 import edu.brown.cs.teams.algorithms.RunKDAlg;
 import edu.brown.cs.teams.algorithms.AlgMain;

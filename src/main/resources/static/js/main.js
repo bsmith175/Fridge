@@ -10,55 +10,8 @@ $(document).ready(() => {
     //TODO: get the jquery selectors for the list where the suggestions should go and the input box where we're typing
     //HINT: look at the hTML
     const suggestionList = $("#suggestions");
-    const input = $("#autocorrect-input");
     const result_cards = $("#result-cards");
     const modal_title = $("#modal-title");
-
-
-    input.keyup(event => {
-        //TODO: empty the suggestionList (you want new suggestions each time someone types something new)
-        suggestionList.empty();
-
-        const postParameters = {
-            //TODO: get the text inside the input box
-            text: input.val()
-        };
-        console.log(postParameters.text)
-
-        //TODO: make a post request to the url to handle this request you set in your Main.java
-        $.post("/result", postParameters, response => {
-            const r = JSON.parse(response);
-            //const text = JSON.parse(response)["text"];
-            for (let res of r.results) {
-                console.log(res)
-
-                suggestionList.append("<li>" + res + "</li>");
-
-            }
-
-
-            $("li").click(function (e) {
-                console.log(e.target);
-                // const target = e.target.val();
-                input.val(e.target.innerHTML);
-            });
-        })
-            .error(err => {
-                console.log("in the .error callback");
-                console.log(err);
-            });
-        //HINT: check out the GET, POST, and JSON section of the lab
-        //HINT: all of the following should happen within the post requst
-
-        //TODO: using the response object, use JSON to parse it
-        //HINT: remember to get the specific field in the JSON you want to use
-
-        //TODO: for each element in the set of results, append it to the suggestionList
-
-        //TODO: add an click handler to each of the elements you added to the suggestionList
-        // with a function which will replace whatever is in input with the suggestion that
-        // was clicked
-    });
 
 
     var next = 1;
@@ -67,7 +20,7 @@ $(document).ready(() => {
         var addto = "#field" + next;
         var addRemove = "#field" + (next);
         next = next + 1;
-        var newIn = '<input  placeholder="Ingredient" class="form-control" id="field' + next + '" name="field' + next + '" type="text">';
+        var newIn = '<input  placeholder="Ingredient" class="form-control" id="field' + next + '" name="field' + next + '" type="text" autocomplete="on">';
 
         var newInput = $(newIn);
         var removeBtn = '<button id="remove' + (next - 1) + '" class="btn btn-danger remove-me" >-</button></div><div id="field">';
@@ -98,8 +51,6 @@ $(document).ready(() => {
 
             }
         }
-        console.log(postParameters.text);
-
 
         $('.like-button').click(function () {
             $(this).toggleClass('is-active');
@@ -149,17 +100,17 @@ $(document).ready(() => {
                 e.preventDefault();
                 const id = (e.target.id);
                 console.log(id);
-
                 const result = r[id];
-                console.log(result);
+                console.log(result.ingredients);
+
                 var ingredients = "";
                 var instructions = "";
 
-                for (let ing of result.ingredients) {
+                for (let ing of JSON.parse(result.ingredients)) {
                     ingredients = ingredients + "<li>" + ing + "</li>"
                 }
 
-                for (let des of result.method) {
+                for (let des of  JSON.parse(result.method)) {
                     instructions = instructions + "<li>" + des + "</li>"
                 }
                 $('.modal-title').html("<h1>" + result.name + "</h1>")
@@ -177,7 +128,9 @@ $(document).ready(() => {
                 const id = (e.target.id);
                 console.log(id);
                 const postParameters = {
-                    id: id
+                    recipeId: id,
+                    userId: ""
+
                 };
                 if ($(this).hasClass("fa-heart-o")){
                     console.log("saving")
