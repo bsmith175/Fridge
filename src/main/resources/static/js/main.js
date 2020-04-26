@@ -90,14 +90,11 @@ $(document).ready(() => {
     $(".btn-outline-success").click(function (e) {
         result_cards.empty();
         e.preventDefault();
-        const postParameters = {
-            //TODO: get the text inside the input box
-            text: []
-        };
+        const postParameters = [];
         let elements = document.forms["fridge-form"].elements;
         for (i = 0; i < elements.length; i++) {
             if (elements[i].value != ""){
-                postParameters.text.push(elements[i].value);
+                postParameters.push(elements[i].value);
 
             }
         }
@@ -107,16 +104,17 @@ $(document).ready(() => {
         $('.like-button').click(function () {
             $(this).toggleClass('is-active');
         })
-        $.post("/recipe", postParameters, response => {
+        $.post("/recipe-recommend", $.param({text: postParameters }, true), response => {
 
-            const r = JSON.parse(response);
+            const r = response.response;
+            console.log(r);
             //const text = JSON.parse(response)["text"];
-            console.log(r.results[0]);
+            console.log(r[0]);
             console.log("post");
 
             var cards = 0;
             let heart_shape = "fa-heart-o";
-            for (let res of r.results) {
+            for (let res of r) {
                 if(favorites.includes(cards)){
                     heart_shape = "fa-heart";
                 }

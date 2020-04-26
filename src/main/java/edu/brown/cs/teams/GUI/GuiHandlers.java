@@ -148,16 +148,17 @@ public class GuiHandlers {
         @Override
         public Object handle(Request request, Response response) throws CommandException {
             QueryParamsMap qm = request.queryMap();
-            String input = qm.value("text");
-            String[] ingredients = input.split("\n"); // not sure if we can do this
+            String[] ingredients = qm.get("text").values();
             List<JsonObject> results = command.runForGui(ingredients);
             String result = "";
             // Each returned recipe is a Json object. Iterate through them to
             // format output string.
+            result += "{response: [";
             for (JsonObject object: results) {
                 result += GSON.toJson(object);
                 result += "\n";
             }
+            result += "]}";
             return result;
         }
     }

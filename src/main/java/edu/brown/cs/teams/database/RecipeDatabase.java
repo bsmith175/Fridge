@@ -46,15 +46,18 @@ public class RecipeDatabase {
   public RecipeDatabase(String dbFileName, Boolean init)
           throws SQLException, ClassNotFoundException, CommandException {
     File db = new File(dbFileName);
-
-    try {
-      if (!db.createNewFile()) {
-        //deletes file contents if file already exists
-        new PrintWriter(db).close();
-      }
-    } catch (IOException e) {
-      throw new CommandException(("ERROR: IOException when creating db file"));
+    if (!db.exists()) {
+      throw new CommandException("No such file " + dbFileName);
     }
+//
+//    try {
+//      if (!db.createNewFile()) {
+//        //deletes file contents if file already exists
+//        new PrintWriter(db).close();
+//      }
+//    } catch (IOException e) {
+//      throw new CommandException(("ERROR: IOException when creating db file"));
+//    }
 
       this.dbFileName = dbFileName;
       Class.forName("org.sqlite.JDBC");
@@ -394,8 +397,8 @@ public class RecipeDatabase {
    * @throws SQLException - if exception occurs during query
    */
   public List<Integer> getFavorites(String uid) throws SQLException{
-    PreparedStatement prep = conn.prepareStatement("SELECT recipeId FROM favorite WHERE uid="
-            + uid + ";");
+    PreparedStatement prep = conn.prepareStatement("SELECT recipeId FROM favorite WHERE uid= ?");
+    prep.setString(1, uid);
     ResultSet res = prep.executeQuery();
     List<Integer> ret = new ArrayList<Integer>();
     while (res.next()) {
@@ -412,8 +415,9 @@ public class RecipeDatabase {
    * @throws SQLException - if exception occurs while querying database
    */
   public JsonObject getRecipeContentFromID(String id) throws SQLException {
-    String query = "SELECT * FROM recipe WHERE recipe.id=" + "id" + ";";
+    String query = "SELECT * FROM recipe WHERE recipe.id= ?";
     PreparedStatement prep = conn.prepareStatement(query);
+    prep.setString(1, id);
     ResultSet rs = prep.executeQuery();
     if (rs.next()) {
       JsonObject recipe = new JsonObject();
@@ -443,9 +447,10 @@ public class RecipeDatabase {
    * @throws SQLException - if exception occurs while updating database
    */
   public Boolean addToFavorites(String rid, String uid) throws SQLException {
-    String check = "SELECT EXISTS(SELECT * FROM favorite WHERE recipeId=" +
-            rid + " AND uid=" + uid + ");";
+    String check = "SELECT EXISTS(SELECT * FROM favorite WHERE recipeId= ?  AND uid= ?);";
     PreparedStatement prep = conn.prepareStatement(check);
+    prep.setString(1, rid);
+    prep.setString(2, uid);
     ResultSet rs = prep.executeQuery();
     rs.next();
 
