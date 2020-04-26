@@ -4,12 +4,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import edu.brown.cs.teams.algorithms.RunSuperiorAlg;
 import edu.brown.cs.teams.io.Command;
 import edu.brown.cs.teams.algorithms.RunKDAlg;
 import edu.brown.cs.teams.algorithms.AlgMain;
-import edu.brown.cs.teams.constants.Constants;
-import edu.brown.cs.teams.database.RecipeDatabase;
 import edu.brown.cs.teams.ingredientParse.IngredientSuggest;
 import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.login.AccountUser;
@@ -33,19 +30,18 @@ public class GuiHandlers {
     private static final Gson GSON = new Gson();
     private static IngredientSuggest suggest;
 
-    public GuiHandlers() throws Exception {
-//        suggest = new IngredientSuggest();
-//        String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
-//            ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
-//        AlgMain.setDb(new RecipeDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, false));
-
-    }
     public void setHandlers(FreeMarkerEngine freeMarker) {
         // Specify the algorithm to run here!!
         Command command = new RunKDAlg();
         Spark.get("/fridge", new FridgeHandler(), freeMarker);
         Spark.post("/recipe", new RecipeHandler());
         Spark.post("/recipe-recommend", new RecipeSuggestHandler(command));
+        Spark.post("/ingredient-suggest", new ingredientSuggestHandler());
+        Spark.post("/favorites", new favoritesPageHandler());
+        Spark.post("/heart", new favoriteButtonHandler());
+        Spark.post("/login", new userLoginHandler());
+
+
     }
     //Handles a user login. Takes user data from the Google User and adds to the database if possible.
     private static class userLoginHandler implements Route {
