@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
+import org.json.simple.parser.ParseException;
 import spark.*;
 import spark.template.freemarker.FreeMarkerEngine;
 
@@ -113,8 +114,20 @@ public final class Main {
       }
     }
     if (options.has("alg2")) {
-      // Eyal set up your thing here
+      try {
+        r = new RecipeDatabase(Constants.DATABASE_FILE, true);
+        Config.setDb(r);
+        Config.buildRecList();
+        System.out.println("ready to query");
+      } catch (CommandException e) {
+        System.out.println(e.getMessage());
+      } catch (SQLException e) {
+        e.printStackTrace();
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      }
     }
+
 
     if (options.has("repl")) {
       // Allow the repl to run both commands
