@@ -6,14 +6,14 @@ import edu.brown.cs.teams.kdtree.DistanceMetric;
 import java.util.HashSet;
 
 public class MinimalRecipe extends CartesianPoint implements DistanceMetric {
-  private String id;
+  private int id;
   /**
    * Constructor for Cartesian point.
    *
    * @param embedding   double array storing position of point
    * @param id          a String
    */
-  public MinimalRecipe(double[] embedding, String id) {
+  public MinimalRecipe(double[] embedding, int id) {
     super(embedding);
     this.id = id;
   }
@@ -31,7 +31,7 @@ public class MinimalRecipe extends CartesianPoint implements DistanceMetric {
    * Getter method for the id
    * @return
    */
-  public String getId() {
+  public int getId() {
     return id;
   }
 }

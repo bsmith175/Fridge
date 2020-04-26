@@ -6,18 +6,18 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="term-project" />
+        <module name="Term-Project" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="term-project" target="11" />
+      <module name="Term-Project" target="11" />
       <module name="Term_Project" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Term-Project" options="-Xlint:all" />
       <module name="Term_Project" options="-Xlint:all" />
-      <module name="term-project" options="-Xlint:all" />
     </option>
   </component>
 </project>

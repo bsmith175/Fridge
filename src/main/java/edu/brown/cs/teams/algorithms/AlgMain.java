@@ -1,5 +1,6 @@
 package edu.brown.cs.teams.algorithms;
 
+import edu.brown.cs.teams.database.UserDatabase;
 import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.database.RecipeDatabase;
 import edu.brown.cs.teams.kdtree.KDTree;
@@ -14,7 +15,8 @@ import java.util.List;
 public class AlgMain {
   private static KDTree<MinimalRecipe> tree;
   private static List<MinimalRecipe> recipeList;
-  private static RecipeDatabase db;
+  private static RecipeDatabase rdb;
+  private static UserDatabase udb;
 
 
   /**
@@ -51,8 +53,17 @@ public class AlgMain {
    *
    * @return the db
    */
-  public static RecipeDatabase getDb() {
-    return db;
+  public static RecipeDatabase getRecipeDb() {
+    return rdb;
+  }
+
+  /**
+   * Getter method for the db proxy.
+   *
+   * @return the db
+   */
+  public static UserDatabase getUserDb() {
+    return udb;
   }
 
   /**
@@ -74,11 +85,12 @@ public class AlgMain {
   }
 
   /**
-   * Setter method for the database querier
-   *
-   * @param db
+   * setter method for the databases.
+   * @param recipe - recipe database
+   * @param user - user database
    */
-  public static void setDb(RecipeDatabase db) {
-    AlgMain.db = db;
+  public static void setDb(RecipeDatabase recipe, UserDatabase user) {
+    rdb = recipe;
+    udb = user;
   }
 }
