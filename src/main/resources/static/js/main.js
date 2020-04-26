@@ -171,6 +171,15 @@ $(document).ready(() => {
             }
         });
     }
+    $('.typeahead').typeahead({
+        source: function (query, process) {
+            return $.post('/suggest', {input: query}, function (data){
+                data = $.parseJSON(data);
+                console.log(data);
+                return process(data);
+            });
+        }
+    });
     createTypeahead($('typeahead'));
     $('.type')
 
