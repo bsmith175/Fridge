@@ -94,7 +94,8 @@ public final class Main {
     }
     if (options.has("alg1")) {
       try {
-        r = new RecipeDatabase(Constants.DATABASE_FILE, false);
+
+        r = new RecipeDatabase(Constants.DATABASE_FILE, true);
         new AlgMain();
         System.out.println("Getting recipes");
         AlgMain.setDb(r);
@@ -107,9 +108,9 @@ public final class Main {
       } catch (CommandException e) {
         System.out.println(e.getMessage());
       } catch (SQLException e) {
-          e.printStackTrace();
+        e.printStackTrace();
       } catch (ClassNotFoundException e) {
-          e.printStackTrace();
+        e.printStackTrace();
       }
     }
     if (options.has("alg2")) {
