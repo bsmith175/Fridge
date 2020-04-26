@@ -33,10 +33,10 @@ public class GuiHandlers {
     private static IngredientSuggest suggest;
 
     public GuiHandlers() throws Exception {
-        suggest = new IngredientSuggest();
-        String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
-            ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
-        AlgMain.setDb(new RecipeDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, false));
+//        suggest = new IngredientSuggest();
+//        String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
+//            ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
+//        AlgMain.setDb(new RecipeDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, false));
 
     }
     public void setHandlers(FreeMarkerEngine freeMarker) {
