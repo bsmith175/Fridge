@@ -2,7 +2,8 @@
 /**
  * Front end logic for providing real time autocorrect suggestions.
  */
-
+const favorites = [];
+favorites.concat(1);
 $(document).ready(() => {
 
     //TODO: get the jquery selectors for the list where the suggestions should go and the input box where we're typing
@@ -85,19 +86,23 @@ $(document).ready(() => {
     });
 
 
-    $(".btn-primary").click(function (e) {
+    $(".btn-outline-success").click(function (e) {
         result_cards.empty();
         e.preventDefault();
-
-        let elements = document.forms["fridge-form"].elements;
-        for (i = 0; i < elements.length; i++) {
-            console.log(elements[i].value);
-        }
-
         const postParameters = {
             //TODO: get the text inside the input box
-            text: ""
+            text: []
         };
+        let elements = document.forms["fridge-form"].elements;
+        for (i = 0; i < elements.length; i++) {
+            if (elements[i].value != ""){
+                postParameters.text.push(elements[i].value);
+
+            }
+        }
+        console.log(postParameters.text);
+
+
         $('.like-button').click(function () {
             $(this).toggleClass('is-active');
         })
@@ -109,14 +114,17 @@ $(document).ready(() => {
             console.log("post");
 
             var cards = 0;
-
+            let heart_shape = "fa-heart-o";
             for (let res of r.results) {
-                console.log(res.img_url)
+                if(favorites.includes(cards)){
+                    heart_shape = "fa-heart";
+                }
+                console.log(favorites.includes(cards));
                 const card = "<div class=\"col-sm d-flex\">\n" +
                     "<dv class=\"card card-body flex-fill\" style=\"width: 18rem;\">\n" +
                     "  <div class=\"d-flex flex-row-reverse\">\n" +
                     "<div>\n" +
-                    "  <i class=\"heart fa fa-heart-o\"></i>\n" +
+                    "  <i id="+cards+" class=\"heart fa "+ heart_shape + "\"></i>\n" +
                     "</div> </div>" +
                     "  <img class=\"card-img-top\" style = \"border: 1px green\"src=" + res.img_url + " alt=\"Card image cap\">\n" +
                     "  <div class=\"card-body\">\n" +
@@ -167,8 +175,28 @@ $(document).ready(() => {
 
 
             })
-            $(".heart.fa").click(function() {
-                console.log("heart")
+            $(".heart.fa").click(function(e) {
+                const id = (e.target.id);
+                console.log(id);
+                const postParameters = {
+                    id: id
+                };
+                if ($(this).hasClass("fa-heart-o")){
+                    console.log("saving")
+                    //TODO: make a post request to the url to handle this request you set in your Main.java
+                    $.post("/addFav", postParameters, response => {
+                    });
+                    favorites.concat(id)
+                    //adding to saved
+                }else{
+                    //removing from saved
+                    console.log("Unsaving")
+                    $.post("/remFav", postParameters, response => {
+                    });
+                    favorites.e
+
+
+                }
                 $(this).toggleClass("fa-heart fa-heart-o");
             });
 

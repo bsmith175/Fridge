@@ -21,140 +21,180 @@ import java.util.Map;
 
 //can have more objects for different types of handlers
 public class GuiHandlers {
-    private static final Gson GSON = new Gson();
+  private static final Gson GSON = new Gson();
 
-    public void setHandlers(FreeMarkerEngine freeMarker) {
-        Spark.get("/fridge", new FridgeHandler(), freeMarker);
-        Spark.post("/recipe", new RecipeHandler());
+  public void setHandlers(FreeMarkerEngine freeMarker) {
+    Spark.get("/fridge", new FridgeHandler(), freeMarker);
+    Spark.post("/recipe", new RecipeHandler());
+    Spark.post("/remFav", new RemFavHandler());
+    Spark.post("/addFav", new AddFavHandler());
+
+
+  }
+
+  //Handles a user login. Takes user data from the Google User and adds to the database if possible.
+  private static class userLoginHandler implements Route {
+
+    @Override
+    public Object handle(Request request, Response response) throws Exception {
+      QueryParamsMap qm = request.queryMap();
+      String uid = qm.value("uid");
+      String name = qm.value("firstName");
+      String pfp = qm.value("profilePicture");
+      AccountUser user = new AccountUser(uid, name, pfp);
+
+      JsonObject responseJSON = new JsonObject();
+      responseJSON.addProperty("uid", uid);
+      responseJSON.addProperty("name", name);
+      responseJSON.addProperty("profilePicture", pfp);
+
+      try {
+        StubAlgMain.getDB().addNewUser(user);
+        responseJSON.addProperty("newUser", true);
+      } catch (SQLException e) {
+        responseJSON.addProperty("newUser", false);
+        List<Integer> recipeIDs = StubAlgMain.getDB().getFavorites(uid);
+      }
+
+      return responseJSON.toString();
     }
-    //Handles a user login. Takes user data from the Google User and adds to the database if possible.
-    private static class userLoginHandler implements Route {
+  }
 
-        @Override
-        public Object handle(Request request, Response response) throws Exception {
-            QueryParamsMap qm = request.queryMap();
-            String uid = qm.value("uid");
-            String name = qm.value("firstName");
-            String pfp = qm.value("profilePicture");
-            AccountUser user = new AccountUser(uid, name, pfp);
+  //handles a request to the favorites page. Queries db for the user's favorited recipes.
+  private static class favoritesPageHandler implements Route {
 
-            JsonObject responseJSON = new JsonObject();
-            responseJSON.addProperty("uid", uid);
-            responseJSON.addProperty("name", name);
-            responseJSON.addProperty("profilePicture", pfp);
+    @Override
+    public Object handle(Request request, Response response) throws Exception {
+      QueryParamsMap qm = request.queryMap();
+      String uid = qm.value("uid");
 
-            try {
-                StubAlgMain.getDB().addNewUser(user);
-                responseJSON.addProperty("newUser", true);
-            } catch (SQLException e) {
-                responseJSON.addProperty("newUser", false);
-                List<Integer> recipeIDs = StubAlgMain.getDB().getFavorites(uid);
-            }
+      List<Integer> recipeIDs = StubAlgMain.getDB().getFavorites(uid);
+      JsonArray responseJSON = new JsonArray();
+      for (Integer curID : recipeIDs) {
 
-            return responseJSON.toString();
+        //this is where the json array is created
+        JsonObject obj = StubAlgMain.getDB().getRecipeContentFromID(Integer.toString(curID));
+        if (obj == null) {
+          throw new IllegalArgumentException("ERROR in favoritesHandler:  recipe doesn't exist");
         }
+        responseJSON.add(obj);
+      }
+      return responseJSON.toString();
     }
+  }
 
-    //handles a request to the favorites page. Queries db for the user's favorited recipes.
-    private static class favoritesPageHandler implements Route {
+  //handles a user "favoriting" a recipe
+  //returns JSON object with properties:
+  //                          added - true, if recipe was added to favorites list
+  //                                  false, if recipe was already in favorites list
+  //                          error: true, if SQLException occured, false otherwise
+  private static class favoriteButtonHandler implements Route {
 
-        @Override
-        public Object handle(Request request, Response response) throws Exception {
-            QueryParamsMap qm = request.queryMap();
-            String uid = qm.value("uid");
-
-            List<Integer> recipeIDs = StubAlgMain.getDB().getFavorites(uid);
-            JsonArray responseJSON = new JsonArray();
-            for (Integer curID : recipeIDs) {
-
-                //this is where the json array is created
-                JsonObject obj = StubAlgMain.getDB().getRecipeContentFromID(Integer.toString(curID));
-                if (obj == null) {
-                    throw new IllegalArgumentException("ERROR in favoritesHandler:  recipe doesn't exist");
-                }
-                responseJSON.add(obj);
-            }
-            return responseJSON.toString();
+    @Override
+    public Object handle(Request request, Response response) {
+      QueryParamsMap qm = request.queryMap();
+      String rid = qm.value("recipe_id");
+      String uid = qm.value("user_id");
+      JsonObject responseJSON = new JsonObject();
+      try {
+        if (StubAlgMain.getDB().addToFavorites(rid, uid)) {
+          responseJSON.addProperty("added", true);
+        } else {
+          responseJSON.addProperty("added", false);
         }
+      } catch (SQLException throwables) {
+        responseJSON.addProperty("error", true);
+        return responseJSON.toString();
+      }
+      responseJSON.addProperty("error", false);
+      return responseJSON;
+    }
+  }
+
+  private static class ingredientSuggestHandler implements Route {
+
+    //returns a json list of ingredient strings, ordered from most relevant to least relevant
+    @Override
+    public Object handle(Request request, Response response) throws Exception {
+      QueryParamsMap qm = request.queryMap();
+      String input = qm.value("input");
+      List<String> ingredients = StubAlgMain.getIngredientSuggest().suggest(input);
+      Gson gson = new Gson();
+      String json = gson.toJson(ingredients);
+      return json;
+    }
+  }
+
+  private static class FridgeHandler implements TemplateViewRoute {
+    @Override
+    public ModelAndView handle(Request req, Response res) {
+      Map<String, Object> variables = ImmutableMap.of("title",
+              "Fridge: Whats in Your Fridge", "message", "");
+      return new ModelAndView(variables, "fridge.ftl");
+    }
+  }
+
+
+  /**
+   * A handler to produce our autocorrect service site.
+   *
+   * @return ModelAndView to render.
+   * (autocorrect.ftl).
+   */
+  private static class RecipeHandler implements Route {
+    @Override
+    public String handle(Request req, Response res) throws ParseException {
+      try (FileReader reader = new FileReader("data/smallJ.json")) {
+        JSONParser parser = new JSONParser();
+        JSONArray array = (JSONArray) parser.parse(reader);
+        List<String> result = new ArrayList<>();
+
+        result = new Gson().fromJson(String.valueOf(array), ArrayList.class);
+        Map<String, Object> variables = ImmutableMap.of("results", result);
+        return GSON.toJson(variables);
+
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      return null;
+    }
+  }
+
+  /**
+   * A handler to add a recipe id to users favorite page
+   *
+   * @return string
+   */
+  private static class AddFavHandler implements Route {
+    @Override
+    public String handle(Request req, Response res) throws ParseException {
+      QueryParamsMap qm = req.queryMap();
+      String id = qm.value("id");
+      // TODO: add this recipe id to users favorites
+      return "s";
     }
 
-    //handles a user "favoriting" a recipe
-    //returns JSON object with properties:
-    //                          added - true, if recipe was added to favorites list
-    //                                  false, if recipe was already in favorites list
-    //                          error: true, if SQLException occured, false otherwise
-    private static class favoriteButtonHandler implements Route {
-
-        @Override
-        public Object handle(Request request, Response response)  {
-            QueryParamsMap qm = request.queryMap();
-            String rid = qm.value("recipe_id");
-            String uid = qm.value("user_id");
-            JsonObject responseJSON = new JsonObject();
-            try {
-                if (StubAlgMain.getDB().addToFavorites(rid, uid)) {
-                    responseJSON.addProperty("added", true);
-                } else {
-                    responseJSON.addProperty("added", false);
-                }
-            } catch (SQLException throwables) {
-                responseJSON.addProperty("error", true);
-                return responseJSON.toString();
-            }
-            responseJSON.addProperty("error", false);
-            return responseJSON;
-        }
-    }
-
-    private static class ingredientSuggestHandler implements Route {
-
-        //returns a json list of ingredient strings, ordered from most relevant to least relevant
-        @Override
-        public Object handle(Request request, Response response) throws Exception {
-            QueryParamsMap qm = request.queryMap();
-            String input = qm.value("input");
-            List<String> ingredients = StubAlgMain.getIngredientSuggest().suggest(input);
-            Gson gson = new Gson();
-            String json = gson.toJson(ingredients);
-            return json;
-        }
-    }
-
-    private static class FridgeHandler implements TemplateViewRoute {
-        @Override
-        public ModelAndView handle(Request req, Response res) {
-            Map<String, Object> variables = ImmutableMap.of("title",
-                    "Fridge: Whats in Your Fridge", "message", "");
-            return new ModelAndView(variables, "fridge.ftl");
-        }
-    }
-
+  }
 
     /**
-     * A handler to produce our autocorrect service site.
+     * A handler to remove a recipe id to users favorite page
      *
-     * @return ModelAndView to render.
-     * (autocorrect.ftl).
+     * @return string
      */
-    private static class RecipeHandler implements Route {
+    private static class RemFavHandler implements Route {
         @Override
         public String handle(Request req, Response res) throws ParseException {
-            try (FileReader reader = new FileReader("data/smallJ.json")) {
-                JSONParser parser = new JSONParser();
-                JSONArray array = (JSONArray) parser.parse(reader);
-                List<String> result = new ArrayList<>();
-
-                result = new Gson().fromJson(String.valueOf(array), ArrayList.class);
-                Map<String, Object> variables = ImmutableMap.of("results", result);
-                return GSON.toJson(variables);
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
+            QueryParamsMap qm = req.queryMap();
+            String id = qm.value("id");
+            // TODO: add this recipe id to users favorites
+            return "s";
         }
+
     }
 
 }
+
+
+

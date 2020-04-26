@@ -21,5 +21,31 @@ input[type="number"] {
 
 .heart {
     font-size: 25px;
-    color:red;
+    color: #ff6264;
+}
+
+.navbar {
+    background-image: linear-gradient(#1c9c57, #0d6f45);
+    font-family: 'Cinzel Decorative', cursive;
+    color : white;
+
+}
+.modal{
+    font-family: 'Cinzel Decorative';
+}
+
+.container{
+    font-family: 'Cinzel Decorative', cursive;}
+.btn {
+    font-family: 'Cinzel Decorative', cursive;
+}
+
+.dropdown-divider{
+    color : grey;
+    background-color: grey;
+    border-color:grey
+
+}
+input[type="text"], textarea {
+
 }

@@ -38,7 +38,7 @@
     </div>
     <div class="container">
         <div class="d-flex justify-content-center ">
-            <h1>What's in your fridge</h1>
+            <h1>Time to Cook!</h1>
 
         </div>
     </div>
@@ -51,7 +51,7 @@
                        placeholder="Ingredient"/>
                 <button id="b1" class="btn add-more" type="button">+</button>
             </div>
-            <button type="submit" class="btn btn-primary ">Submit</button>
+            <button type="submit" class="btn btn-outline-success ">Find Recipes</button>
         </form>
 
 

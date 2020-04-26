@@ -13,8 +13,29 @@
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/html5bp.css">
     <link rel="stylesheet" href="css/main.css">
-  </head>
-  <body>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Fredericka+the+Great&display=swap" rel="stylesheet">
+
+</head>
+  <body style="background-color: #fffeee">
+  <nav class="navbar navbar-expand-lg navbar-dark ">
+      <a class="navbar-brand" href="#">
+          What's In My Fridge
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+              <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
+              <div class="dropdown-divider"></div>
+              <a class="nav-item nav-link" href="#">Profile</a>
+              <div class="dropdown-divider"></div>
+              <a class="nav-item nav-link" href="#">Favorites</a>
+              <div class="dropdown-divider"></div>
+              <a class="nav-item nav-link " href="#">Login</a>
+          </div>
+      </div>
+  </nav>
      ${content}
 
      <!-- Again, we're serving up the unminified source for clarity. -->
@@ -25,12 +46,7 @@
      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
      <script src="https://use.fontawesome.com/843dae523c.js"></script>
-<#--     <script>-->
-<#--         function hearted() {-->
-<#--             console.log("heart");-->
-<#--             $(".heart span").css('background-color' ,'#ce4553')-->
-<#--         }-->
-<#--     </script>-->
+
      ${message}
   </body>
   <!-- See http://html5boilerplate.com/ for a good place to start
