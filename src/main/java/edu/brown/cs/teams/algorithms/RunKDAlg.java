@@ -38,7 +38,7 @@ public class RunKDAlg implements Command {
       List<MinimalRecipe> neighbors = AlgMain.getTree().getNeighbors(100, queryEmbedding);
       String result = "";
       for (MinimalRecipe recipe : neighbors) {
-        result += AlgMain.getDb().getRecipe(recipe.getId());
+        result += AlgMain.getRecipeDb().getRecipe(recipe.getId());
       }
       return result;
     } catch (IOException | ParseException e) {
@@ -60,7 +60,7 @@ public class RunKDAlg implements Command {
       double[] queryEmbedding = Config.arrayAdd(embeddings);
       List<MinimalRecipe> neighbors = AlgMain.getTree().getNeighbors(100, queryEmbedding);
       List<JsonObject> results = new ArrayList<>();
-      RecipeDatabase db = AlgMain.getDb();
+      RecipeDatabase db = AlgMain.getRecipeDb();
       for (MinimalRecipe recipe : neighbors) {
         results.add(db.getRecipeContentFromID(recipe.getId()));
       }

@@ -7,6 +7,7 @@ import edu.brown.cs.teams.algorithms.RunSuperiorAlg;
 import edu.brown.cs.teams.algorithms.AlgMain;
 import edu.brown.cs.teams.constants.Constants;
 import edu.brown.cs.teams.database.RecipeDatabase;
+import edu.brown.cs.teams.database.UserDatabase;
 import edu.brown.cs.teams.io.Command;
 import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.io.REPL;
@@ -61,12 +62,18 @@ public final class Main {
     parser.accepts("postgres_init");
     OptionSet options = parser.parse(args);
     RecipeDatabase r = null;
+    UserDatabase u = null;
 
-      if (options.has("sqlite_init")) {
+      if (options.has("init")) {
           try {
               r = new RecipeDatabase(Constants.DATABASE_FILE, true);
               r.makeTable();
               r.parseJson();
+
+              String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
+                      ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
+              u = new UserDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, true);
+              u.initUserDB();
           } catch (ClassNotFoundException e) {
               e.printStackTrace();
           } catch (SQLException e) {
@@ -76,31 +83,21 @@ public final class Main {
           } catch (CommandException e) {
               e.printStackTrace();
           }
-      }else if (options.has("postgres_init")) {
-        try {
-            String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
-                    ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
-             r = new RecipeDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, true);
-            r.makeTable();
-            r.parseJson();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }  catch (JSONException e) {
-            e.printStackTrace();
-        } catch (CommandException e) {
-            e.printStackTrace();
-        }
-    }
+      }
+
     if (options.has("alg1")) {
       try {
-        r = new RecipeDatabase(Constants.DATABASE_FILE, true);
+        r = new RecipeDatabase(Constants.DATABASE_FILE, false);
+
+        String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
+                  ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
+        u = new UserDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, false);
+
         new AlgMain();
         System.out.println("Getting recipes");
-        AlgMain.setDb(r);
+        AlgMain.setDb(r, u);
         Config.setDb(r);
-        List<MinimalRecipe> recipes = AlgMain.getDb().getRecipes("data/ingredient_vectors.json");
+        List<MinimalRecipe> recipes = AlgMain.getRecipeDb().getRecipes("data/ingredient_vectors.json");
         AlgMain.setRecipeList(recipes);
         System.out.println("Building KD Tree");
         AlgMain.setTree(AlgMain.getTree().buildKDTree(recipes));
@@ -115,7 +112,12 @@ public final class Main {
     }
     if (options.has("alg2")) {
       try {
-        r = new RecipeDatabase(Constants.DATABASE_FILE, true);
+        r = new RecipeDatabase(Constants.DATABASE_FILE, false);
+        String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
+                  ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
+        u = new UserDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, false);
+
+        AlgMain.setDb(r, u);
         Config.setDb(r);
         Config.buildRecList();
         System.out.println("ready to query");

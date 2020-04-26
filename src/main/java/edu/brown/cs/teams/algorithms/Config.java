@@ -104,7 +104,7 @@ public final class Config {
     return embedLength;
   }
 
-  public static JsonObject getRecipeJson(String id) throws SQLException {
+  public static JsonObject getRecipeJson(int id) throws SQLException {
     return db.getRecipeContentFromID(id);
   }
 
