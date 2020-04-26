@@ -6,7 +6,7 @@ import edu.brown.cs.teams.algorithms.Config;
 import java.util.*;
 
 public class Recipe extends CartesianPoint {
-  private String id;
+  private int id;
   private Set<Ingredient> ingredients;
   private double similarity;
   private double[] recipeVec;
@@ -17,7 +17,7 @@ public class Recipe extends CartesianPoint {
    * @param embedding double array storing position of point
    * @param id        a String
    */
-  public Recipe(double[] embedding, String id, Set<Ingredient> ingredients) {
+  public Recipe(double[] embedding, int id, Set<Ingredient> ingredients) {
     super(embedding);
     this.id = id;
     this.ingredients = ingredients;
@@ -37,7 +37,7 @@ public class Recipe extends CartesianPoint {
    * getter method for id
    * @return the set of ingredients in the recipe
    */
-  public String getId() {
+  public int getId() {
     return id;
   }
 

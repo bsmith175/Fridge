@@ -78,24 +78,7 @@ public class RecipeDatabase {
     }
   }
 
-  /**
-   * Constructs a postgresql RecipeDatabase. Connects to database server.
-   */
-  public RecipeDatabase(String url, String user, String pwd, Boolean init) throws ClassNotFoundException,
-          SQLException, CommandException {
-    Class.forName("org.postgresql.Driver");
-    conn = DriverManager.getConnection(url, user, pwd);
 
-
-    if (!init) {
-      try {
-        verifyTables();
-      } catch (SQLException e) {
-        throw new CommandException("ERROR: SQL database is malformed: "
-                + this.dbFileName);
-      }
-    }
-  }
 
   //-------------------------- recipe tables setup --------------------------------
 
@@ -225,50 +208,6 @@ public class RecipeDatabase {
   }
 
 
-  //-------------------------- User tables setup --------------------------------
-
-
-  /**
-   * creates the user table. This table has three columns:
-   *      uid (TEXT): the unique string identifying the user (primary key)
-   *      name (TEXT): The user's first name. Is not unique
-   *      profile (TEXT): The path to the user's profile image.
-   *
-   * @throws SQLException - if exception occurs while making table.
-   */
-  public void makeUserTable() throws SQLException {
-    PreparedStatement prep = conn.prepareStatement("CREATE TABLE guser("
-            + "uid TEXT PRIMARY KEY, "
-            + "name TEXT, "
-            + "profile TEXT);");
-    prep.executeUpdate();
-  }
-
-  /**
-   * The favorite table is a junction table between recipes and users. It links every recipe
-   * that is a favorite to each of the users that have it as a favorite.
-   *
-   * @throws SQLException
-   */
-  public void makeFavTable() throws SQLException {
-    PreparedStatement prep = conn.prepareStatement("CREATE TABLE favorite("
-            + "recipeId INTEGER REFERENCES recipe(id), "
-            + "uid TEXT REFERENCES guser(uid));");
-    prep.executeUpdate();
-  }
-
-  /**
-   * The exclude table links every user to each food category that they chose to exclude.
-   *
-   * @throws SQLException
-   */
-  public void makeExcludeTable() throws SQLException {
-    PreparedStatement prep = conn.prepareStatement("CREATE TABLE exclude("
-            + "category TEXT, "
-            + "uid TEXT REFERENCES guser(uid));");
-    prep.executeUpdate();
-  }
-
   //------------------------- Recipe table queries----------------
 
   public List<MinimalRecipe> getRecipes(String vectorFileName)
@@ -298,7 +237,7 @@ public class RecipeDatabase {
               newTokens.add(tokens[i]);
             }
             double[] totalEmbedding = Config.arrayAdd(embeddings);
-            String id = rs.getString(1);
+            int id = rs.getInt(1);
             MinimalRecipe recipe = new MinimalRecipe(totalEmbedding, id);
             recipes.add(recipe);
           }
@@ -317,10 +256,10 @@ public class RecipeDatabase {
   }
 
 
-  public String getRecipe(String id) throws CommandException {
+  public String getRecipe(int id) throws CommandException {
     String query = "SELECT * FROM recipe WHERE recipe.id = ?";
     try (PreparedStatement prep = conn.prepareStatement(query)) {
-      prep.setString(1, id);
+      prep.setInt(1, id);
       try (ResultSet rs = prep.executeQuery()) {
         String result = "";
         while (rs.next()) {
@@ -361,7 +300,7 @@ public class RecipeDatabase {
               }
             }
             double[] totalEmbedding = Config.arrayAdd(embeddings);
-            String id = rs.getString(1);
+            int id = rs.getInt(1);
             Recipe recipe = new Recipe(totalEmbedding, id, newTokens);
             recipes.add(recipe);
           }
@@ -378,47 +317,6 @@ public class RecipeDatabase {
     return recipes;
   }
 
-
-
-  //-------------------------- User tables methods --------------------------------
-
-  /**
-   * Adds a new user to the database.
-   * @param user - the User to be added to the database
-   * @throws SQLException - if user could not be added
-   *                      - if user already exists
-   */
-  public void addNewUser(AccountUser user) throws SQLException {
-    String uid = user.getUid();
-    String name = user.getName();
-    String profilePic = user.getProfile();
-
-    PreparedStatement prep = conn.prepareStatement("INSERT INTO guser VALUES (?, ?, ?);");
-    prep.setString(1, uid);
-    prep.setString(2, name);
-    prep.setString(3, profilePic);
-    prep.addBatch();
-    prep.executeUpdate();
-  }
-
-
-  /**
-   * Queries a user's favorite recipe list, given a user ID.
-   * @param uid - User ID
-   * @return - A List of recipe IDs
-   * @throws SQLException - if exception occurs during query
-   */
-  public List<Integer> getFavorites(String uid) throws SQLException{
-    PreparedStatement prep = conn.prepareStatement("SELECT recipeId FROM favorite WHERE uid= ?");
-    prep.setString(1, uid);
-    ResultSet res = prep.executeQuery();
-    List<Integer> ret = new ArrayList<Integer>();
-    while (res.next()) {
-      ret.add(res.getInt(1));
-    }
-    return ret;
-  }
-
   /**
    * Gets the content needed to display the recipe in labeled form, given its ID.
    * @param id  - the recipe ID.
@@ -426,10 +324,10 @@ public class RecipeDatabase {
    *         - null if the recipe was not in the database
    * @throws SQLException - if exception occurs while querying database
    */
-  public JsonObject getRecipeContentFromID(String id) throws SQLException {
+  public JsonObject getRecipeContentFromID(int id) throws SQLException {
     String query = "SELECT * FROM recipe WHERE recipe.id= ?";
     PreparedStatement prep = conn.prepareStatement(query);
-    prep.setString(1, id);
+    prep.setInt(1, id);
     ResultSet rs = prep.executeQuery();
     if (rs.next()) {
       JsonObject recipe = new JsonObject();
@@ -448,32 +346,7 @@ public class RecipeDatabase {
     }
   }
 
-  /**
-   * Attemps to add a recipe to the user's favorites list.
-   * @param rid - ID of recipe
-   * @param uid - ID of user
-   * @return  True
-   *             -if recipe was successfully added to favorites list
-   *          False
-   *              - if recipe was already in user's favorites list
-   * @throws SQLException - if exception occurs while updating database
-   */
-  public Boolean addToFavorites(String rid, String uid) throws SQLException {
-    String check = "SELECT EXISTS(SELECT * FROM favorite WHERE recipeId= ?  AND uid= ?);";
-    PreparedStatement prep = conn.prepareStatement(check);
-    prep.setString(1, rid);
-    prep.setString(2, uid);
-    ResultSet rs = prep.executeQuery();
-    rs.next();
 
-    if (rs.getBoolean(1)) {
-      return false;
-    }
-    prep  = conn.prepareStatement("INSERT INTO favorite VALUES(?, ?)");
-    prep.setString(1, rid);
-    prep.setString(2, uid);
-    prep.addBatch();
-    prep.executeUpdate();
-    return true;
-  }
+
+
 }

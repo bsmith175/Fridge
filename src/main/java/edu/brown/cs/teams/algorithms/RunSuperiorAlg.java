@@ -33,7 +33,7 @@ public class RunSuperiorAlg implements Command {
       Config.printRecIngreds(first);
       first = recpq.poll();
       Config.printRecIngreds(first);
-      return first.getId();
+      return Integer.toString(first.getId());
     } catch (IOException | ParseException e) {
       throw new CommandException(e.getMessage());
     }

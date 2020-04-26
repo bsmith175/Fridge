@@ -63,11 +63,10 @@ public class GuiHandlers {
             responseJSON.addProperty("profilePicture", pfp);
 
             try {
-                AlgMain.getDb().addNewUser(user);
+                AlgMain.getUserDb().addNewUser(user);
                 responseJSON.addProperty("newUser", true);
             } catch (SQLException e) {
                 responseJSON.addProperty("newUser", false);
-                List<Integer> recipeIDs = AlgMain.getDb().getFavorites(uid);
             }
 
             return responseJSON.toString();
@@ -82,12 +81,12 @@ public class GuiHandlers {
             QueryParamsMap qm = request.queryMap();
             String uid = qm.value("uid");
 
-            List<Integer> recipeIDs = AlgMain.getDb().getFavorites(uid);
+            List<Integer> recipeIDs = AlgMain.getUserDb().getFavorites(uid);
             JsonArray responseJSON = new JsonArray();
             for (Integer curID : recipeIDs) {
 
                 //this is where the json array is created
-                JsonObject obj = AlgMain.getDb().getRecipeContentFromID(Integer.toString(curID));
+                JsonObject obj = AlgMain.getRecipeDb().getRecipeContentFromID(curID);
                 if (obj == null) {
                     throw new IllegalArgumentException("ERROR in favoritesHandler:  recipe doesn't exist");
                 }
@@ -107,11 +106,11 @@ public class GuiHandlers {
         @Override
         public Object handle(Request request, Response response)  {
             QueryParamsMap qm = request.queryMap();
-            String rid = qm.value("recipe_id");
+            int rid = Integer.parseInt(qm.value("recipe_id"));
             String uid = qm.value("user_id");
             JsonObject responseJSON = new JsonObject();
             try {
-                if (AlgMain.getDb().addToFavorites(rid, uid)) {
+                if (AlgMain.getUserDb().addToFavorites(rid, uid)) {
                     responseJSON.addProperty("added", true);
                 } else {
                     responseJSON.addProperty("added", false);
