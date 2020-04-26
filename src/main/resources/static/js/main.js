@@ -106,8 +106,7 @@ $(document).ready(() => {
         })
         $.post("/recipe-recommend", $.param({text: postParameters }, true), response => {
 
-            const r = response.response;
-            console.log(r);
+            const r = JSON.parse(response);
             //const text = JSON.parse(response)["text"];
             console.log(r[0]);
             console.log("post");
@@ -151,7 +150,7 @@ $(document).ready(() => {
                 const id = (e.target.id);
                 console.log(id);
 
-                const result = r.results[id];
+                const result = r[id];
                 console.log(result);
                 var ingredients = "";
                 var instructions = "";
