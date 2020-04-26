@@ -1,4 +1,4 @@
-package edu.brown.cs.teams.state;
+package edu.brown.cs.teams.algorithms;
 
 import edu.brown.cs.teams.database.RecipeDatabase;
 import edu.brown.cs.teams.io.CommandException;
@@ -9,9 +9,10 @@ import edu.brown.cs.teams.recipe.RecipeDistanceComparator;
 import java.sql.SQLException;
 import java.util.*;
 
+import com.google.gson.JsonObject;
+
 public final class Config {
 
-  private Map<String, Double> catToVal = new HashMap();
   private static int embedLength = 0;
   private Map<String, double[]> recToVec = new HashMap<>();
   private static List<Recipe> fullRecipes =
@@ -19,31 +20,11 @@ public final class Config {
   private static RecipeDatabase db;
 
   public Config() throws SQLException {
-
-//    catToVal.put("meat", Double.POSITIVE_INFINITY);
-//    catToVal.put("fish", 100.0);
-//    catToVal.put("seafood", 100.0);
-//    catToVal.put("leaf", 10.0);
-//    catToVal.put("vegmain", 80.0);
-//    catToVal.put("vegflav", 70.0);
-//    catToVal.put("fruits", 60.0);
-//    catToVal.put("carbs", 200.0);
-//    catToVal.put("dairy", 40.0);
-//    catToVal.put("beans", 10.0);
-//    catToVal.put("baking", 500.0);
-//    catToVal.put("fats", 30.0);
-//    catToVal.put("spices", 5.0);
-//    catToVal.put("nuts", 15.0);
-//    catToVal.put("sauces", 100.0);
   }
 
-  public static void buildRecList() throws CommandException {
-    try {
-      fullRecipes.addAll(db.getFullRecipes("data/ingredient_vectors" +
-          ".json"));
-    } catch (SQLException e) {
-      throw new CommandException(e.getMessage());
-    }
+  public static void buildRecList() throws SQLException {
+    fullRecipes.addAll(db.getFullRecipes("data/ingredient_vectors" +
+            ".json"));
   }
 
 
@@ -70,12 +51,15 @@ public final class Config {
         closest = similarity;
       }
     }
-    return best;
+    if (closest > 0.9) {
+      return best;
+    }
+    else {
+      return null;
+    }
   }
 
-  public Map getCatToVal() {
-    return catToVal;
-  }
+
 
   public static double cosineSimilarity(double[] vec1, double[] vec2) {
     double dotProduct = 0.0;
@@ -88,6 +72,8 @@ public final class Config {
     }
     return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
   }
+
+
 
   public static double[] arrayAdd(double[][] arrays) {
     double[] result = new double[300];
@@ -132,5 +118,9 @@ public final class Config {
     for (Ingredient i : r.getIngredients()) {
       System.out.print(i.getId() + " ");
     }
+  }
+
+  public JsonObject getRecipeJSON(String id) throws SQLException {
+    return db.getRecipeContentFromID(id);
   }
 }

@@ -1,20 +1,16 @@
-package edu.brown.cs.teams;
+package edu.brown.cs.teams.algorithms;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import edu.brown.cs.teams.GUI.StubAlgMain;
-import edu.brown.cs.teams.database.UserDatabase;
+import edu.brown.cs.teams.database.RecipeDatabase;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import edu.brown.cs.teams.algorithms.AlgMain;
 import edu.brown.cs.teams.io.Command;
 import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.io.REPL;
 import edu.brown.cs.teams.recipe.MinimalRecipe;
-import edu.brown.cs.teams.state.Config;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -64,7 +60,7 @@ public class RunKDAlg implements Command {
       double[] queryEmbedding = Config.arrayAdd(embeddings);
       List<MinimalRecipe> neighbors = AlgMain.getTree().getNeighbors(1, queryEmbedding);
       List<JsonObject> results = new ArrayList<>();
-      UserDatabase db = StubAlgMain.getDB();
+      RecipeDatabase db = AlgMain.getDb();
       for (MinimalRecipe recipe : neighbors) {
         results.add(db.getRecipeContentFromID(recipe.getId()));
       }
