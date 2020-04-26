@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import edu.brown.cs.teams.RunKDAlg;
+import edu.brown.cs.teams.io.Command;
 import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.login.AccountUser;
 import org.json.simple.JSONArray;
@@ -26,8 +27,11 @@ public class GuiHandlers {
     private static final Gson GSON = new Gson();
 
     public void setHandlers(FreeMarkerEngine freeMarker) {
+        // Specify the algorithm to run here!!
+        Command command = new RunKDAlg();
         Spark.get("/fridge", new FridgeHandler(), freeMarker);
         Spark.post("/recipe", new RecipeHandler());
+        Spark.post("/recipe-recommend", new RecipeSuggestHandler(command));
     }
     //Handles a user login. Takes user data from the Google User and adds to the database if possible.
     private static class userLoginHandler implements Route {
@@ -123,6 +127,10 @@ public class GuiHandlers {
     }
 
     private static class RecipeSuggestHandler implements Route {
+        private Command command;
+        public RecipeSuggestHandler(Command command){
+            this.command = command;
+        }
 
         // Returns the suggested recipes
         @Override
@@ -130,13 +138,16 @@ public class GuiHandlers {
             QueryParamsMap qm = request.queryMap();
             String input = qm.value("input");
             String[] ingredients = input.split("\n"); // not sure if we can do this
-            String[] argmuments = new String[ingredients.length];
-            for (int i = 0; i < ingredients.length; i ++) {
-                argmuments[i] = "\"" + ingredients + "\"";
-            }
             Gson gson = new Gson();
-            String json = gson.toJson(RunKDAlg.runForGui(argmuments));
-            return json;
+            List<JsonObject> results = command.runForGui(ingredients);
+            String result = "";
+            // Each returned recipe is a Json object. Iterate through them to
+            // formate output string.
+            for (JsonObject object: results) {
+                result += gson.toJson(object);
+                result += "\n";
+            }
+            return result;
         }
     }
 

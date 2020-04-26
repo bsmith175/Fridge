@@ -49,8 +49,8 @@ public class RunKDAlg implements Command {
       throw new CommandException(e.getMessage());
     }
   }
-
-  public static List<JsonObject> runForGui(String[] command) throws CommandException {
+  @Override
+  public List<JsonObject> runForGui(String[] command) throws CommandException {
     try {
       Gson gson = new Gson();
       FileReader reader = new FileReader("data/ingredient_vectors.json");
