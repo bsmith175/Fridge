@@ -127,7 +127,7 @@ public class RecipeDatabase {
   public void makeTable() throws SQLException {
     System.out.println("makeTable");
     prep = conn.prepareStatement("CREATE TABLE recipe("
-            + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + "id SERIAL PRIMARY KEY ,"
             + "name TEXT,"
             + "author TEXT,"
             + "description TEXT,"
@@ -186,7 +186,7 @@ public class RecipeDatabase {
         if ((String) e.get("author") != null) {
           prep = conn.prepareStatement(
                   "INSERT INTO recipe VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
-          prep.setString(1, String.valueOf(id));
+          prep.setInt(1, id);
           prep.setString(2, (String) e.get("name"));
           prep.setString(3, (String) e.get("author"));
           prep.setString(4, (String) e.get("description"));
@@ -237,9 +237,9 @@ public class RecipeDatabase {
    * @throws SQLException - if exception occurs while making table.
    */
   public void makeUserTable() throws SQLException {
-    PreparedStatement prep = conn.prepareStatement("CREATE TABLE user("
-            + "uid TEXT PRIMARY KEY,"
-            + "name TEXT,"
+    PreparedStatement prep = conn.prepareStatement("CREATE TABLE guser("
+            + "uid TEXT PRIMARY KEY, "
+            + "name TEXT, "
             + "profile TEXT);");
     prep.executeUpdate();
   }
@@ -252,8 +252,20 @@ public class RecipeDatabase {
    */
   public void makeFavTable() throws SQLException {
     PreparedStatement prep = conn.prepareStatement("CREATE TABLE favorite("
-            + "recipeId TEXT FOREIGN KEY REFERENCES recipe(id),"
-            + "uid TEXT FOREIGN KEY REFERENCES user(uid);");
+            + "recipeId INTEGER REFERENCES recipe(id), "
+            + "uid TEXT REFERENCES guser(uid));");
+    prep.executeUpdate();
+  }
+
+  /**
+   * The exclude table links every user to each food category that they chose to exclude.
+   *
+   * @throws SQLException
+   */
+  public void makeExcludeTable() throws SQLException {
+    PreparedStatement prep = conn.prepareStatement("CREATE TABLE exclude("
+            + "category TEXT, "
+            + "uid TEXT REFERENCES guser(uid));");
     prep.executeUpdate();
   }
 
@@ -381,7 +393,7 @@ public class RecipeDatabase {
     String name = user.getName();
     String profilePic = user.getProfile();
 
-    PreparedStatement prep = conn.prepareStatement("INSERT INTO user VALUES (?, ?, ?);");
+    PreparedStatement prep = conn.prepareStatement("INSERT INTO guser VALUES (?, ?, ?);");
     prep.setString(1, uid);
     prep.setString(2, name);
     prep.setString(3, profilePic);

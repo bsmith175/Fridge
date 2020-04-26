@@ -75,27 +75,31 @@ public final class Main {
           } catch (CommandException e) {
               e.printStackTrace();
           }
-      }else if (options.has("postgres_init")) {
+      } else if (options.has("postgres_init")) {
         try {
             String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
                     ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
              r = new RecipeDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, true);
             r.makeTable();
             r.parseJson();
+            r.makeUserTable();
+            r.makeFavTable();
+            r.makeExcludeTable();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
-        }  catch (JSONException e) {
-            e.printStackTrace();
         } catch (CommandException e) {
             e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-    }
+      }
     if (options.has("alg1")) {
       try {
-
-        r = new RecipeDatabase(Constants.DATABASE_FILE, true);
+        String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
+                  ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
+        r = new RecipeDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, false);
         new AlgMain();
         System.out.println("Getting recipes");
         AlgMain.setDb(r);
