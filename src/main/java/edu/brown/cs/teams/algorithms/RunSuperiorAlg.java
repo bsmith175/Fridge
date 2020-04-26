@@ -1,6 +1,7 @@
 package edu.brown.cs.teams.algorithms;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -59,5 +60,10 @@ public class RunSuperiorAlg implements Command {
     } catch (IOException | ParseException e) {
       throw new CommandException(e.getMessage());
     }
+  }
+
+  @Override
+  public List<JsonObject> runForGui(String[] command) throws CommandException {
+    return null;
   }
 }
