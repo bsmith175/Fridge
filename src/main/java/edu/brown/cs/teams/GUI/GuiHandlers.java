@@ -150,15 +150,7 @@ public class GuiHandlers {
             QueryParamsMap qm = request.queryMap();
             String[] ingredients = qm.get("text").values();
             List<JsonObject> results = command.runForGui(ingredients);
-            String result = "";
-            // Each returned recipe is a Json object. Iterate through them to
-            // format output string.
-            result += "{response: [";
-            for (JsonObject object: results) {
-                result += GSON.toJson(object);
-                result += "\n";
-            }
-            result += "]}";
+            String result = GSON.toJson(results);
             return result;
         }
     }

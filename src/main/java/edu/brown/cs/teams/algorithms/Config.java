@@ -104,6 +104,11 @@ public final class Config {
     return embedLength;
   }
 
+  public static JsonObject getRecipeJson(String id) throws SQLException {
+    return db.getRecipeContentFromID(id);
+  }
+
+
   public double[] getRecVec(String id) {
     return recToVec.get(id);
   }
@@ -120,7 +125,4 @@ public final class Config {
     }
   }
 
-  public JsonObject getRecipeJSON(String id) throws SQLException {
-    return db.getRecipeContentFromID(id);
-  }
 }
