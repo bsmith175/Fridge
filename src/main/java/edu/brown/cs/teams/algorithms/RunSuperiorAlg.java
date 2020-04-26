@@ -78,7 +78,7 @@ public class RunSuperiorAlg implements Command {
     try {
       PriorityQueue<Recipe> recpq = preCommand(command);
       List<JsonObject> guiResults = new ArrayList<>();
-      while (!recpq.isEmpty()) {
+      for (int i = 0; i < 100; i ++) {
         JsonObject jsonRecipe = Config.getRecipeJson(recpq.poll().getId());
         guiResults.add(jsonRecipe);
       }
