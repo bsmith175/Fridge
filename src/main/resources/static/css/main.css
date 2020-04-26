@@ -3,11 +3,49 @@ input[type="number"] {
 }
 
 * {
-.border-radius(0) !important;
+. border-radius(0) !important;
 }
 
 #field {
-  margin-bottom:20px;
+  margin-bottom: 20px;
 }
 
 
+
+
+.button:focus {
+  background-color: #afffc3;
+
+}
+
+
+.heart {
+  font-size: 25px;
+  color: #ff6264;
+}
+
+.navbar {
+  background-image: linear-gradient(#1c9c57, #0d6f45);
+  font-family: 'Cinzel Decorative', cursive;
+  color : white;
+
+}
+.modal{
+  font-family: 'Cinzel Decorative';
+}
+
+.container{
+  font-family: 'Cinzel Decorative', cursive;}
+.btn {
+  font-family: 'Cinzel Decorative', cursive;
+}
+
+.dropdown-divider{
+  color : grey;
+  background-color: grey;
+  border-color:grey
+
+}
+input[type="text"], textarea {
+
+}
