@@ -113,7 +113,16 @@ public final class Main {
       }
     }
     if (options.has("alg2")) {
-      // Eyal set up your thing here
+      try {
+        r = new RecipeDatabase(Constants.DATABASE_FILE, true);
+        
+      } catch (CommandException e) {
+        System.out.println(e.getMessage());
+      } catch (SQLException e) {
+        e.printStackTrace();
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      }
     }
 
     if (options.has("repl")) {
