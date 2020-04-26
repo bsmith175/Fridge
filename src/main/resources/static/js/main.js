@@ -124,7 +124,7 @@ $(document).ready(() => {
                     "<div>\n" +
                     "  <i id="+cards+" class=\"heart fa "+ heart_shape + "\"></i>\n" +
                     "</div> </div>" +
-                    "  <img class=\"card-img-top\" style = \"border: 1px green\"src=" + res.img_url + " alt=\"Card image cap\">\n" +
+                    "  <img class=\"card-img-top\" style = \"border: 1px green\"src=" + res.imageURL + " alt=\"Card image cap\">\n" +
                     "  <div class=\"card-body\">\n" +
                     "    <h5 class=\"card-title\">" + res.name + "</h5>\n" +
                     "    <p class=\"card-text\">" + res.description + "</p>\n" +
