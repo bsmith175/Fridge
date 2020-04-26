@@ -20,15 +20,11 @@ public class MinimalRecipe extends CartesianPoint implements DistanceMetric {
 
   @Override
   public double getDistance(double[] target) {
-    double dotProduct = 0.0;
-    double normA = 0.0;
-    double normB = 0.0;
-    for (int i = 0; i < target.length; i++) {
-      dotProduct += super.getPosition()[i] * target[i];
-      normA += Math.pow(super.getPosition()[i], 2);
-      normB += Math.pow(target[i], 2);
+    double sum = 0.0;
+    for(int i=0;i<target.length;i++) {
+      sum = sum + Math.pow((target[i]-super.getPosition()[i]),2.0);
     }
-    return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+    return sum;
   }
 
   /**
