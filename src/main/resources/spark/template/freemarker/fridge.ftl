@@ -45,10 +45,10 @@
     <div class="container">
 
         <form name="fridge-form">
-            <div class="form-group ">
+            <div class="typeahead form-group">
 
-                <input type="text" class="form-control" id="field1" name="field1"
-                       placeholder="Ingredient" autocomplete="on"/>
+                <input type="text" class="form-control typeahead" id="field1" name="field1"
+                       placeholder="Ingredient" autocomplete="off"/>
                 <button id="b1" class="btn add-more" type="button">+</button>
             </div>
             <button type="submit" class="btn btn-outline-success ">Find Recipes</button>

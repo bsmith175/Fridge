@@ -34,7 +34,7 @@ public class GuiHandlers {
     private static IngredientSuggest suggest;
 
     public GuiHandlers() throws Exception {
-//        suggest = new IngredientSuggest();
+        suggest = new IngredientSuggest();
 //        String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
 //            ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
 //        AlgMain.setDb(new RecipeDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, false));
@@ -45,6 +45,8 @@ public class GuiHandlers {
         Command command = new RunKDAlg();
         Spark.get("/fridge", new FridgeHandler(), freeMarker);
         Spark.post("/recipe", new RecipeHandler());
+        Spark.post("/suggest", new ingredientSuggestHandler());
+
         Spark.post("/recipe-recommend", new RecipeSuggestHandler(command));
     }
     //Handles a user login. Takes user data from the Google User and adds to the database if possible.

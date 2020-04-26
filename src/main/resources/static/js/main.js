@@ -20,9 +20,10 @@ $(document).ready(() => {
         var addto = "#field" + next;
         var addRemove = "#field" + (next);
         next = next + 1;
-        var newIn = '<input  placeholder="Ingredient" class="form-control" id="field' + next + '" name="field' + next + '" type="text" autocomplete="on">';
+        var newIn = '<input  placeholder="Ingredient" class="typeahead form-control type" id="field' + next + '" name="field' + next + '" type="text" autocomplete="off">';
 
         var newInput = $(newIn);
+        createTypeahead(newInput)
         var removeBtn = '<button id="remove' + (next - 1) + '" class="btn btn-danger remove-me" >-</button></div><div id="field">';
         var removeButton = $(removeBtn);
         $(addto).after(newInput);
@@ -46,7 +47,7 @@ $(document).ready(() => {
         const postParameters = [];
         let elements = document.forms["fridge-form"].elements;
         for (i = 0; i < elements.length; i++) {
-            if (elements[i].value != ""){
+            if (elements[i].value != "") {
                 postParameters.push(elements[i].value);
 
             }
@@ -55,7 +56,7 @@ $(document).ready(() => {
         $('.like-button').click(function () {
             $(this).toggleClass('is-active');
         })
-        $.post("/recipe-recommend", $.param({text: postParameters }, true), response => {
+        $.post("/recipe-recommend", $.param({text: postParameters}, true), response => {
 
             const r = JSON.parse(response);
             //const text = JSON.parse(response)["text"];
@@ -65,7 +66,7 @@ $(document).ready(() => {
             var cards = 0;
             let heart_shape = "fa-heart-o";
             for (let res of r) {
-                if(favorites.includes(cards)){
+                if (favorites.includes(cards)) {
                     heart_shape = "fa-heart";
                 }
                 console.log(favorites.includes(cards));
@@ -73,7 +74,7 @@ $(document).ready(() => {
                     "<dv class=\"card card-body flex-fill\" style=\"width: 18rem;\">\n" +
                     "  <div class=\"d-flex flex-row-reverse\">\n" +
                     "<div>\n" +
-                    "  <i id="+cards+" class=\"heart fa "+ heart_shape + "\"></i>\n" +
+                    "  <i id=" + cards + " class=\"heart fa " + heart_shape + "\"></i>\n" +
                     "</div> </div>" +
                     "  <img class=\"card-img-top\" style = \"border: 1px green\"src=" + res.imageURL + " alt=\"Card image cap\">\n" +
                     "  <div class=\"card-body\">\n" +
@@ -110,7 +111,7 @@ $(document).ready(() => {
                     ingredients = ingredients + "<li>" + ing + "</li>"
                 }
 
-                for (let des of  JSON.parse(result.method)) {
+                for (let des of JSON.parse(result.method)) {
                     instructions = instructions + "<li>" + des + "</li>"
                 }
                 $('.modal-title').html("<h1>" + result.name + "</h1>")
@@ -124,7 +125,7 @@ $(document).ready(() => {
 
 
             })
-            $(".heart.fa").click(function(e) {
+            $(".heart.fa").click(function (e) {
                 const id = (e.target.id);
                 console.log(id);
                 const postParameters = {
@@ -132,14 +133,14 @@ $(document).ready(() => {
                     userId: ""
 
                 };
-                if ($(this).hasClass("fa-heart-o")){
+                if ($(this).hasClass("fa-heart-o")) {
                     console.log("saving")
                     //TODO: make a post request to the url to handle this request you set in your Main.java
                     $.post("/addFav", postParameters, response => {
                     });
                     favorites.concat(id)
                     //adding to saved
-                }else{
+                } else {
                     //removing from saved
                     console.log("Unsaving")
                     $.post("/remFav", postParameters, response => {
@@ -158,9 +159,20 @@ $(document).ready(() => {
             });
 
 
-
     });
-
+    function createTypeahead($els){
+        $els.typeahead({
+            source: function (query, process) {
+                return $.post('/suggest', {input: query}, function (data){
+                    data = $.parseJSON(data);
+                    console.log(data);
+                    return process(data);
+                });
+            }
+        });
+    }
+    createTypeahead($('typeahead'));
+    $('.type')
 
 
 });
