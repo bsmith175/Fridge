@@ -12,7 +12,7 @@ $(document).ready(() => {
     const suggestionList = $("#suggestions");
     const result_cards = $("#result-cards");
     const modal_title = $("#modal-title");
-    
+
 
     var next = 1;
     $(".add-more").click(function (e) {
@@ -20,7 +20,7 @@ $(document).ready(() => {
         var addto = "#field" + next;
         var addRemove = "#field" + (next);
         next = next + 1;
-        var newIn = '<input  placeholder="Ingredient" class="form-control" id="field' + next + '" name="field' + next + '" type="text">';
+        var newIn = '<input  placeholder="Ingredient" class="form-control" id="field' + next + '" name="field' + next + '" type="text" autocomplete="on">';
 
         var newInput = $(newIn);
         var removeBtn = '<button id="remove' + (next - 1) + '" class="btn btn-danger remove-me" >-</button></div><div id="field">';
