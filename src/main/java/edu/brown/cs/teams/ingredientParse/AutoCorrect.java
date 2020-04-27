@@ -23,7 +23,7 @@ import java.util.*;
 
             prefix = prefixIn;
             whitespace = whitespaceIn;
-            led = 1;
+            led = 0;
         }
 
         /**
@@ -95,19 +95,6 @@ import java.util.*;
                 }
 
             return suggestions;
-        }
-
-
-        private class ledComparator implements Comparator<String> {
-            private String dest;
-
-            public void setDest(String s) {
-                dest = s;
-            }
-            @Override
-            public int compare(String o1, String o2) {
-                return Trie.getLedDistance(o1, dest) - Trie.getLedDistance(o2, dest);
-            }
         }
 
 }

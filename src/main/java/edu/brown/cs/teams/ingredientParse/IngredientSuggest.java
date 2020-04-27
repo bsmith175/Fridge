@@ -34,18 +34,25 @@ public class IngredientSuggest {
         }
         String[] tokens = input.split(" ");
         List<String> correctedTokens = new ArrayList<String>();
-        for (String token : tokens) {
-            correctedTokens.add(ac.suggest(token).peek());
-        }
-
-        if (correctedTokens.size() == 0) {
-            return null;
-        }
         List<String> ret = new ArrayList();
 
-        PriorityQueue<Pair<String, Integer>> pq = StringMatch.findClosest(correctedTokens, termToIngredients);
-        while (!pq.isEmpty()) {
-            ret.add(pq.poll().getFirst());
+        if (tokens.length == 1) {
+            PriorityQueue<String> output = findAll(ac.suggest(tokens[0]), tokens[0]);
+            while (!output.isEmpty()) {
+                ret.add(output.poll());
+            }
+        } else {
+            for (String token : tokens) {
+                correctedTokens.add(ac.suggest(token).peek());
+            }
+
+            if (correctedTokens.size() == 0) {
+                return null;
+            }
+            PriorityQueue<Pair<String, Integer>> pq = findClosest(correctedTokens);
+            while (!pq.isEmpty()) {
+                ret.add(pq.poll().getFirst());
+            }
         }
 
         return ret;
@@ -77,4 +84,57 @@ public class IngredientSuggest {
         }
         return ret;
     }
-}
+
+    private PriorityQueue<Pair<String, Integer>> findClosest(List<String> tokens) {
+        PriorityQueue<Pair<String, Integer>> ingredientCount = new PriorityQueue<>(new IngredientPairComparator());
+
+        HashMap<String, Integer> ingredientCountMap = new HashMap<String, Integer>();
+
+        for (String token: tokens) {
+            Set<String> ingredients = termToIngredients.get(token);
+            if (ingredients != null) {
+                for (String ingredient : ingredients) {
+                    Integer count = ingredientCountMap.get(ingredient);
+                    if (count == null) {
+                        count = 0;
+                    }
+                    count++;
+                    ingredientCountMap.put(ingredient, count);
+                }
+            }
+        }
+
+        ingredientCountMap.forEach((k, v) -> ingredientCount.add(new Pair<String, Integer>(k, v)));
+        return ingredientCount;
+    }
+
+
+    private PriorityQueue<String> findAll(PriorityQueue<String> tokens, String input) {
+        String cur = tokens.poll();
+        ledComparator lc = new ledComparator();
+        lc.setDest(input);
+        PriorityQueue<String> ret = new PriorityQueue<>(lc);
+        while (cur != null) {
+            Set<String> ingredients = termToIngredients.get(cur);
+            if (ingredients != null) {
+                ret.addAll(ingredients);
+            }
+            cur = tokens.poll();
+        }
+        return ret;
+    }
+
+    private static class IngredientPairComparator implements Comparator<Pair<String, Integer>> {
+
+        @Override
+        public int compare(Pair<String, Integer> o1, Pair<String, Integer> o2) {
+            int indicator = o2.getSecond() - o1.getSecond();
+            if (indicator == 0) {
+                return o1.getFirst().length() - o2.getFirst().length();
+            }
+            return indicator;
+        }
+    }
+
+    }
+
