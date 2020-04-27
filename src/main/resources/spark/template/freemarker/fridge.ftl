@@ -36,24 +36,36 @@
     </div>
     <div id="recipe-modal">
     </div>
-    <div class="container">
-        <div class="d-flex justify-content-center ">
-            <h1>Time to Cook!</h1>
+    <div class="col">
+    <div class=" rounded profile d-flex flex-row justify-content-center">
+        <div class="flex-col justify-content-center">
 
+            <img class="profile-pic rounded-circle"
+                 src="https://png.pngtree.com/png-vector/20190711/ourlarge/pngtree-cook-icon-for-your-project-png-image_1541448.jpg"
+                 alt="Card image cap" height="160" width="160">
+            <h3 class="rounded welcome"> Welcome Ben Smith ! </h3>
         </div>
     </div>
-    <div class="container">
 
-        <form name="fridge-form">
-            <div class="typeahead form-group">
 
-                <input type="text" class="form-control typeahead" id="field1" name="field1"
-                       placeholder="Ingredient" autocomplete="off"/>
-                <button id="b1" class="btn add-more" type="button">+</button>
+    <div class="food-form rounded">
+        <div class="container">
+            <div class="d-flex justify-content-center ">
+                <h1>Time to Cook!</h1>
+
             </div>
-            <button type="submit" class="btn btn-outline-success ">Find Recipes</button>
-        </form>
+        </div>
+        <div class="container">
 
+            <form name="fridge-form">
+                <div class="typeahead form-group">
+                    <input type="text" class="form-control typeahead" id="field1" name="field1"
+                           placeholder="Ingredient" autocomplete="off"/>
+                    <button id="b1" class="btn add-more" type="button">+</button>
+                </div>
+                <button type="submit" class="btn btn-outline-success find-recipe ">Find Recipes</button>
+            </form>
+        </div>
 
     </div>
     <div><p></p></div>

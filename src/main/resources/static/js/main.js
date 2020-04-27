@@ -15,6 +15,7 @@ $(document).ready(() => {
     getFavs();
 
     function getFavs() {
+        favorites = [];
         $.post("/favorites", {"uid": -1}, response =>{
             const r = JSON.parse(response);
             for (let res of r){
@@ -35,7 +36,7 @@ $(document).ready(() => {
 
         var newInput = $(newIn);
         createTypeahead(newInput)
-        var removeBtn = '<button id="remove' + (next - 1) + '" class="btn btn-danger remove-me" >-</button></div><div id="field">';
+        var removeBtn = '<button id="remove' + (next - 1) + '" class="btn remove-me" >-</button></div><div id="field">';
         var removeButton = $(removeBtn);
         $(addto).after(newInput);
         $(addRemove).after(removeButton);
@@ -159,23 +160,8 @@ $(document).ready(() => {
                     console.log(r);
 
                 });
-                // if ($(this).hasClass("fa-heart-o")) {
-                //     console.log("saving")
-                //     //TODO: make a post request to the url to handle this request you set in your Main.java
-                //     $.post("/addFav", postParameters, response => {
-                //     });
-                //     favorites.concat(id)
-                //     //adding to saved
-                // } else {
-                //     //removing from saved
-                //     console.log("Unsaving")
-                //     $.post("/remFav", postParameters, response => {
-                //     });
-                //     favorites.e
-                //
-                //
-                // }
                 $(this).toggleClass("fa-heart fa-heart-o");
+                getFavs();
             });
 
         })

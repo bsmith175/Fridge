@@ -14,12 +14,13 @@
     <link rel="stylesheet" href="css/html5bp.css">
     <link rel="stylesheet" href="css/main.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Fredericka+the+Great&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Abel&display=swap" rel="stylesheet">
 
 </head>
-<body style="background-color: #fffeee">
+<body style="background-color: #cee5f2">
 <nav class="navbar navbar-expand-lg navbar-dark ">
-    <a class="navbar-brand" href="#">
-        What's In My Fridge
+    <a class="navbar-brand" href="/fridge">
+        What's In My Fridge?
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -28,7 +29,7 @@
         <div class="navbar-nav">
             <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
             <div class="dropdown-divider"></div>
-            <a class="nav-item nav-link" href="#">Profile</a>
+            <a class="nav-item nav-link" href="/home">Profile</a>
             <div class="dropdown-divider"></div>
             <a class="nav-item nav-link" href="#">Favorites</a>
             <div class="dropdown-divider"></div>

@@ -42,6 +42,8 @@ public class GuiHandlers {
         // Specify the algorithm to run here!!
         Command command = new RunKDAlg();
         Spark.get("/fridge", new FridgeHandler(), freeMarker);
+        Spark.get("/home", new HomeHandler(), freeMarker);
+
         Spark.post("/recipe", new RecipeHandler());
         Spark.post("/suggest", new ingredientSuggestHandler());
 
@@ -168,6 +170,14 @@ public class GuiHandlers {
             Map<String, Object> variables = ImmutableMap.of("title",
                     "Fridge: Whats in Your Fridge", "message", "");
             return new ModelAndView(variables, "fridge.ftl");
+        }
+    }
+    private static class HomeHandler implements TemplateViewRoute {
+        @Override
+        public ModelAndView handle(Request req, Response res) {
+            Map<String, Object> variables = ImmutableMap.of("title",
+                    "Fridge: Whats in Your Fridge", "message", "");
+            return new ModelAndView(variables, "home.ftl");
         }
     }
 
