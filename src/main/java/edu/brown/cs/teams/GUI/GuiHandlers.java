@@ -40,7 +40,7 @@ public class GuiHandlers {
     }
     public void setHandlers(FreeMarkerEngine freeMarker) {
         // Specify the algorithm to run here!!
-        Command command = new RunKDAlg();
+        Command command = new RunSuperiorAlg();
         Spark.get("/fridge", new FridgeHandler(), freeMarker);
         Spark.post("/recipe", new RecipeHandler());
         Spark.post("/suggest", new ingredientSuggestHandler());
