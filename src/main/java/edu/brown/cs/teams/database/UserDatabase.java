@@ -174,10 +174,9 @@ public class UserDatabase {
      * @throws SQLException - if exception occurs while updating database
      */
     public void removeFavorite(int rid, String uid) throws SQLException {
-        PreparedStatement prep =  conn.prepareStatement("DELETE FROM favorite WHERE uid=? AND rid=?");
+        PreparedStatement prep =  conn.prepareStatement("DELETE FROM favorite WHERE uid=? AND recipeid=?");
         prep.setString(1, uid);
         prep.setInt(2, rid);
-        prep.addBatch();
         prep.executeUpdate();
     }
 
