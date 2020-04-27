@@ -166,5 +166,20 @@ public class UserDatabase {
         return true;
     }
 
+    /**
+     * Attemps to remove a recipe to the user's favorites list.
+     * @param rid - ID of recipe
+     * @param uid - ID of user
+     *
+     * @throws SQLException - if exception occurs while updating database
+     */
+    public void removeFavorite(int rid, String uid) throws SQLException {
+        PreparedStatement prep =  conn.prepareStatement("DELETE FROM favorite WHERE uid=? AND rid=?");
+        prep.setString(1, uid);
+        prep.setInt(2, rid);
+        prep.addBatch();
+        prep.executeUpdate();
+    }
+
 
 }

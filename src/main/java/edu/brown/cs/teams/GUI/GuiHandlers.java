@@ -120,6 +120,7 @@ public class GuiHandlers {
                 if (AlgMain.getUserDb().addToFavorites(rid, uid)) {
                     responseJSON.addProperty("added", true);
                 } else {
+                    AlgMain.getUserDb().
                     responseJSON.addProperty("added", false);
                 }
             } catch (SQLException throwable) {
