@@ -3,8 +3,7 @@
  * Front end logic for providing real time autocorrect suggestions.
  */
 
-const favorites = [];
-favorites.concat(1);
+let favorites = [];
 $(document).ready(() => {
 
     //TODO: get the jquery selectors for the list where the suggestions should go and the input box where we're typing
@@ -12,6 +11,18 @@ $(document).ready(() => {
     const suggestionList = $("#suggestions");
     const result_cards = $("#result-cards");
     const modal_title = $("#modal-title");
+
+    getFavs();
+
+    function getFavs() {
+        $.post("/favorites", {"uid": -1}, response =>{
+            const r = JSON.parse(response);
+            for (let res of r){
+                favorites.push(res);
+            }
+            console.log(favorites);
+        });
+    }
 
 
     var next = 1;
@@ -64,12 +75,19 @@ $(document).ready(() => {
             console.log("post");
 
             var cards = 0;
-            let heart_shape = "fa-heart-o";
             for (let res of r) {
-                if (favorites.includes(cards)) {
-                    heart_shape = "fa-heart";
+                let heart_shape = "fa-heart-o";
+
+                let count = 0
+                for (let index = 0; index < favorites.length; index++){
+                    console.log(favorites[index].id)
+
+                    if (favorites[index].id == res.id) {
+                        heart_shape = "fa-heart";
+                        console.log("equal");
+
+                    }
                 }
-                console.log(favorites.includes(cards));
                 const card = "<div class=\"col-sm d-flex\">\n" +
                     "<dv class=\"card card-body flex-fill\" style=\"width: 18rem;\">\n" +
                     "  <div class=\"d-flex flex-row-reverse\">\n" +
@@ -126,29 +144,37 @@ $(document).ready(() => {
 
             })
             $(".heart.fa").click(function (e) {
-                const id = (e.target.id);
+                const field_id = (e.target.id);
+                const recipe = r[field_id];
+                const id = recipe.id;
+
                 console.log(id);
                 const postParameters = {
-                    recipeId: id,
-                    userId: ""
-
+                    recipe_id: id,
+                    user_id: "-1"
                 };
-                if ($(this).hasClass("fa-heart-o")) {
-                    console.log("saving")
-                    //TODO: make a post request to the url to handle this request you set in your Main.java
-                    $.post("/addFav", postParameters, response => {
-                    });
-                    favorites.concat(id)
-                    //adding to saved
-                } else {
-                    //removing from saved
-                    console.log("Unsaving")
-                    $.post("/remFav", postParameters, response => {
-                    });
-                    favorites.e
 
+                $.post("/heart", postParameters, response =>{
+                    const r = JSON.parse(response);
+                    console.log(r);
 
-                }
+                });
+                // if ($(this).hasClass("fa-heart-o")) {
+                //     console.log("saving")
+                //     //TODO: make a post request to the url to handle this request you set in your Main.java
+                //     $.post("/addFav", postParameters, response => {
+                //     });
+                //     favorites.concat(id)
+                //     //adding to saved
+                // } else {
+                //     //removing from saved
+                //     console.log("Unsaving")
+                //     $.post("/remFav", postParameters, response => {
+                //     });
+                //     favorites.e
+                //
+                //
+                // }
                 $(this).toggleClass("fa-heart fa-heart-o");
             });
 
