@@ -63,7 +63,7 @@ $(document).ready(() => {
         $.post("/recipe-recommend", $.param({text: postParameters}, true), response => {
             //parse response
             const r = JSON.parse(response);
-            make_cards(result_cards, r, false);
+            make_cards(result_cards, r);
 
 
         });
@@ -101,12 +101,12 @@ $(document).ready(() => {
     function profilePage() {
         console.log("profile");
         fav.empty();
-        make_cards(fav, favorites, false);
+        make_cards(fav, favorites);
 
     }
 
 
-    function make_cards(e, r, profile) {
+    function make_cards(e, r) {
         console.log(r)
 
         let cards = 0; //html id for each recipe card

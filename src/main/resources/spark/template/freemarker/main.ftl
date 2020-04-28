@@ -22,7 +22,7 @@
 </head>
 <body style="background-color: #cee5f2">
 <nav class="navbar navbar-expand-lg navbar-dark ">
-    <a class="navbar-brand" href="/fridge">
+    <a class="navbar-brand" href="/">
         What's In My Fridge?
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
@@ -31,7 +31,7 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-            <a class="nav-item nav-link active" href="/fridge">Home <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
             <div class="dropdown-divider"></div>
             <a class="nav-item nav-link" href="/home">Profile</a>
             <a class="nav-item nav-link" onclick="signOut();">Sign out</a>
