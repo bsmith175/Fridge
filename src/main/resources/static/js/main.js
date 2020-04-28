@@ -3,7 +3,17 @@
  * Front end logic for providing real time autocorrect suggestions.
  */
 
-let favorites = [];
+var favorites = [];
+
+function getFavs() {
+    $.post("/favorites", {"uid": -1}, response => {
+        const r = JSON.parse(response);
+        for (let res of r) {
+            favorites.push(res);
+        }
+    });
+}
+
 $(document).ready(() => {
 
     //TODO: get the jquery selectors for the list where the suggestions should go and the input box where we're typing
@@ -14,30 +24,19 @@ $(document).ready(() => {
 
     getFavs();
 
-    function getFavs() {
-        favorites = [];
-        $.post("/favorites", {"uid": -1}, response =>{
-            const r = JSON.parse(response);
-            for (let res of r){
-                favorites.push(res);
-            }
-            console.log(favorites);
-        });
-    }
-
 
     var next = 1;
     $(".add-more").click(function (e) {
         e.preventDefault();
-        var addto = "#field" + next;
-        var addRemove = "#field" + (next);
+        let addto = "#field" + next;
+        let addRemove = "#field" + (next);
         next = next + 1;
-        var newIn = '<input  placeholder="Ingredient" class="typeahead form-control type" id="field' + next + '" name="field' + next + '" type="text" autocomplete="off">';
+        let newIn = '<input  placeholder="Ingredient" class="typeahead form-control type" id="field' + next + '" name="field' + next + '" type="text" autocomplete="off">';
 
-        var newInput = $(newIn);
+        let newInput = $(newIn);
         createTypeahead(newInput)
-        var removeBtn = '<button id="remove' + (next - 1) + '" class="btn remove-me" >-</button></div><div id="field">';
-        var removeButton = $(removeBtn);
+        let removeBtn = '<button id="remove' + (next - 1) + '" class="btn remove-me" >-</button></div><div id="field">';
+        let removeButton = $(removeBtn);
         $(addto).after(newInput);
         $(addRemove).after(removeButton);
         $("#field" + next).attr('data-source', $(addto).attr('data-source'));
@@ -45,8 +44,8 @@ $(document).ready(() => {
 
         $('.remove-me').click(function (e) {
             e.preventDefault();
-            var fieldNum = this.id.charAt(this.id.length - 1);
-            var fieldID = "#field" + fieldNum;
+            let fieldNum = this.id.charAt(this.id.length - 1);
+            let fieldID = "#field" + fieldNum;
             $(this).remove();
             $(fieldID).remove();
         });
@@ -75,20 +74,25 @@ $(document).ready(() => {
             console.log(r[0]);
             console.log("post");
 
-            var cards = 0;
+            let cards = 0;
+
             for (let res of r) {
+
+
                 let heart_shape = "fa-heart-o";
 
-                let count = 0
-                for (let index = 0; index < favorites.length; index++){
-                    console.log(favorites[index].id)
-
+                let length = favorites.length;
+                // console.log(length);
+                for (let index = 0; index < length; index++) {
+                    // console.log(favorites[index].id)
                     if (favorites[index].id == res.id) {
                         heart_shape = "fa-heart";
                         console.log("equal");
 
                     }
                 }
+                // console.log("end of for loop")
+
                 const card = "<div class=\"col-sm d-flex\">\n" +
                     "<dv class=\"card card-body flex-fill\" style=\"width: 18rem;\">\n" +
                     "  <div class=\"d-flex flex-row-reverse\">\n" +
@@ -155,27 +159,30 @@ $(document).ready(() => {
                     user_id: "-1"
                 };
 
-                $.post("/heart", postParameters, response =>{
+                $.post("/heart", postParameters, response => {
                     const r = JSON.parse(response);
                     console.log(r);
+                    favorites.length = 0;
+                    getFavs();
+                    console.log(favorites);
 
+                    $(this).toggleClass("fa-heart fa-heart-o");
                 });
-                $(this).toggleClass("fa-heart fa-heart-o");
-                getFavs();
-            });
 
-        })
-            .error(err => {
-                console.log("in the .error callback");
-                console.log(err);
-            });
+            })
+                .error(err => {
+                    console.log("in the .error callback");
+                    console.log(err);
+                });
 
 
+        });
     });
-    function createTypeahead($els){
+
+    function createTypeahead($els) {
         $els.typeahead({
             source: function (query, process) {
-                return $.post('/suggest', {input: query}, function (data){
+                return $.post('/suggest', {input: query}, function (data) {
                     data = $.parseJSON(data);
                     console.log(data);
                     return process(data);
@@ -183,9 +190,10 @@ $(document).ready(() => {
             }
         });
     }
+
     $('.typeahead').typeahead({
         source: function (query, process) {
-            return $.post('/suggest', {input: query}, function (data){
+            return $.post('/suggest', {input: query}, function (data) {
                 data = $.parseJSON(data);
                 console.log(data);
                 return process(data);
