@@ -52,13 +52,13 @@
 
                 </div>
                 <h4>Ingredients</h4>
-                <ol class="ingredients">
-
-                </ol>
-                <h4>Instructions</h4>
-                <ul class="instructions">
+                <ul class="ingredients">
 
                 </ul>
+                <h4>Instructions</h4>
+                <ol class="instructions">
+
+                </ol>
                 <h4>CookTime</h4>
                 <div class="cook-time">
 

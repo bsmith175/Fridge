@@ -16,13 +16,13 @@ $(document).ready(() => {
     favorites.length = 0;
     getFavs();
 
-    // $('#myTab a[href="#favorites"]').on('click', function (e) {
-    //     e.preventDefault()
-    //     profilePage();
-    //     $(this).tab('show')
-    // })
-    // $('#myTab a[href="#excluded"]').tab('show');
-    // $('#myTab a[href="#pantry"]').tab('show');
+    $('#myTab a[href="#favorites"]').on('click', function (e) {
+        e.preventDefault()
+        profilePage();
+        $(this).tab('show')
+    })
+    $('#myTab a[href="#excluded"]').tab('show');
+    $('#myTab a[href="#pantry"]').tab('show');
 
 
 
@@ -115,7 +115,7 @@ $(document).ready(() => {
                 favorites.push(res);
             }
             console.log(favorites);
-            //profilePage();
+            profilePage();
 
         });
     }
