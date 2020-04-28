@@ -19,7 +19,8 @@ import java.util.List;
 
 public class RunKDAlg implements Command {
   @Override
-  public String runCommand(String[] command) throws CommandException {
+  public String runCommand(String[] command, boolean dairy,
+                           boolean meat, boolean nuts) throws CommandException {
     if (command.length < 3) {
       throw new CommandException("ERROR: Must enter in at least two ingredients");
     }
@@ -46,7 +47,8 @@ public class RunKDAlg implements Command {
     }
   }
   @Override
-  public List<JsonObject> runForGui(String[] command) throws CommandException {
+  public List<JsonObject> runForGui(String[] command, boolean dairy,
+                                    boolean meat, boolean nuts) throws CommandException {
     try {
       Gson gson = new Gson();
       FileReader reader = new FileReader("data/ingredient_vectors.json");

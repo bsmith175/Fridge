@@ -40,7 +40,7 @@ public class GuiHandlers {
     }
     public void setHandlers(FreeMarkerEngine freeMarker) {
         // Specify the algorithm to run here!!
-        Command command = new RunKDAlg();
+        Command command = new RunSuperiorAlg();
         Spark.get("/fridge", new FridgeHandler(), freeMarker);
         Spark.get("/home", new HomeHandler(), freeMarker);
 
@@ -159,7 +159,8 @@ public class GuiHandlers {
         public Object handle(Request request, Response response) throws CommandException {
             QueryParamsMap qm = request.queryMap();
             String[] ingredients = qm.get("text").values();
-            List<JsonObject> results = command.runForGui(ingredients);
+            List<JsonObject> results = command.runForGui(ingredients, false,
+                    false, false);
             String result = GSON.toJson(results);
             return result;
         }

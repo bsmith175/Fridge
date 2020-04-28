@@ -46,7 +46,7 @@ public class REPL {
         if (input.length > 0) {
           Command command = this.commands.get(input[0]);
           if (command != null) {
-            String output = command.runCommand(input);
+            String output = command.runCommand(input, false, false, false);
             if (!output.equals("")) {
               System.out.println(output);
             }
