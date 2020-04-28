@@ -6,13 +6,15 @@
 //user profile put in global scope
 let userProfile = undefined;
 let favorites = [];
+let pantryItems = ["salt", "pepper", "oil", "butter", "honey","soy sauce", "cumin","vanilla","thyme","flour"];
+
 
 $(document).ready(() => {
 
     const result_cards = $("#result-cards");
     const modal_title = $("#modal-title");
     const fav = $("#display-favs");
-    const pantry = $("#pantry");
+    const pantry = $("#pantry-item");
     const excluded = $("#excluded");
     console.log($(".add-more"));
     favorites.length = 0;
@@ -53,6 +55,7 @@ $(document).ready(() => {
         //add inputs to postParameters
         const postParameters = [];
         let elements = document.forms["fridge-form"].elements;
+        console.log(elements);
         for (let i = 0; i < elements.length; i++) {
             if (elements[i].value != "") {
                 postParameters.push(elements[i].value);
@@ -91,8 +94,25 @@ $(document).ready(() => {
         profilePage();
         $(this).tab('show')
     })
+
+    $('#myTab a[href="#pantry"]').on('click', function (e) {
+        pantry.empty();
+        console.log(pantryItems);
+        e.preventDefault()
+        for (let i = 0; i < pantryItems.length; i++) {
+
+            const s = "<button type=\"button\" class=\"btn btn-lg btn-outline-info\">\n" + pantryItems[i]
+                + "<span class=\"badge badge-light\">x</span>\n"
+                + "                        </button>";
+            console.log(s);
+
+            pantry.append(s);
+        }
+        console.log(pantry);
+
+        $(this).tab('show')
+    })
     $('#myTab a[href="#excluded"]').tab('show');
-    $('#myTab a[href="#pantry"]').tab('show');
 
 
     function createTypeahead($els) {
