@@ -10,20 +10,26 @@
                 <h3 class="welcome rounded"> Welcome Ben Smith ! </h3>
             </div>
         </div>
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link active" href="#">Active</a>
+        <ul class="nav nav-tabs"  id="myTab" role="tablist">
+            <li class="nav-item ">
+                <a class="nav-link active" data-toggle="tab" href="#favorites" role="tab" aria-controls="home" aria-selected="true">favorites</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
+                <a class="nav-link" data-toggle="tab" href="#pantry" role="tab" aria-controls="home" aria-selected="false">Pantry</a>
+
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link disabled" href="#">Disabled</a>
+                <a class="nav-link" data-toggle="tab" href="#excluded" role="tab" aria-controls="home" aria-selected="false">Excluded</a>
+
             </li>
         </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="fav" role="tabpanel" aria-labelledby="favorites-tab">
+                <div class="row"  id="display-favs"> </div>
+            </div>
+            <div class="tab-pane fade show active" id="pantry" role="tabpanel" aria-labelledby="profile-tab"></div>
+            <div class="tab-pane fade show active" id="excluded" role="tabpanel" aria-labelledby="contact-tab"></div>
+        </div>
     </div>
 
 
