@@ -10,10 +10,104 @@ $(document).ready(() => {
     const result_cards = $("#result-cards");
     const modal_title = $("#modal-title");
     const fav = $("#display-favs");
-    console.log(result_cards);
-    console.log(fav);
     const pantry = $("#pantry");
     const excluded = $("#excluded");
+    console.log($(".add-more"));
+    favorites.length = 0;
+    getFavs();
+
+    // $('#myTab a[href="#favorites"]').on('click', function (e) {
+    //     e.preventDefault()
+    //     profilePage();
+    //     $(this).tab('show')
+    // })
+    // $('#myTab a[href="#excluded"]').tab('show');
+    // $('#myTab a[href="#pantry"]').tab('show');
+
+
+
+    var next = 1;
+    $(".add-more").click(function (e) {
+        console.log("add")
+        e.preventDefault();
+        var addto = "#field" + next;
+        var addRemove = "#field" + (next);
+        next = next + 1;
+        var newIn = '<input  placeholder="Ingredient" class="typeahead form-control type" id="field' + next + '" name="field' + next + '" type="text" autocomplete="off">';
+        var newInput = $(newIn);
+        createTypeahead(newInput);
+
+        var removeBtn = '<button id="remove' + (next - 1) + '" class="btn remove-me" >-</button></div><div id="field">';
+        var removeButton = $(removeBtn);
+        $(addto).after(newInput);
+        $(addRemove).after(removeButton);
+        $("#field" + next).attr('data-source', $(addto).attr('data-source'));
+        $("#count").val(next);
+
+        $('.remove-me').click(function (e) {
+            console.log("remove")
+            e.preventDefault();
+            var fieldNum = this.id.charAt(this.id.length - 1);
+            var fieldID = "#field" + fieldNum;
+            $(this).remove();
+            $(fieldID).remove();
+        });
+    });
+
+    //Find Recipes Button clicked
+    $(".find-recipe").click(function (e) {
+        console.log("find recipe")
+
+        result_cards.empty();
+        e.preventDefault();
+        //add inputs to postParameters
+        const postParameters = [];
+        let elements = document.forms["fridge-form"].elements;
+        for (let i = 0; i < elements.length; i++) {
+            if (elements[i].value != "") {
+                postParameters.push(elements[i].value);
+
+            }
+        }
+        console.log(postParameters)
+        $.post("/recipe-recommend", $.param({text: postParameters}, true), response => {
+            //parse response
+            const r = JSON.parse(response);
+            make_cards(result_cards, r, false);
+
+
+        });
+
+    });
+
+    function createTypeahead($els) {
+        $els.typeahead({
+            source: function (query, process) {
+                return $.post('/suggest', {input: query}, function (data) {
+                    data = JSON.parse(data);
+                    console.log(data);
+                    return process(data);
+                });
+            }
+        });
+    }
+
+    $('.typeahead').typeahead({
+        source: function (query, process) {
+            console.log("typeahead");
+
+            return $.post('/suggest', {input: query}, function (data) {
+                data = JSON.parse(data);
+                console.log(data);
+                return process(data);
+            });
+        }
+    });
+    createTypeahead($('typeahead'));
+    $('.type')
+
+
+
     function getFavs() {
         $.post("/favorites", {"uid": -1}, response => {
             const r = JSON.parse(response);
@@ -21,44 +115,20 @@ $(document).ready(() => {
                 favorites.push(res);
             }
             console.log(favorites);
-            profilePage();
+            //profilePage();
 
         });
-
     }
-
-
-
-    favorites.length = 0;
-    getFavs();
-    //TODO: get the jquery selectors for the list where the suggestions should go and the input box where we're typing
-    $('#myTab a[href="#favorites"]').on('click', function (e) {
-        e.preventDefault()
-        profilePage();
-        $(this).tab('show')
-    })
-    // $('#myTab a[href="#favorites"]').tab('show');
-
-    $('#myTab a[href="#excluded"]').tab('show');
-   $('#myTab a[href="#pantry"]').tab('show');
-
 
     function profilePage() {
         console.log("profile");
-        console.log(favorites);
         fav.empty();
         make_cards(fav, favorites, false);
-        console.log(fav);
 
     }
 
 
     function make_cards(e, r, profile) {
-        if (profile == true){
-            r = favorites
-            console.log(JSON.stringify(r));
-        }
-
         console.log(r)
 
         let cards = 0; //html id for each recipe card
@@ -66,7 +136,6 @@ $(document).ready(() => {
             const res = r[i];
             let heart_shape = "fa-heart-o";
             let length = favorites.length;
-            console.log(r)
 
             for (let index = 0; index < length; index++) {
                 if (favorites[index].id == res.id) {
@@ -88,10 +157,9 @@ $(document).ready(() => {
                 "    <button id=" + cards + " type=\"button\" class=\"btn btn-outline-success openBtn\" data-toggle=\"modal\" data-target=\".bd-example-modal-lg\">View Recipe</button>\n" +
                 "  </div>\n" +
                 "  </div>\n" +
-                "</div>"
+                "</div>";
             //add card to result_card selector.
             e.append(card);
-            console.log(e);
             cards = cards + 1;
         }
 
@@ -123,7 +191,7 @@ $(document).ready(() => {
             $('.cook-time').html("<img src=\"data/recipe-clock.png\" alt=\"Flowers in Chania\">\n")
 
 
-        })
+        });
         //like button
         $(".heart.fa").click(function (e) {
             //get recipe that was liked
@@ -154,81 +222,6 @@ $(document).ready(() => {
             });
 
     }
-
-    var next = 1;
-    $(".add-more").click(function (e) {
-        e.preventDefault();
-        let addto = "#field" + next;
-        let addRemove = "#field" + (next);
-        next = next + 1;
-        let newIn = '<input  placeholder="Ingredient" class="typeahead form-control type" id="field' + next + '" name="field' + next + '" type="text" autocomplete="off">';
-
-        let newInput = $(newIn);
-        createTypeahead(newInput)
-        let removeBtn = '<button id="remove' + (next - 1) + '" class="btn remove-me" >-</button></div><div id="field">';
-        let removeButton = $(removeBtn);
-        $(addto).after(newInput);
-        $(addRemove).after(removeButton);
-        $("#field" + next).attr('data-source', $(addto).attr('data-source'));
-        $("#count").val(next);
-
-        $('.remove-me').click(function (e) {
-            e.preventDefault();
-            let fieldNum = this.id.charAt(this.id.length - 1);
-            let fieldID = "#field" + fieldNum;
-            $(this).remove();
-            $(fieldID).remove();
-        });
-    });
-
-    //Find Recipes Button clicked
-    $(".btn-outline-success").click(function (e) {
-        profilePage();
-
-        result_cards.empty();
-        e.preventDefault();
-        //add inputs to postParameters
-        const postParameters = [];
-        let elements = document.forms["fridge-form"].elements;
-        for (let i = 0; i < elements.length; i++) {
-            if (elements[i].value != "") {
-                postParameters.push(elements[i].value);
-
-            }
-        }
-        $.post("/recipe-recommend", $.param({text: postParameters}, true), response => {
-            //parse response
-            const r = JSON.parse(response);
-            make_cards(result_cards, r, false);
-
-
-        });
-
-    });
-
-    function createTypeahead($els) {
-        $els.typeahead({
-            source: function (query, process) {
-                return $.post('/suggest', {input: query}, function (data) {
-                    data = $.parseJSON(data);
-                    console.log(data);
-                    return process(data);
-                });
-            }
-        });
-    }
-
-    $('.typeahead').typeahead({
-        source: function (query, process) {
-            return $.post('/suggest', {input: query}, function (data) {
-                data = $.parseJSON(data);
-                console.log(data);
-                return process(data);
-            });
-        }
-    });
-    createTypeahead($('typeahead'));
-    $('.type')
 
 
 });

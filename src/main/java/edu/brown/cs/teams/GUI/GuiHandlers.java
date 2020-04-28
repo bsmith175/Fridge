@@ -50,7 +50,6 @@ public class GuiHandlers {
         Spark.post("/suggest", new ingredientSuggestHandler());
 
         Spark.post("/recipe-recommend", new RecipeSuggestHandler(command));
-        Spark.post("/ingredient-suggest", new ingredientSuggestHandler());
         Spark.post("/favorites", new favoritesPageHandler());
         Spark.post("/heart", new favoriteButtonHandler());
         Spark.post("/login", new userLoginHandler());

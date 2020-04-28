@@ -1,6 +1,4 @@
 <#assign content>
-    </div>
-
 
 
     <div class="food-form rounded">
