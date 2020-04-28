@@ -159,6 +159,9 @@ public class GuiHandlers {
         public Object handle(Request request, Response response) throws CommandException {
             QueryParamsMap qm = request.queryMap();
             String[] ingredients = qm.get("text").values();
+            for(String i : ingredients){
+                System.out.println(i);
+            }
             List<JsonObject> results = command.runForGui(ingredients);
             String result = GSON.toJson(results);
             return result;
