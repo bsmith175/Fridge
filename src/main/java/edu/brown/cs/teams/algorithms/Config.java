@@ -1,30 +1,58 @@
 package edu.brown.cs.teams.algorithms;
 
 import edu.brown.cs.teams.database.RecipeDatabase;
-import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.recipe.Ingredient;
 import edu.brown.cs.teams.recipe.Recipe;
-import edu.brown.cs.teams.recipe.RecipeDistanceComparator;
-
 import java.sql.SQLException;
 import java.util.*;
-
 import com.google.gson.JsonObject;
 
 public final class Config {
 
-  private static int embedLength = 0;
-  private Map<String, double[]> recToVec = new HashMap<>();
   private static List<Recipe> fullRecipes =
           new ArrayList<>();
   private static RecipeDatabase db;
 
-  public Config() throws SQLException {
+  private static String nuts =
+          "(cashew|pistachio|pinyon|almond|pecan)";
+
+  private static String meats = "(bear|beef|buffalo|bison|calf|caribou" +
+          "|goat|ham|horse|kangaroo|lamb|marrow|moose" +
+          "|mutton|opossum|pork|bacon|rabbit|snake|squirrrel|tripe|" +
+          "turtle|veal|venison|prosciutto|cornish|duck" +
+          "|goose|grouse|ostrich|partridge|pheasant|quail|squab" +
+          "|turkey|sausage|chicken|rib)(?!((\\s*)(chees|milk|egg)))";
+
+  private static String dairy = "(milk|whey|cheese|yogurt|paneer|(\\s+)cream)";
+
+  public Config() {
   }
 
   public static void buildRecList() throws SQLException {
     fullRecipes.addAll(db.getFullRecipes("data/ingredient_vectors" +
             ".json"));
+  }
+
+  /**
+   * method to get nuts list string
+   * @return list of nuts in a string
+   */
+  public static String getNuts(){
+    return nuts;
+  }
+  /**
+   * method to get meat list string.
+   * @return meat list string
+   */
+  public static String getMeats(){
+    return meats;
+  }
+  /**
+   * method to get dairy list string.
+   * @return dairy list string
+   */
+  public static String getDairy(){
+    return dairy;
   }
 
 
@@ -36,8 +64,9 @@ public final class Config {
   /**
    * Gives the most likely candidate to represent a recipe ingredient in
    * the user ingredient list.
+   *
    * @param ingredients the user ingredient list
-   * @param ingr an recipe ingredient
+   * @param ingr        an recipe ingredient
    * @return the closest vector ingredient to the recipe ingredient
    */
   public static Ingredient generateCandidate(
@@ -51,14 +80,12 @@ public final class Config {
         closest = similarity;
       }
     }
-    if (closest > 0.9) {
+    if (closest > 0.0) {
       return best;
-    }
-    else {
+    } else {
       return null;
     }
   }
-
 
 
   public static double cosineSimilarity(double[] vec1, double[] vec2) {
@@ -74,15 +101,14 @@ public final class Config {
   }
 
 
-
   public static double[] arrayAdd(double[][] arrays) {
     double[] result = new double[300];
-    for (int i = 0; i < result.length; i ++){
-      for (double[] currArr: arrays) {
+    for (int i = 0; i < result.length; i++) {
+      for (double[] currArr : arrays) {
         result[i] += currArr[i];
       }
     }
-    for (int i = 0; i < result.length; i ++) {
+    for (int i = 0; i < result.length; i++) {
       result[i] /= arrays.length;
     }
     return result;
@@ -90,7 +116,7 @@ public final class Config {
 
   public static double[] ingredAdd(Collection<Ingredient> ingreds) {
     double[] result = new double[300];
-    for (int i = 0; i < result.length; i ++){
+    for (int i = 0; i < result.length; i++) {
       for (Ingredient ingr : ingreds) {
         double[] embedding = ingr.getVec();
         result[i] += embedding[i];
@@ -100,18 +126,11 @@ public final class Config {
     return result;
   }
 
-  public static int getEmbedLength() {
-    return embedLength;
-  }
 
   public static JsonObject getRecipeJson(int id) throws SQLException {
     return db.getRecipeContentFromID(id);
   }
 
-
-  public double[] getRecVec(String id) {
-    return recToVec.get(id);
-  }
 
   public static void setDb(RecipeDatabase newDB) {
     db = newDB;

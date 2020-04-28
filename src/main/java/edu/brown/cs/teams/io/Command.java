@@ -16,7 +16,9 @@ public interface Command {
    * @throws CommandException if there is an error in the command format
    * @return output of the command to be printed to the repl
    */
-  String runCommand(String[] command) throws CommandException;
+  String runCommand(String[] command, boolean dairy,
+                    boolean meat, boolean nuts) throws CommandException;
 
-  List<JsonObject> runForGui(String[] command) throws CommandException;
+  List<JsonObject> runForGui(String[] command, boolean dairy,
+                             boolean meat, boolean nuts) throws CommandException;
 }
