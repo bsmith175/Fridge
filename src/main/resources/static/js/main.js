@@ -85,23 +85,15 @@ $(document).ready(() => {
     createTypeahead($('typeahead'));
     $('.type')
 
+    $('#myTab a[href="#favorites"]').on('click', function (e) {
+        e.preventDefault()
+        profilePage();
+        $(this).tab('show')
+    })
+    $('#myTab a[href="#excluded"]').tab('show');
+    $('#myTab a[href="#pantry"]').tab('show');
 
 
-
-    function profilePage() {
-        console.log("profile");
-        fav.empty();
-        make_cards(fav, favorites);
-
-        $('#myTab a[href="#favorites"]').on('click', function (e) {
-            e.preventDefault()
-            profilePage();
-            $(this).tab('show')
-        })
-        $('#myTab a[href="#excluded"]').tab('show');
-        $('#myTab a[href="#pantry"]').tab('show');
-
-    }
     function createTypeahead($els) {
         $els.typeahead({
             source: function (query, process) {
