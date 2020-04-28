@@ -70,17 +70,6 @@ $(document).ready(() => {
 
     });
 
-    function createTypeahead($els) {
-        $els.typeahead({
-            source: function (query, process) {
-                return $.post('/suggest', {input: query}, function (data) {
-                    data = JSON.parse(data);
-                    console.log(data);
-                    return process(data);
-                });
-            }
-        });
-    }
 
     $('.typeahead').typeahead({
         source: function (query, process) {
@@ -98,13 +87,32 @@ $(document).ready(() => {
 
 
 
+
     function profilePage() {
         console.log("profile");
         fav.empty();
         make_cards(fav, favorites);
 
-    }
+        $('#myTab a[href="#favorites"]').on('click', function (e) {
+            e.preventDefault()
+            profilePage();
+            $(this).tab('show')
+        })
+        $('#myTab a[href="#excluded"]').tab('show');
+        $('#myTab a[href="#pantry"]').tab('show');
 
+    }
+    function createTypeahead($els) {
+        $els.typeahead({
+            source: function (query, process) {
+                return $.post('/suggest', {input: query}, function (data) {
+                    data = JSON.parse(data);
+                    console.log(data);
+                    return process(data);
+                });
+            }
+        });
+    }
 
     function make_cards(e, r) {
         console.log(r)
@@ -172,32 +180,33 @@ $(document).ready(() => {
         });
         //like button
         $(".heart.fa").click(function (e) {
-            console.log(localStorage.getItem("signedin"));
-
             if (localStorage.getItem("signedin") != "true") {
+
                 alert("Please sign in to favorite recipes!");
+                console.log("else didn't work");
+
             } else {
-            //get recipe that was liked
-            const field_id = (e.target.id);
-            const recipe = r[field_id];
-            const id = recipe.id;
-            console.log(id);
-            //craft post parameters
-            const postParameters = {
-                recipe_id: id,
-                user_id: userProfile.getId()
-            };
+                //get recipe that was liked
+                const field_id = (e.target.id);
+                const recipe = r[field_id];
+                const id = recipe.id;
+                console.log(id);
+                //craft post parameters
+                const postParameters = {
+                    recipe_id: id,
+                    user_id: userProfile.getId()
+                };
 
-            $.post("/heart", postParameters, response => {
-                const r = JSON.parse(response);
-                console.log(r);
-                favorites.length = 0;
-                getFavs();
-                console.log(favorites);
+                $.post("/heart", postParameters, response => {
+                    const r = JSON.parse(response);
+                    console.log(r);
+                    favorites.length = 0;
+                    getFavs();
+                    console.log(favorites);
 
-                $(this).toggleClass("fa-heart fa-heart-o");
-            });
-        }
+                    $(this).toggleClass("fa-heart fa-heart-o");
+                });
+            }
 
         })
             .error(err => {
@@ -206,19 +215,16 @@ $(document).ready(() => {
             });
 
     }
-    $('.active[data-toggle="tab"]').trigger('click');
 
-    $('#myTab a[href="#favorites"]').on('click', function (e) {
-        e.preventDefault()
-        profilePage();
-        $(this).tab('show')
-    })
-    $('#myTab a[href="#excluded"]').tab('show');
-    $('#myTab a[href="#pantry"]').tab('show');
+    function profilePage() {
+        console.log("profile");
+        fav.empty();
+        make_cards(fav, favorites, false);
 
-
+    }
 
 });
+
 
 function getFavs() {
     const params = {
@@ -277,7 +283,7 @@ function signOut() {
     auth2.signOut().then(function () {
         // Reset userProfile variable
         userProfile = undefined;
-        localStorage.setItem("signedIn", false);
+        localStorage.setItem("signedin", false);
         favorites = [];
         $("#user-name").text("Please sign in to view profile!");
 
