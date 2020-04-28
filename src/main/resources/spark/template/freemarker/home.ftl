@@ -24,7 +24,7 @@
             </li>
         </ul>
         <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade show active" id="fav" role="tabpanel" aria-labelledby="favorites-tab">
+            <div class="tab-pane fade show active" id="favorites" role="tabpanel" aria-labelledby="favorites-tab">
                 <div class="row"  id="display-favs"> </div>
             </div>
             <div class="tab-pane fade show active" id="pantry" role="tabpanel" aria-labelledby="profile-tab"></div>
