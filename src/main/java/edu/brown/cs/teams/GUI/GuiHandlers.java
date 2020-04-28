@@ -41,15 +41,16 @@ public class GuiHandlers {
     public void setHandlers(FreeMarkerEngine freeMarker) {
         // Specify the algorithm to run here!!
         Command command = new RunKDAlg();
-        Spark.get("/fridge", new FridgeHandler(), freeMarker);
+        Spark.get("/", new FridgeHandler(), freeMarker);
         Spark.get("/home", new HomeHandler(), freeMarker);
         Spark.post("/suggested-recipes", new SuggestedHandler());
+
+
 
         Spark.post("/recipe", new RecipeHandler());
         Spark.post("/suggest", new ingredientSuggestHandler());
 
         Spark.post("/recipe-recommend", new RecipeSuggestHandler(command));
-        Spark.post("/ingredient-suggest", new ingredientSuggestHandler());
         Spark.post("/favorites", new favoritesPageHandler());
         Spark.post("/heart", new favoriteButtonHandler());
         Spark.post("/login", new userLoginHandler());
@@ -192,7 +193,6 @@ public class GuiHandlers {
             return new ModelAndView(variables, "home.ftl");
         }
     }
-
 
     /**
      * A handler to produce our autocorrect service site.

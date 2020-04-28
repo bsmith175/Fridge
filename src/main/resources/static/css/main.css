@@ -87,7 +87,28 @@ input[type="text"], textarea {
 .food-form{
   margin: 2em;
 
-  background: rgba(165, 224, 242, 0.79);
+  background: rgba(201, 242, 218, 0.79);
+}
+.nav-tabs .nav-item .nav-link {
+  background-color: rgb(255, 173, 123);
+  color: #fffdfe;
+}
 
+.nav-tabs .nav-item .nav-link.active {
+  color: #edfffc;
+  background-color: rgb(255, 155, 113);
+
+}
+
+.tab-content {
+  border: 1px solid #dee2e6;
+  border-top: transparent;
+}
+
+.tab-content .tab-pane {
+  background-color: rgba(255, 226, 202, 0.62);
+  color: #ff9283;
+  min-height: 350px;
+  height: auto;
 
 }
