@@ -84,9 +84,7 @@ $(document).ready(() => {
     });
     createTypeahead($('typeahead'));
     $('.type')
-
-
-
+    
 
     function profilePage() {
         console.log("profile");
