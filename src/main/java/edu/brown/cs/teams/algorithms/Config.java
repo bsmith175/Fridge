@@ -51,7 +51,7 @@ public final class Config {
         closest = similarity;
       }
     }
-    if (closest > 0.9) {
+    if (closest > 0.5) {
       return best;
     }
     else {

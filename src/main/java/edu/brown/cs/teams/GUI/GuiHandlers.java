@@ -53,8 +53,9 @@ public class GuiHandlers {
         Spark.post("/favorites", new favoritesPageHandler());
         Spark.post("/heart", new favoriteButtonHandler());
         Spark.post("/login", new userLoginHandler());
-
-
+        Spark.post("/pantry", new pantryHandler());
+        Spark.post("/add-pantry", new pantryAddHandler());
+        Spark.post("/remove-pantry", new removePantryHandler());
     }
     //Handles a user login. Takes user data from the Google User and adds to the database if possible.
     private static class userLoginHandler implements Route {
@@ -206,6 +207,69 @@ public class GuiHandlers {
                 e.printStackTrace();
             }
             return null;
+        }
+    }
+
+    //Handler for adding a list of ingredients to the pantry.
+    private static class pantryAddHandler implements Route {
+
+        //Takes in array of ingredients entered by user, just like for a recipe search.
+        //additionally has another parameter, "uid", which is the user's ID.
+        @Override
+        public Object handle(Request request, Response response) throws Exception {
+            QueryParamsMap qm = request.queryMap();
+            String[] ingredients = qm.get("text").values();
+            String uid = qm.value("uid");
+            JsonObject responseJSON = new JsonObject();
+
+            try {
+                AlgMain.getUserDb().addToPantry(ingredients, uid);
+                responseJSON.addProperty("success", true);
+            } catch (SQLException e) {
+                responseJSON.addProperty("success", false);
+            }
+
+            return responseJSON.toString();
+        }
+    }
+
+    //removes an ingredient from user's pantry. Takes in parameters "text" - the ingredient to remove
+    // and "uid" - the user ID.
+    private static class removePantryHandler implements Route {
+
+        @Override
+        public Object handle(Request request, Response response) throws Exception {
+            QueryParamsMap qm = request.queryMap();
+            String term = qm.value("text");
+            String uid = qm.value("uid");
+            JsonObject responseJSON = new JsonObject();
+
+            try {
+                AlgMain.getUserDb().removePantryitem(term, uid);
+                responseJSON.addProperty("success", true);
+
+            } catch (SQLException e) {
+                responseJSON.addProperty("success", false);
+            }
+            return responseJSON.toString();
+        }
+    }
+
+    //returns a list of ingredient names in the user's pantry. Takes in one parameter
+    //"uid" - the user ID
+    private static class pantryHandler implements Route {
+
+        @Override
+        public Object handle(Request request, Response response) throws Exception {
+            QueryParamsMap qm = request.queryMap();
+            String uid = qm.value("uid");
+            String responseJSON = "";
+            try {
+                 responseJSON = GSON.toJson(AlgMain.getUserDb().getPantry(uid));
+                 return responseJSON;
+            } catch (SQLException e) {
+                return responseJSON;
+            }
         }
     }
 

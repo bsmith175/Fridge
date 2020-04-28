@@ -36,6 +36,7 @@ public class UserDatabase {
         makeUserTable();
         makeExcludeTable();
         makeFavTable();
+        makePantryTable();
         verifyTables();
     }
 
@@ -93,6 +94,19 @@ public class UserDatabase {
     private void makeExcludeTable() throws SQLException {
         PreparedStatement prep = conn.prepareStatement("CREATE TABLE exclude("
                 + "category TEXT, "
+                + "uid TEXT REFERENCES guser(uid));");
+        prep.executeUpdate();
+    }
+
+    /**
+     * The favorite table is a junction table between recipes and users. It links every recipe
+     * that is a favorite to each of the users that have it as a favorite.
+     *
+     * @throws SQLException
+     */
+    private void makePantryTable() throws SQLException {
+        PreparedStatement prep = conn.prepareStatement("CREATE TABLE pantry("
+                + "ingredient TEXT, "
                 + "uid TEXT REFERENCES guser(uid));");
         prep.executeUpdate();
     }
@@ -180,5 +194,55 @@ public class UserDatabase {
         prep.executeUpdate();
     }
 
+    /**
+     * Attemps to add a recipe to the user's favorites list.
+     * @param ingredients - array of ingredients to add
+     * @param uid - ID of user
+     * @return  True
+     *             -if recipe was successfully added to favorites list
+     *          False
+     *              - if recipe was already in user's favorites list
+     * @throws SQLException - if exception occurs while updating database
+     */
+    public void addToPantry(String[] ingredients, String uid) throws SQLException {
+        for (String ingredient : ingredients) {
+            PreparedStatement prep = conn.prepareStatement("INSERT INTO pantry VALUES(?, ?)");
+            prep.setString(1, ingredient);
+            prep.setString(2, uid);
+            prep.addBatch();
+            prep.executeUpdate();
+        }
+    }
+
+    /**
+     * Attemps to remove a recipe to the user's favorites list.
+     * @param ingredient - ingredient to remove
+     * @param uid - ID of user
+     *
+     * @throws SQLException - if exception occurs while updating database
+     */
+    public void removePantryitem(String ingredient, String uid) throws SQLException {
+        PreparedStatement prep =  conn.prepareStatement("DELETE FROM pantry WHERE uid=? AND ingredient=?");
+        prep.setString(1, uid);
+        prep.setString(2, ingredient);
+        prep.executeUpdate();
+    }
+
+    /**
+     * Queries a user's pantry ingredients, given a user ID.
+     * @param uid - User ID
+     * @return - A List of pantry ingredients
+     * @throws SQLException - if exception occurs during query
+     */
+    public List<String> getPantry(String uid) throws SQLException{
+        PreparedStatement prep = conn.prepareStatement("SELECT ingredient FROM pantry WHERE uid= ?");
+        prep.setString(1, uid);
+        ResultSet res = prep.executeQuery();
+        List<String> ret = new ArrayList<>();
+        while (res.next()) {
+            ret.add(res.getString(1));
+        }
+        return ret;
+    }
 
 }

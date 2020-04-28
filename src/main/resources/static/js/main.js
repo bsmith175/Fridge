@@ -84,22 +84,17 @@ $(document).ready(() => {
     });
     createTypeahead($('typeahead'));
     $('.type')
-    
 
-    function profilePage() {
-        console.log("profile");
-        fav.empty();
-        make_cards(fav, favorites);
 
-        $('#myTab a[href="#favorites"]').on('click', function (e) {
-            e.preventDefault()
-            profilePage();
-            $(this).tab('show')
-        })
-        $('#myTab a[href="#excluded"]').tab('show');
-        $('#myTab a[href="#pantry"]').tab('show');
+    $('#myTab a[href="#favorites"]').on('click', function (e) {
+        e.preventDefault()
+        profilePage();
+        $(this).tab('show')
+    })
+    $('#myTab a[href="#excluded"]').tab('show');
+    $('#myTab a[href="#pantry"]').tab('show');
 
-    }
+
     function createTypeahead($els) {
         $els.typeahead({
             source: function (query, process) {
@@ -178,7 +173,8 @@ $(document).ready(() => {
         });
         //like button
         $(".heart.fa").click(function (e) {
-            if (localStorage.getItem("signedin") !== "true") {
+            if (localStorage.getItem("signedin") != "true") {
+
                 alert("Please sign in to favorite recipes!");
                 console.log("else didn't work");
 
@@ -245,7 +241,7 @@ function onSignIn(googleUser) {
     // Store userprofile in global variable
     userProfile = googleUser.getBasicProfile();
 
-    localStorage.setItem("signedin", true);
+    localStorage.setItem("signedin", "true");
     console.log("signed in is true");
     $("#user-name").text("Welcome, " + userProfile.getGivenName() + "!");
 
