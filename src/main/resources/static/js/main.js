@@ -16,12 +16,121 @@ $(document).ready(() => {
 
     function getFavs() {
         favorites = [];
-        $.post("/favorites", {"uid": -1}, response =>{
+        $.post("/favorites", {"uid": -1}, response => {
             const r = JSON.parse(response);
-            for (let res of r){
+            for (let res of r) {
                 favorites.push(res);
             }
             console.log(favorites);
+        });
+    }
+
+    returnSuggestions();
+
+    function returnSuggestions() {
+        $.post("/suggested-recipes", $.param({favorites, "uid": -1}, true), response => {
+            getCardsFromResponse(response)
+        });
+    }
+
+
+    /**
+     * Gets called when user opens app and when they submit their ingredients
+     * @param response
+     */
+    function getCardsFromResponse(response) {
+        const r = JSON.parse(response);
+        //const text = JSON.parse(response)["text"];
+        console.log(r[0]);
+        console.log("post");
+
+        var cards = 0;
+        for (let res of r) {
+            let heart_shape = "fa-heart-o";
+
+            let count = 0
+            for (let index = 0; index < favorites.length; index++) {
+                console.log(favorites[index].id)
+
+                if (favorites[index].id == res.id) {
+                    heart_shape = "fa-heart";
+                    console.log("equal");
+
+                }
+            }
+            const card = "<div class=\"col-sm d-flex\">\n" +
+                "<dv class=\"card card-body flex-fill\" style=\"width: 18rem;\">\n" +
+                "  <div class=\"d-flex flex-row-reverse\">\n" +
+                "<div>\n" +
+                "  <i id=" + cards + " class=\"heart fa " + heart_shape + "\"></i>\n" +
+                "</div> </div>" +
+                "  <img class=\"card-img-top\" style = \"border: 1px green\"src=" + res.imageURL + " alt=\"Card image cap\">\n" +
+                "  <div class=\"card-body\">\n" +
+                "    <h5 class=\"card-title\">" + res.name + "</h5>\n" +
+                "    <p class=\"card-text\">" + res.description + "</p>\n" +
+                "    <button id=" + cards + " type=\"button\" class=\"btn btn-outline-success openBtn\" data-toggle=\"modal\" data-target=\".bd-example-modal-lg\">View Recipe</button>\n" +
+                "  </div>\n" +
+                "  </div>\n" +
+                "</div>"
+
+            result_cards.append(card);
+            cards = cards + 1;
+
+        }
+        // function showModal(data)
+        // {
+        //     //you can do anything with data, or pass more data to this function. i set this data to modal header for example
+        //     $("#myModal .modal-title").html(data.name)
+        //     $("#myModal").modal();
+        // }
+
+        $(".openBtn").click(function (e) {
+            modal_title.empty();
+            e.preventDefault();
+            const id = (e.target.id);
+            console.log(id);
+            const result = r[id];
+            console.log(result.ingredients);
+
+            var ingredients = "";
+            var instructions = "";
+
+            for (let ing of JSON.parse(result.ingredients)) {
+                ingredients = ingredients + "<li>" + ing + "</li>"
+            }
+
+            for (let des of JSON.parse(result.method)) {
+                instructions = instructions + "<li>" + des + "</li>"
+            }
+            $('.modal-title').html("<h1>" + result.name + "</h1>")
+            //$('.modal-header').html( "<img class='d-flex' src=" + result.img_url +" alt=\"Card image cap\">\n"  );
+
+            $('.description').html("<p>" + result.description + "</p>")
+
+            $('.ingredients').html(ingredients)
+            $('.instructions').html(instructions)
+            $('.cook-time').html("<img src=\"data/recipe-clock.png\" alt=\"Flowers in Chania\">\n")
+
+
+        })
+        $(".heart.fa").click(function (e) {
+            const field_id = (e.target.id);
+            const recipe = r[field_id];
+            const id = recipe.id;
+
+            console.log(id);
+            const postParameters = {
+                recipe_id: id,
+                user_id: "-1"
+            };
+
+            $.post("/heart", postParameters, response => {
+                const r = JSON.parse(response);
+                console.log(r);
+
+            });
+            $(this).toggleClass("fa-heart fa-heart-o");
+            getFavs();
         });
     }
 
@@ -69,101 +178,7 @@ $(document).ready(() => {
             $(this).toggleClass('is-active');
         })
         $.post("/recipe-recommend", $.param({text: postParameters}, true), response => {
-
-            const r = JSON.parse(response);
-            //const text = JSON.parse(response)["text"];
-            console.log(r[0]);
-            console.log("post");
-
-            var cards = 0;
-            for (let res of r) {
-                let heart_shape = "fa-heart-o";
-
-                let count = 0
-                for (let index = 0; index < favorites.length; index++){
-                    console.log(favorites[index].id)
-
-                    if (favorites[index].id == res.id) {
-                        heart_shape = "fa-heart";
-                        console.log("equal");
-
-                    }
-                }
-                const card = "<div class=\"col-sm d-flex\">\n" +
-                    "<dv class=\"card card-body flex-fill\" style=\"width: 18rem;\">\n" +
-                    "  <div class=\"d-flex flex-row-reverse\">\n" +
-                    "<div>\n" +
-                    "  <i id=" + cards + " class=\"heart fa " + heart_shape + "\"></i>\n" +
-                    "</div> </div>" +
-                    "  <img class=\"card-img-top\" style = \"border: 1px green\"src=" + res.imageURL + " alt=\"Card image cap\">\n" +
-                    "  <div class=\"card-body\">\n" +
-                    "    <h5 class=\"card-title\">" + res.name + "</h5>\n" +
-                    "    <p class=\"card-text\">" + res.description + "</p>\n" +
-                    "    <button id=" + cards + " type=\"button\" class=\"btn btn-outline-success openBtn\" data-toggle=\"modal\" data-target=\".bd-example-modal-lg\">View Recipe</button>\n" +
-                    "  </div>\n" +
-                    "  </div>\n" +
-                    "</div>"
-
-                result_cards.append(card);
-                cards = cards + 1;
-
-            }
-            // function showModal(data)
-            // {
-            //     //you can do anything with data, or pass more data to this function. i set this data to modal header for example
-            //     $("#myModal .modal-title").html(data.name)
-            //     $("#myModal").modal();
-            // }
-
-            $(".openBtn").click(function (e) {
-                modal_title.empty();
-                e.preventDefault();
-                const id = (e.target.id);
-                console.log(id);
-                const result = r[id];
-                console.log(result.ingredients);
-
-                var ingredients = "";
-                var instructions = "";
-
-                for (let ing of JSON.parse(result.ingredients)) {
-                    ingredients = ingredients + "<li>" + ing + "</li>"
-                }
-
-                for (let des of JSON.parse(result.method)) {
-                    instructions = instructions + "<li>" + des + "</li>"
-                }
-                $('.modal-title').html("<h1>" + result.name + "</h1>")
-                //$('.modal-header').html( "<img class='d-flex' src=" + result.img_url +" alt=\"Card image cap\">\n"  );
-
-                $('.description').html("<p>" + result.description + "</p>")
-
-                $('.ingredients').html(ingredients)
-                $('.instructions').html(instructions)
-                $('.cook-time').html("<img src=\"data/recipe-clock.png\" alt=\"Flowers in Chania\">\n")
-
-
-            })
-            $(".heart.fa").click(function (e) {
-                const field_id = (e.target.id);
-                const recipe = r[field_id];
-                const id = recipe.id;
-
-                console.log(id);
-                const postParameters = {
-                    recipe_id: id,
-                    user_id: "-1"
-                };
-
-                $.post("/heart", postParameters, response =>{
-                    const r = JSON.parse(response);
-                    console.log(r);
-
-                });
-                $(this).toggleClass("fa-heart fa-heart-o");
-                getFavs();
-            });
-
+            getCardsFromResponse(response)
         })
             .error(err => {
                 console.log("in the .error callback");
@@ -172,10 +187,13 @@ $(document).ready(() => {
 
 
     });
-    function createTypeahead($els){
+
+
+
+    function createTypeahead($els) {
         $els.typeahead({
             source: function (query, process) {
-                return $.post('/suggest', {input: query}, function (data){
+                return $.post('/suggest', {input: query}, function (data) {
                     data = $.parseJSON(data);
                     console.log(data);
                     return process(data);
@@ -183,9 +201,10 @@ $(document).ready(() => {
             }
         });
     }
+
     $('.typeahead').typeahead({
         source: function (query, process) {
-            return $.post('/suggest', {input: query}, function (data){
+            return $.post('/suggest', {input: query}, function (data) {
                 data = $.parseJSON(data);
                 console.log(data);
                 return process(data);

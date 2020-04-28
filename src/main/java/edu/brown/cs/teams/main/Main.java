@@ -96,7 +96,6 @@ public final class Main {
         new AlgMain();
         System.out.println("Getting recipes");
         AlgMain.setDb(r, u);
-        Config.setDb(r);
         List<MinimalRecipe> recipes = AlgMain.getRecipeDb().getRecipes("data/ingredient_vectors.json");
         AlgMain.setRecipeList(recipes);
         System.out.println("Building KD Tree");

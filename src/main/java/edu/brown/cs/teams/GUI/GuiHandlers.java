@@ -43,6 +43,7 @@ public class GuiHandlers {
         Command command = new RunKDAlg();
         Spark.get("/fridge", new FridgeHandler(), freeMarker);
         Spark.get("/home", new HomeHandler(), freeMarker);
+        Spark.post("/suggested-recipes", new SuggestedHandler());
 
         Spark.post("/recipe", new RecipeHandler());
         Spark.post("/suggest", new ingredientSuggestHandler());
@@ -144,6 +145,17 @@ public class GuiHandlers {
             List<String> ingredients = suggest.suggest(input);
             String json = GSON.toJson(ingredients);
             return json;
+        }
+    }
+
+    private static class SuggestedHandler implements Route {
+        @Override
+        public Object handle(Request request, Response response) throws Exception {
+            QueryParamsMap qm = request.queryMap();
+            String[] favs = qm.get("text").values();
+            String uid = qm.get("uid").values()[0];
+            String result = GSON.toJson(RunKDAlg.getRecommendations(uid));
+            return result;
         }
     }
 
