@@ -3,10 +3,12 @@
  * Front end logic for providing real time autocorrect suggestions.
  */
 
+//user profile put in global scope
+let userProfile = undefined;
+let favorites = [];
 
 $(document).ready(() => {
 
-    var favorites = [];
     const result_cards = $("#result-cards");
     const modal_title = $("#modal-title");
     const fav = $("#display-favs");
@@ -14,17 +16,6 @@ $(document).ready(() => {
     const excluded = $("#excluded");
     console.log($(".add-more"));
     favorites.length = 0;
-    getFavs();
-
-    $('#myTab a[href="#favorites"]').on('click', function (e) {
-        e.preventDefault()
-        profilePage();
-        $(this).tab('show')
-    })
-    $('#myTab a[href="#excluded"]').tab('show');
-    $('#myTab a[href="#pantry"]').tab('show');
-
-
 
     var next = 1;
     $(".add-more").click(function (e) {
@@ -36,7 +27,6 @@ $(document).ready(() => {
         var newIn = '<input  placeholder="Ingredient" class="typeahead form-control type" id="field' + next + '" name="field' + next + '" type="text" autocomplete="off">';
         var newInput = $(newIn);
         createTypeahead(newInput);
-
         var removeBtn = '<button id="remove' + (next - 1) + '" class="btn remove-me" >-</button></div><div id="field">';
         var removeButton = $(removeBtn);
         $(addto).after(newInput);
@@ -73,24 +63,13 @@ $(document).ready(() => {
         $.post("/recipe-recommend", $.param({text: postParameters}, true), response => {
             //parse response
             const r = JSON.parse(response);
-            make_cards(result_cards, r, false);
+            make_cards(result_cards, r);
 
 
         });
 
     });
 
-    function createTypeahead($els) {
-        $els.typeahead({
-            source: function (query, process) {
-                return $.post('/suggest', {input: query}, function (data) {
-                    data = JSON.parse(data);
-                    console.log(data);
-                    return process(data);
-                });
-            }
-        });
-    }
 
     $('.typeahead').typeahead({
         source: function (query, process) {
@@ -106,29 +85,28 @@ $(document).ready(() => {
     createTypeahead($('typeahead'));
     $('.type')
 
+    $('#myTab a[href="#favorites"]').on('click', function (e) {
+        e.preventDefault()
+        profilePage();
+        $(this).tab('show')
+    })
+    $('#myTab a[href="#excluded"]').tab('show');
+    $('#myTab a[href="#pantry"]').tab('show');
 
 
-    function getFavs() {
-        $.post("/favorites", {"uid": -1}, response => {
-            const r = JSON.parse(response);
-            for (let res of r) {
-                favorites.push(res);
+    function createTypeahead($els) {
+        $els.typeahead({
+            source: function (query, process) {
+                return $.post('/suggest', {input: query}, function (data) {
+                    data = JSON.parse(data);
+                    console.log(data);
+                    return process(data);
+                });
             }
-            console.log(favorites);
-            profilePage();
-
         });
     }
 
-    function profilePage() {
-        console.log("profile");
-        fav.empty();
-        make_cards(fav, favorites, false);
-
-    }
-
-
-    function make_cards(e, r, profile) {
+    function make_cards(e, r) {
         console.log(r)
 
         let cards = 0; //html id for each recipe card
@@ -194,26 +172,33 @@ $(document).ready(() => {
         });
         //like button
         $(".heart.fa").click(function (e) {
-            //get recipe that was liked
-            const field_id = (e.target.id);
-            const recipe = r[field_id];
-            const id = recipe.id;
-            console.log(id);
-            //craft post parameters
-            const postParameters = {
-                recipe_id: id,
-                user_id: "-1"
-            };
+            if (localStorage.getItem("signedin") != "true") {
 
-            $.post("/heart", postParameters, response => {
-                const r = JSON.parse(response);
-                console.log(r);
-                favorites.length = 0;
-                getFavs();
-                console.log(favorites);
+                alert("Please sign in to favorite recipes!");
+                console.log("else didn't work");
 
-                $(this).toggleClass("fa-heart fa-heart-o");
-            });
+            } else {
+                //get recipe that was liked
+                const field_id = (e.target.id);
+                const recipe = r[field_id];
+                const id = recipe.id;
+                console.log(id);
+                //craft post parameters
+                const postParameters = {
+                    recipe_id: id,
+                    user_id: userProfile.getId()
+                };
+
+                $.post("/heart", postParameters, response => {
+                    const r = JSON.parse(response);
+                    console.log(r);
+                    favorites.length = 0;
+                    getFavs();
+                    console.log(favorites);
+
+                    $(this).toggleClass("fa-heart fa-heart-o");
+                });
+            }
 
         })
             .error(err => {
@@ -223,5 +208,76 @@ $(document).ready(() => {
 
     }
 
+    function profilePage() {
+        console.log("profile");
+        fav.empty();
+        make_cards(fav, favorites, false);
+
+    }
 
 });
+
+
+function getFavs() {
+    const params = {
+        userID: userProfile.getId(),
+        name: userProfile.getName(),
+        email: userProfile.getEmail(),
+        profilePic: userProfile.getImageUrl()
+    };
+    $.post("/favorites", {"uid": userProfile.getId()}, response => {
+        const r = JSON.parse(response);
+        for (let res of r) {
+            favorites.push(res);
+        }
+        console.log(favorites);
+        //profilePage();
+
+    });
+}
+
+function onSignIn(googleUser) {
+    // Store userprofile in global variable
+    userProfile = googleUser.getBasicProfile();
+
+    localStorage.setItem("signedin", "true");
+    console.log("signed in is true");
+    $("#user-name").text("Welcome, " + userProfile.getGivenName() + "!");
+
+    // Performs page specific actions after user has signed in
+
+    const loginData = {
+        uid: userProfile.getId(),
+        firstName: userProfile.getName(),
+        profilePicture: userProfile.getImageUrl()
+    };
+
+    getFavs();
+    $.post("/login", loginData, function (response) {
+
+    });
+}
+
+/**
+ * Handles sign in errors.
+ *
+ * @param {*} error
+ */
+function onFailure(error) {
+    console.log(error);
+}
+
+/**
+ * Sign out the user.
+ */
+function signOut() {
+    let auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+        // Reset userProfile variable
+        userProfile = undefined;
+        localStorage.setItem("signedin", false);
+        favorites = [];
+        $("#user-name").text("Please sign in to view profile!");
+
+    });
+}

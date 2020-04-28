@@ -318,6 +318,30 @@ public class RecipeDatabase {
   }
 
   /**
+   * Method to get an array of token ingredients for a recipe.
+   */
+  public String[] getTokenIngredients(int id) throws CommandException {
+    try {
+      String query = "SELECT tokens FROM recipe WHERE recipe.id= ?";
+      PreparedStatement prep = conn.prepareStatement(query);
+      prep.setInt(1, id);
+      ResultSet rs = prep.executeQuery();
+      if (rs.next()) {
+        String[] tokens = rs.getString(1)
+            .substring(1, rs.getString(1).length() - 1)
+            .replaceAll("\"", "")
+            .split(",");
+        return tokens;
+      } else {
+        throw new CommandException("No such recipe with id " + id);
+      }
+    } catch (SQLException e) {
+      throw new CommandException(e.getMessage());
+    }
+
+  }
+
+  /**
    * Gets the content needed to display the recipe in labeled form, given its ID.
    * @param id  - the recipe ID.
    * @return - JsonObject of the recipe's content (everything except tokens)

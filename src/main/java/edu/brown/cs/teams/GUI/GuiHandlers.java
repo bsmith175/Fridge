@@ -40,9 +40,10 @@ public class GuiHandlers {
     }
     public void setHandlers(FreeMarkerEngine freeMarker) {
         // Specify the algorithm to run here!!
-        Command command = new RunSuperiorAlg();
-        Spark.get("/fridge", new FridgeHandler(), freeMarker);
+        Command command = new RunKDAlg();
+        Spark.get("/", new FridgeHandler(), freeMarker);
         Spark.get("/home", new HomeHandler(), freeMarker);
+        Spark.post("/suggested-recipes", new SuggestedHandler());
 
 
 
@@ -145,6 +146,17 @@ public class GuiHandlers {
             List<String> ingredients = suggest.suggest(input);
             String json = GSON.toJson(ingredients);
             return json;
+        }
+    }
+
+    private static class SuggestedHandler implements Route {
+        @Override
+        public Object handle(Request request, Response response) throws Exception {
+            QueryParamsMap qm = request.queryMap();
+            String[] favs = qm.get("text").values();
+            String uid = qm.get("uid").values()[0];
+            String result = GSON.toJson(RunKDAlg.getRecommendations(uid));
+            return result;
         }
     }
 
