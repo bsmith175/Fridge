@@ -3,6 +3,8 @@
     <meta charset="utf-8">
     <title>${title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-signin-client_id" content="727828985870-25d5atf1g5r853t5n6o90u0dansh9ao2.apps.googleusercontent.com">
+
     <!-- In real-world webapps, css is usually minified and
          concatenated. Here, separate normalize from our code, and
          avoid minification for clarity. -->
@@ -32,12 +34,13 @@
             <a class="nav-item nav-link active" href="/fridge">Home <span class="sr-only">(current)</span></a>
             <div class="dropdown-divider"></div>
             <a class="nav-item nav-link" href="/home">Profile</a>
+            <a class="nav-item nav-link" onclick="signOut();">Sign out</a>
         </div>
     </div>
-    <#--  Google Sign In  -->
-    <meta name="google-signin-client_id" content="727828985870-25d5atf1g5r853t5n6o90u0dansh9ao2.apps.googleusercontent.com">
 
-    <div class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onFailure" data-longtitle="true"></div>
+    <#--  Google Sign In  -->
+
+    <a class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onFailure" data-longtitle="true"></a>
 </nav>
 
 <div class="modal fade bd-example-modal-lg" id="myModal" tabindex="-1" role="dialog"
