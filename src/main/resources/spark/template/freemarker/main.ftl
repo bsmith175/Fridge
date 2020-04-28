@@ -27,7 +27,7 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-            <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link active" href="/fridge">Home <span class="sr-only">(current)</span></a>
             <div class="dropdown-divider"></div>
             <a class="nav-item nav-link" href="/home">Profile</a>
             <div class="dropdown-divider"></div>
@@ -36,7 +36,14 @@
             <a class="nav-item nav-link " href="#">Login</a>
         </div>
     </div>
+    <#--  Google Sign In  -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="727828985870-25d5atf1g5r853t5n6o90u0dansh9ao2.apps.googleusercontent.com">
+
+    <div class="g-signin2" data-onsuccess="onSignIn" data-longtitle="true"></div>
+
 </nav>
+
 ${content}
 
 <!-- Again, we're serving up the unminified source for clarity. -->

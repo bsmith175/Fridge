@@ -3,6 +3,8 @@
  * Front end logic for providing real time autocorrect suggestions.
  */
 
+//user profile put in global scope
+let userprofile = undefined;
 
 $(document).ready(() => {
     var favorites = [];
@@ -187,6 +189,53 @@ $(document).ready(() => {
     });
     createTypeahead($('typeahead'));
     $('.type')
+
+    function onSignIn(googleUser) {
+        // Store userprofile in global variable
+        userProfile = googleUser.getBasicProfile();
+        localStorage.setItem("signedin", true);
+
+        // Performs page specific actions after user has signed in
+
+        const loginData = {
+            uid: userProfile.getId(),
+            firstName: userProfile.getName(),
+            profilePicture: userProfile.getImageUrl()
+        };
+
+        $.post("/login", loginData, function (response) {
+            const responseData = JSON.parse(response);
+            if (responseData.success) {
+                const isNewUser = responseData.isNewUser;
+                if (isNewUser) {
+                    newUserModal.show();
+                    modalOpen = true;
+                }
+            } else {
+                window.location.replace("/error");
+                console.log("Error logging in");
+            }
+        });
+    }
+
+    /**
+     * Sign out the user.
+     */
+    function signOut() {
+        let auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+            // Reset userProfile variable
+            userProfile = undefined;
+            document.cookie = "loggedIn=false; path=/";
+
+            // Performs page specific actions after user has signed out
+            onUserSignedOut();
+
+            // Hide profile info dropdown and show login button
+            $("#profile-info").css({visibility: "hidden"});
+            $("#sign-in").css({visibility: "visible"});
+        });
+    }
 
 
 });
