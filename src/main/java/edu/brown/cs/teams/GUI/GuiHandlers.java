@@ -41,7 +41,7 @@ public class GuiHandlers {
     public void setHandlers(FreeMarkerEngine freeMarker) {
         // Specify the algorithm to run here!!
         Command command = new RunKDAlg();
-        Spark.get("/fridge", new FridgeHandler(), freeMarker);
+        Spark.get("/", new FridgeHandler(), freeMarker);
         Spark.get("/home", new HomeHandler(), freeMarker);
 
 
