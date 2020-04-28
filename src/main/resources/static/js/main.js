@@ -172,8 +172,9 @@ $(document).ready(() => {
         });
         //like button
         $(".heart.fa").click(function (e) {
+            console.log(localStorage.getItem("signedin"));
 
-            if (localStorage.getItem("signedIn") !== true) {
+            if (localStorage.getItem("signedin") != "true") {
                 alert("Please sign in to favorite recipes!");
             } else {
             //get recipe that was liked
@@ -241,7 +242,7 @@ function onSignIn(googleUser) {
     // Store userprofile in global variable
     userProfile = googleUser.getBasicProfile();
 
-    localStorage.setItem("signedin", true);
+    localStorage.setItem("signedin", "true");
     console.log("signed in is true");
     $("#user-name").text("Welcome, " + userProfile.getGivenName() + "!");
 

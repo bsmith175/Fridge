@@ -37,9 +37,7 @@
             <a class="nav-item nav-link" onclick="signOut();">Sign out</a>
         </div>
     </div>
-
     <#--  Google Sign In  -->
-
     <a class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onFailure" data-longtitle="true"></a>
 </nav>
 
