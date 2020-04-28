@@ -63,7 +63,7 @@ $(document).ready(() => {
         $.post("/recipe-recommend", $.param({text: postParameters}, true), response => {
             //parse response
             const r = JSON.parse(response);
-            make_cards(result_cards, r, false);
+            make_cards(result_cards, r);
 
 
         });
@@ -87,17 +87,21 @@ $(document).ready(() => {
 
 
 
-    $('.active[data-toggle="tab"]').trigger('click');
 
-    $('#myTab a[href="#favorites"]').on('click', function (e) {
-        e.preventDefault()
-        profilePage();
-        $(this).tab('show')
-    })
-    $('#myTab a[href="#excluded"]').tab('show');
-    $('#myTab a[href="#pantry"]').tab('show');
+    function profilePage() {
+        console.log("profile");
+        fav.empty();
+        make_cards(fav, favorites);
 
+        $('#myTab a[href="#favorites"]').on('click', function (e) {
+            e.preventDefault()
+            profilePage();
+            $(this).tab('show')
+        })
+        $('#myTab a[href="#excluded"]').tab('show');
+        $('#myTab a[href="#pantry"]').tab('show');
 
+    }
     function createTypeahead($els) {
         $els.typeahead({
             source: function (query, process) {
@@ -110,7 +114,7 @@ $(document).ready(() => {
         });
     }
 
-    function make_cards(e, r, profile) {
+    function make_cards(e, r) {
         console.log(r)
 
         let cards = 0; //html id for each recipe card
