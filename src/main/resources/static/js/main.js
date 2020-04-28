@@ -16,14 +16,6 @@ $(document).ready(() => {
     favorites.length = 0;
     getFavs();
 
-    $('#myTab a[href="#favorites"]').on('click', function (e) {
-        e.preventDefault()
-        profilePage();
-        $(this).tab('show')
-    })
-    $('#myTab a[href="#excluded"]').tab('show');
-    $('#myTab a[href="#pantry"]').tab('show');
-
 
 
     var next = 1;
@@ -36,7 +28,6 @@ $(document).ready(() => {
         var newIn = '<input  placeholder="Ingredient" class="typeahead form-control type" id="field' + next + '" name="field' + next + '" type="text" autocomplete="off">';
         var newInput = $(newIn);
         createTypeahead(newInput);
-
         var removeBtn = '<button id="remove' + (next - 1) + '" class="btn remove-me" >-</button></div><div id="field">';
         var removeButton = $(removeBtn);
         $(addto).after(newInput);
@@ -115,7 +106,7 @@ $(document).ready(() => {
                 favorites.push(res);
             }
             console.log(favorites);
-            profilePage();
+            //profilePage();
 
         });
     }
@@ -222,6 +213,16 @@ $(document).ready(() => {
             });
 
     }
+    $('.active[data-toggle="tab"]').trigger('click');
+
+    $('#myTab a[href="#favorites"]').on('click', function (e) {
+        e.preventDefault()
+        profilePage();
+        $(this).tab('show')
+    })
+    $('#myTab a[href="#excluded"]').tab('show');
+    $('#myTab a[href="#pantry"]').tab('show');
+
 
 
 });

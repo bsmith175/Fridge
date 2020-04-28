@@ -1,6 +1,5 @@
 <#assign content>
 
-
     <div class="food-form rounded">
         <div class="container">
             <div class="d-flex justify-content-center ">
@@ -23,11 +22,8 @@
     </div>
     <div><p></p></div>
     <div class="container">
-        <div class="row" id="result-cards">
-        </div>
-
+        <div class="row" id="result-cards"></div>
     </div>
-
 
 </#assign>
 
