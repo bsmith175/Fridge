@@ -64,8 +64,10 @@
                 <ol class="instructions">
 
                 </ol>
-                <h4>CookTime</h4>
                 <div class="cook-time">
+
+                </div>
+                <div class="servings">
 
                 </div>
             </div>

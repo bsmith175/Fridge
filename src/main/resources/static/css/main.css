@@ -11,7 +11,8 @@ input[type="number"] {
 }
 
 
-
+.card{
+}
 
 .button:focus {
   background-color: #afffc3;
@@ -110,7 +111,7 @@ input[type="text"], textarea {
 .tab-content .tab-pane {
   background-color: #eef6ff;
 
-  color: #ff9283;
+  color: black;
   min-height: 200px;
   height: auto;
 
@@ -134,15 +135,22 @@ input[type="text"], textarea {
   font-family: 'Abel', sans-serif;
 
 }
-
+.enjoy-explanation,
 .pantry-explanation{
   margin: 0em ; !important;
   margin-bottom:10px;
   font-family: 'Abel', sans-serif;
 
-  font-size: small;
+  font-size: medium;
   font-weight: bold;
 }
+
+.enjoy-explanation{
+  justify-content: center;
+  font-size: large; !important;
+
+}
+
 
 .pantry-add-more{
   margin-top:10px;
@@ -166,6 +174,9 @@ input[type="text"], textarea {
   font-size: x-large;
   font-style: oblique;
 
+}
 
+.cook-time{
+  margin-left: 10px;
 
 }
