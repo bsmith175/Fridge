@@ -54,7 +54,6 @@ $(document).ready(() => {
 
     $(".add-to-pantry").click(function (e){
         console.log("add to pantry")
-        e.preventDefault();
         let postParameters = "";
         let elements = document.forms["pantry-form"].elements;
         for (let i = 0; i < elements.length; i++) {
