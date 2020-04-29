@@ -17,6 +17,17 @@ $(document).ready(() => {
     console.log($(".add-more"));
     favorites.length = 0;
 
+
+    function getSuggestions() {
+        $.post("/suggested-recipes", {data: favorites, "uid": -1}, response => {
+            make_cards(result_cards, JSON.parse(response))
+
+        });
+    }
+
+    getSuggestions();
+
+
     var next = 1;
     $(".add-more").click(function (e) {
         console.log("add")
