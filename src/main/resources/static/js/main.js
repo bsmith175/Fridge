@@ -358,11 +358,12 @@ function getSuggestions() {
 function onSignIn(googleUser) {
     // Store userprofile in global variable
     userProfile = googleUser.getBasicProfile();
+    $("#user-name").text("Welcome, " + userProfile.getGivenName() + "!");
+
     if (sessionStorage.getItem("signedin") !== "true") {
 
         sessionStorage.setItem("signedin", "true");
         console.log("Signing in new");
-        $("#user-name").text("Welcome, " + userProfile.getGivenName() + "!");
 
         // Performs page specific actions after user has signed in
 
