@@ -239,7 +239,7 @@ $(document).ready(() => {
         });
         //like button
         $(".heart.fa").click(function (e) {
-            if (sessionStorage.getItem("signedin") != "true") {
+            if (sessionStorage.getItem("signedin") !== "true") {
 
                 alert("Please sign in to favorite recipes!");
                 console.log("else didn't work");
@@ -256,13 +256,25 @@ $(document).ready(() => {
                     user_id: userProfile.getId()
                 };
 
-                $.post("/heart", postParameters, response => {
-                    const r = JSON.parse(response);
-                    console.log(r);
-                    getFavs();
-                    console.log(favorites);
+                if (favorites.includes(recipe)) {
+                    console.log("Already in favorites");
+                    for (var i = 0; i < favorites.length; i++) {
+                        if (favorites[i] === recipe) {
+                            favorites.splice(i, 1);
+                        }
+                    }
+                } else {
+                    console.log("Adding to favorites");
+                    favorites.push(recipe);
+                }
+                sessionStorage.setItem("favorites", JSON.stringify(favorites));
+                //getFavs();
+                //console.log(favorites);
 
-                    $(this).toggleClass("fa-heart fa-heart-o");
+                $(this).toggleClass("fa-heart fa-heart-o");
+
+                $.post("/heart", postParameters, response => {
+                    console.log(response);
                 });
             }
 
