@@ -16,17 +16,13 @@ $(document).ready(() => {
     const result_cards = $("#result-cards");
     const modal_title = $("#modal-title");
     const fav = $("#display-favs");
+    const enjoy = $("#display-enjoy")
     pantry = $("#pantry-item");
 
     const excluded = $("#excluded");
     console.log($(".add-more"));
     favorites.length = 0;
 
-    if (sessionStorage.getItem("signedin") === "true") {
-        getFavs();
-        getPantry();
-        getSuggestions();
-    }
 
     var next = 1;
     $(".add-more").click(function (e) {
@@ -119,20 +115,20 @@ $(document).ready(() => {
 
     $('#myTab a[href="#favorites"]').on('click', function (e) {
         e.preventDefault()
-        profilePage(favorites);
+
+        profilePage(fav, favorites);
         //$(this).tab('show')
     })
 
     $('#myTab a[href="#enjoy"]').on('click', function (e) {
         //getSuggestions();
-        e.preventDefault()
-        profilePage(suggestions)
+        profilePage(enjoy, suggestions)
         //$(this).tab('show')
     })
 
     $('#myTab a[href="#pantry"]').on('click', function (e) {
         e.preventDefault();
-        console.log("pantry");
+        console.log("pantry tab clicked");
         console.log(pantryItems);
         displayPantry();
         // console.log(typeof $(this).tab('show'));
@@ -141,9 +137,9 @@ $(document).ready(() => {
     });
 
     function displayPantry(){
+        console.log(pantryItems.length);
         pantry.empty();
-        console.log(pantryItems.length)
-
+        console.log("Displaying pantry");
         for (let i = 0; i < pantryItems.length; i++) {
 
             const s = "<button type=\"button\" id=\""+i+"\" class=\"btn btn-lg btn-outline-info remove-pantry\" onclick='remove_pantry(this.id)'>\n"
@@ -242,7 +238,7 @@ $(document).ready(() => {
         });
         //like button
         $(".heart.fa").click(function (e) {
-            if (localStorage.getItem("signedin") != "true") {
+            if (sessionStorage.getItem("signedin") != "true") {
 
                 alert("Please sign in to favorite recipes!");
                 console.log("else didn't work");
@@ -277,10 +273,10 @@ $(document).ready(() => {
 
     }
 
-    function profilePage(results) {
+    function profilePage(e, results) {
         console.log("profile");
-        fav.empty();
-        make_cards(fav, results, false);
+        e.empty();
+        make_cards(e, results, false);
 
     }
 
@@ -291,6 +287,7 @@ $(document).ready(() => {
  *
  */
 function getFavs() {
+    console.log("Getting favorites and setting storage");
     favorites.length = 0;
     const params = {
         userID: userProfile.getId(),
@@ -300,6 +297,7 @@ function getFavs() {
     };
     $.post("/favorites", {"uid": userProfile.getId()}, response => {
         const r = JSON.parse(response);
+        sessionStorage.setItem("favorites", response);
         for (let res of r) {
             favorites.push(res);
         }
@@ -313,7 +311,7 @@ function getFavs() {
  * @param {*} clicked_id id of ingrdient clicked
  */
 function remove_pantry(clicked_id){
-    console.log("remove from pantry");
+    console.log("removing item from pantry");
     console.log(clicked_id);
     console.log(pantryItems);
 
@@ -331,13 +329,15 @@ function remove_pantry(clicked_id){
  *
  */
 function getPantry() {
-    console.log("get pantry");
+    console.log("getting pantry and setting in storage");
     pantryItems.length = 0;
     const params = {
         uid: userProfile.getId(),
     };
     $.post("/pantry", params, response => {
         const r = JSON.parse(response)
+        sessionStorage.setItem("pantry", response);
+
         for (let res of r) {
             pantryItems.push(res);
         }
@@ -346,9 +346,11 @@ function getPantry() {
 
 }
 function getSuggestions() {
+    console.log("getting suggested recipes and setting in storage");
     $.post("/suggested-recipes", {
         "uid": userProfile.getId()
     }, response => {
+        sessionStorage.setItem("suggestions", response);
         suggestions = JSON.parse(response);
     });
 }
@@ -357,26 +359,34 @@ function getSuggestions() {
 function onSignIn(googleUser) {
     // Store userprofile in global variable
     userProfile = googleUser.getBasicProfile();
+    if (sessionStorage.getItem("signedin") !== "true") {
 
-    localStorage.setItem("signedin", "true");
-    console.log("signed in");
-    $("#user-name").text("Welcome, " + userProfile.getGivenName() + "!");
+        sessionStorage.setItem("signedin", "true");
+        console.log("Signing in new");
+        $("#user-name").text("Welcome, " + userProfile.getGivenName() + "!");
 
-    // Performs page specific actions after user has signed in
+        // Performs page specific actions after user has signed in
 
-    const loginData = {
-        uid: userProfile.getId(),
-        firstName: userProfile.getName(),
-        profilePicture: userProfile.getImageUrl()
-    };
+        const loginData = {
+            uid: userProfile.getId(),
+            firstName: userProfile.getName(),
+            profilePicture: userProfile.getImageUrl()
+        };
 
-    getFavs();
-    getPantry();
-    getSuggestions();
+        getFavs();
+        getSuggestions();
+        getPantry();
 
-    $.post("/login", loginData, function (response) {
+        $.post("/login", loginData, function (response) {
 
-    });
+        });
+    } else {
+        console.log("Already signed in");
+        favorites = JSON.parse(sessionStorage.getItem("favorites"));
+        suggestions = JSON.parse(sessionStorage.getItem("suggestions"));
+        pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
+
+    }
 }
 
 /**
@@ -392,13 +402,15 @@ function onFailure(error) {
  * Sign out the user.
  */
 function signOut() {
+    console.log("Signing out");
     let auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
         // Reset userProfile variable
         userProfile = undefined;
-        localStorage.setItem("signedin", false);
+        sessionStorage.setItem("signedin", false);
         favorites = [];
         pantryItems = [];
+        suggestions = [];
         $("#user-name").text("Please sign in to view profile!");
 
     });

@@ -38,6 +38,9 @@
             <div class="tab-pane fade" id="favorites" role="tabpanel" aria-labelledby="favorites-tab">
                 <div class="row" id="display-favs"></div>
             </div>
+            <div class = "tab-pane fade" id="enjoy" role="tabpanel" aria-labelledby="enjoy-tab">
+                <div class="row" id="display-enjoy"></div>
+            </div>
             <div class="tab-pane fade" id="pantry" role="tabpanel" aria-labelledby="profile-tab">
                 <div class="col">
                 <p class="pantry-items">Items Stored in Pantry: </p>
