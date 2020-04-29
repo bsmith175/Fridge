@@ -24,13 +24,7 @@ $(document).ready(() => {
     favorites.length = 0;
 
 
-    function getSuggestions() {
-        $.post("/suggested-recipes", {
-            "uid": userProfile.getId()
-        }, response => {
-            suggestions = JSON.parse(response);
-        });
-    }
+
 
     var next = 1;
     $(".add-more").click(function (e) {
@@ -75,8 +69,8 @@ $(document).ready(() => {
 
         })
 
-
     })
+
 
     //Find Recipes Button clicked
     $(".find-recipe").click(function (e) {
@@ -91,7 +85,6 @@ $(document).ready(() => {
         for (let i = 0; i < elements.length; i++) {
             if (elements[i].value != "") {
                 postParameters.push(elements[i].value);
-
             }
         }
         console.log(postParameters)
@@ -128,7 +121,8 @@ $(document).ready(() => {
     })
 
     $('#myTab a[href="#enjoy"]').on('click', function (e) {
-        getSuggestions();
+        e.preventDefault()
+        console.log(suggestions)
         profilePage(enjoy, suggestions)
         $(this).tab('show')
     })
@@ -265,6 +259,7 @@ $(document).ready(() => {
                     const r = JSON.parse(response);
                     console.log(r);
                     getFavs();
+                    getSuggestions();
                     console.log(favorites);
 
                     $(this).toggleClass("fa-heart fa-heart-o");
@@ -302,11 +297,24 @@ function getFavs() {
     };
     $.post("/favorites", {"uid": userProfile.getId()}, response => {
         const r = JSON.parse(response);
+        favorites = []
         for (let res of r) {
             favorites.push(res);
         }
         console.log(favorites);
 
+    });
+}
+function getSuggestions() {
+    $.post("/suggested-recipes", {
+        "uid": userProfile.getId()
+    }, response => {
+        const r = JSON.parse(response);
+        suggestions = []
+        for (let res of r) {
+            suggestions.push(res);
+        }
+        console.log(suggestions);
     });
 }
 /**
@@ -367,6 +375,7 @@ function onSignIn(googleUser) {
 
     getFavs();
     getPantry();
+    getSuggestions();
 
     $.post("/login", loginData, function (response) {
 
@@ -393,6 +402,7 @@ function signOut() {
         localStorage.setItem("signedin", false);
         favorites = [];
         pantryItems = [];
+        suggestions = [];
         $("#user-name").text("Please sign in to view profile!");
 
     });
