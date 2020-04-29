@@ -1,6 +1,7 @@
 <#assign content>
 
     <div class="col">
+
         <div class=" rounded profile d-flex flex-row justify-content-center">
             <div class="flex-col justify-content-center">
 
@@ -42,7 +43,7 @@
                             <input type="text" class="form-control typeahead" id="field1" name="field1"
                                    placeholder="Ingredient" autocomplete="off"/>
                         </div>
-                        <button type="submit" class="btn btn-outline-success add-to-pantry ">Add To Pantrt</button>
+                        <button type="submit" class="btn btn-outline-success add-to-pantry ">Add To Pantry</button>
                     </form>
                 </div>
             </div>

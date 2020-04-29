@@ -113,7 +113,12 @@ input[type="text"], textarea {
 
 }
 
+.food-images{
+  display: table;
+  border-collapse: collapse;
+  width: 100%;
 
+}
 .pantry-buttons {
   background: rgba(255, 254, 240, 0.16);
 
@@ -125,5 +130,26 @@ input[type="text"], textarea {
   margin-left:10px;
   font-size: large;
   font-weight: bold;
+
+}
+
+.item {
+  display: table-cell;
+  vertical-align: top;
+}
+.item img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.bbc{
+  text-align: center;
+  font-family: 'Abel', cursive;
+  margin-top: 10px;
+  font-size: x-large;
+  font-style: oblique;
+
+
 
 }

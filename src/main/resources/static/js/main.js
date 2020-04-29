@@ -6,7 +6,7 @@
 //user profile put in global scope
 let userProfile = undefined;
 let favorites = [];
-let pantryItems = ["salt", "pepper", "oil", "butter", "honey","soy sauce", "cumin","vanilla","thyme","flour"];
+let pantryItems = [];
 
 
 $(document).ready(() => {
@@ -45,6 +45,10 @@ $(document).ready(() => {
             $(fieldID).remove();
         });
     });
+
+    $(".add-to-pantry").click(function (e){
+
+    })
 
     //Find Recipes Button clicked
     $(".find-recipe").click(function (e) {
@@ -213,7 +217,6 @@ $(document).ready(() => {
                 $.post("/heart", postParameters, response => {
                     const r = JSON.parse(response);
                     console.log(r);
-                    favorites.length = 0;
                     getFavs();
                     console.log(favorites);
 
@@ -240,6 +243,7 @@ $(document).ready(() => {
 
 
 function getFavs() {
+    favorites.length = 0;
     const params = {
         userID: userProfile.getId(),
         name: userProfile.getName(),
@@ -256,6 +260,25 @@ function getFavs() {
 
     });
 }
+
+function getPantry() {
+    pantryItems.length = 0;
+    const params = {
+        uid: userProfile.getId(),
+    };
+    $.post("/pantry", {"uid": userProfile.getId()}, response => {
+        const r = JSON.parse(response);
+        for (let res of r) {
+            pantryItems.push(res);
+        }
+        console.log(pantryItems);
+        //profilePage();
+
+    });
+}
+
+
+
 
 function onSignIn(googleUser) {
     // Store userprofile in global variable

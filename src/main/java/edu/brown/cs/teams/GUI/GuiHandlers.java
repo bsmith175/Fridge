@@ -54,6 +54,7 @@ public class GuiHandlers {
         Spark.post("/favorites", new favoritesPageHandler());
         Spark.post("/heart", new favoriteButtonHandler());
         Spark.post("/login", new userLoginHandler());
+
         Spark.post("/pantry", new pantryHandler());
         Spark.post("/add-pantry", new pantryAddHandler());
         Spark.post("/remove-pantry", new removePantryHandler());
