@@ -14,7 +14,7 @@
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item ">
                 <a class="nav-link active" data-toggle="tab" href="#favorites" role="tab" aria-controls="home"
-                   aria-selected="true">favorites</a>
+                   aria-selected="true">Favorites</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" data-toggle="tab" href="#enjoy" role="tab" aria-controls="home"
