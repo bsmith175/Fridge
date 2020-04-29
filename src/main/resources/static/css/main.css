@@ -39,7 +39,8 @@ input[type="number"] {
 .navbar,
 .btn,
 .container{
-  font-family: 'Abel', sans-serif;}
+  font-family: 'Abel', sans-serif;
+}
 
 
 .dropdown-divider{
@@ -66,6 +67,7 @@ input[type="text"], textarea {
 
 .welcome {
   background-color: rgba(242, 175, 152, 0.79);
+  font-style: oblique;
 
 }
 
@@ -106,7 +108,8 @@ input[type="text"], textarea {
 }
 
 .tab-content .tab-pane {
-  background-color: rgba(255, 226, 202, 0.62);
+  background-color: #eef6ff;
+
   color: #ff9283;
   min-height: 200px;
   height: auto;
@@ -126,10 +129,23 @@ input[type="text"], textarea {
 
 .pantry-items{
   margin: 0em ; !important;
-  margin-bottom:10px;
-  margin-left:10px;
   font-size: large;
   font-weight: bold;
+  font-family: 'Abel', sans-serif;
+
+}
+
+.pantry-explanation{
+  margin: 0em ; !important;
+  margin-bottom:10px;
+  font-family: 'Abel', sans-serif;
+
+  font-size: small;
+  font-weight: bold;
+}
+
+.pantry-add-more{
+  margin-top:10px;
 
 }
 
