@@ -16,6 +16,7 @@ $(document).ready(() => {
     const result_cards = $("#result-cards");
     const modal_title = $("#modal-title");
     const fav = $("#display-favs");
+    const enjoy = $("#display-enjoy")
     pantry = $("#pantry-item");
 
     const excluded = $("#excluded");
@@ -122,13 +123,13 @@ $(document).ready(() => {
 
     $('#myTab a[href="#favorites"]').on('click', function (e) {
         e.preventDefault()
-        profilePage(favorites);
+        profilePage(fav, favorites);
         $(this).tab('show')
     })
 
     $('#myTab a[href="#enjoy"]').on('click', function (e) {
         getSuggestions();
-        profilePage(suggestions)
+        profilePage(enjoy, suggestions)
         $(this).tab('show')
     })
 
@@ -278,10 +279,10 @@ $(document).ready(() => {
 
     }
 
-    function profilePage(results) {
+    function profilePage(e, results) {
         console.log("profile");
-        fav.empty();
-        make_cards(fav, results, false);
+        e.empty();
+        make_cards(e, results, false);
 
     }
 
