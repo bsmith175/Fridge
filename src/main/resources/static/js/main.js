@@ -52,7 +52,7 @@ $(document).ready(() => {
     });
 
 
-    $(".add-to-pantry").click(function (e){
+    $(".add-to-pantry").click(function (e) {
         console.log("add to pantry")
         let postParameters = "";
         let elements = document.forms["pantry-form"].elements;
@@ -64,9 +64,12 @@ $(document).ready(() => {
 
         $.post('/add-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
             data = JSON.parse(data);
+            getPantry();
+            displayPantry();
+
         })
-        // $('#myTab a[href="#pantry"]').click();
-        // console.log("asdfasdf");
+        return false;
+
     })
 
     //Find Recipes Button clicked
@@ -135,25 +138,24 @@ $(document).ready(() => {
 
     });
 
-    function displayPantry(){
-        console.log(pantryItems.length);
-        pantry.empty();
-        console.log("Displaying pantry");
-        for (let i = 0; i < pantryItems.length; i++) {
+    function displayPantry() {
+        setTimeout(function () {
+            pantry.empty();
+            console.log(pantryItems.length)
 
-            const s = "<button type=\"button\" id=\""+i+"\" class=\"btn btn-lg btn-outline-info remove-pantry\" onclick='remove_pantry(this.id)'>\n"
-                + pantryItems[i]
-                + "<span class=\"badge badge-light\">x</span>\n"
-                + "                        </button>";
-            console.log(s);
+            for (let i = 0; i < pantryItems.length; i++) {
 
-            pantry.append(s);
-        }
-        console.log(pantry);
+                const s = "<button type=\"button\" id=\"" + i + "\" class=\"btn btn-lg btn-outline-info remove-pantry\" onclick='remove_pantry(this.id)'>\n"
+                    + pantryItems[i]
+                    + "<span class=\"badge badge-light\">x</span>\n"
+                    + "                        </button>";
+                console.log(s);
+
+                pantry.append(s);
+            }
+            console.log(pantry);
+        }, 1000);
     }
-
-
-
 
 
     //$('#myTab a[href="#excluded"]').tab('show');
@@ -304,12 +306,13 @@ function getFavs() {
 
     });
 }
+
 /**
  * Removes a pantry item.
  *
  * @param {*} clicked_id id of ingrdient clicked
  */
-function remove_pantry(clicked_id){
+function remove_pantry(clicked_id) {
     console.log("removing item from pantry");
     console.log(clicked_id);
     console.log(pantryItems);
@@ -320,9 +323,10 @@ function remove_pantry(clicked_id){
         data = JSON.parse(data);
 
     })
-    pantry.find("#"+ clicked_id).remove();
+    pantry.find("#" + clicked_id).remove();
     getPantry();
 }
+
 /**
  * Gets pantry items and stores them in pantryItems.
  *
@@ -344,6 +348,7 @@ function getPantry() {
     });
 
 }
+
 function getSuggestions() {
     console.log("getting suggested recipes and setting in storage");
     $.post("/suggested-recipes", {
