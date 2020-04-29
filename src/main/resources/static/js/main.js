@@ -72,8 +72,11 @@ $(document).ready(() => {
 
         $.post('/add-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
             data = JSON.parse(data);
+            getPantry();
+            displayPantry();
 
         })
+        return false;
 
 
     })
@@ -143,20 +146,24 @@ $(document).ready(() => {
     });
 
     function displayPantry(){
-        pantry.empty();
-        console.log(pantryItems.length)
+        setTimeout( function(){
+            pantry.empty();
+            console.log(pantryItems.length)
 
-        for (let i = 0; i < pantryItems.length; i++) {
+            for (let i = 0; i < pantryItems.length; i++) {
 
-            const s = "<button type=\"button\" id=\""+i+"\" class=\"btn btn-lg btn-outline-info remove-pantry\" onclick='remove_pantry(this.id)'>\n"
-                + pantryItems[i]
-                + "<span class=\"badge badge-light\">x</span>\n"
-                + "                        </button>";
-            console.log(s);
+                const s = "<button type=\"button\" id=\""+i+"\" class=\"btn btn-lg btn-outline-info remove-pantry\" onclick='remove_pantry(this.id)'>\n"
+                    + pantryItems[i]
+                    + "<span class=\"badge badge-light\">x</span>\n"
+                    + "                        </button>";
+                console.log(s);
 
-            pantry.append(s);
-        }
-        console.log(pantry);
+                pantry.append(s);
+            }
+            console.log(pantry);
+        }, 1000 );
+
+
     }
 
 
