@@ -174,8 +174,7 @@ public class GuiHandlers {
             QueryParamsMap qm = request.queryMap();
             String[] ingredients = qm.get("text").values();
 
-            //List<JsonObject> results = command.runForGui(ingredients); NATES
-            List<JsonObject> results = command.runForGui(ingredients, false, //EYALS
+            List<JsonObject> results = command.runForGui(ingredients, false,
                     false, false);
             String result = GSON.toJson(results);
             return result;
@@ -234,12 +233,12 @@ public class GuiHandlers {
         @Override
         public Object handle(Request request, Response response) throws Exception {
             QueryParamsMap qm = request.queryMap();
-            String[] ingredients = qm.get("text").values();
             String uid = qm.value("uid");
+            String term = qm.value("text");
             JsonObject responseJSON = new JsonObject();
 
             try {
-                AlgMain.getUserDb().addToPantry(ingredients, uid);
+                AlgMain.getUserDb().addToPantry(term, uid);
                 responseJSON.addProperty("success", true);
             } catch (SQLException e) {
                 responseJSON.addProperty("success", false);

@@ -7,6 +7,8 @@
 let userProfile = undefined;
 let favorites = [];
 let pantryItems = [];
+let pantry = $("#pantry-item");
+
 
 
 $(document).ready(() => {
@@ -14,14 +16,18 @@ $(document).ready(() => {
     const result_cards = $("#result-cards");
     const modal_title = $("#modal-title");
     const fav = $("#display-favs");
-    const pantry = $("#pantry-item");
+    pantry = $("#pantry-item");
+
     const excluded = $("#excluded");
     console.log($(".add-more"));
     favorites.length = 0;
 
 
     function getSuggestions() {
-        $.post("/suggested-recipes", {data: favorites, "uid": -1}, response => {
+        console.log(favorites);
+        console.log("heeeeey");
+
+        $.post("/suggested-recipes", {"data": favorites, "uid": userProfile.getId()}, response => {
             make_cards(result_cards, JSON.parse(response))
 
         });
@@ -34,6 +40,7 @@ $(document).ready(() => {
         getSuggestions();
 
     })
+
     var next = 1;
     $(".add-more").click(function (e) {
         console.log("add")
@@ -61,7 +68,22 @@ $(document).ready(() => {
         });
     });
 
+
     $(".add-to-pantry").click(function (e){
+        console.log("add to pantry")
+        let postParameters = "";
+        let elements = document.forms["pantry-form"].elements;
+        for (let i = 0; i < elements.length; i++) {
+            if (elements[i].value != "") {
+                postParameters = elements[i].value;
+            }
+        }
+
+        $.post('/add-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
+            data = JSON.parse(data);
+
+        })
+
 
     })
 
@@ -115,12 +137,22 @@ $(document).ready(() => {
     })
 
     $('#myTab a[href="#pantry"]').on('click', function (e) {
-        pantry.empty();
+        e.preventDefault();
+        console.log("pantry");
         console.log(pantryItems);
-        e.preventDefault()
+        displayPantry();
+        $(this).tab('show');
+
+    });
+
+    function displayPantry(){
+        pantry.empty();
+        console.log(pantryItems.length)
+
         for (let i = 0; i < pantryItems.length; i++) {
 
-            const s = "<button type=\"button\" class=\"btn btn-lg btn-outline-info\">\n" + pantryItems[i]
+            const s = "<button type=\"button\" id=\""+i+"\" class=\"btn btn-lg btn-outline-info remove-pantry\" onclick='remove_pantry(this.id)'>\n"
+                + pantryItems[i]
                 + "<span class=\"badge badge-light\">x</span>\n"
                 + "                        </button>";
             console.log(s);
@@ -128,9 +160,12 @@ $(document).ready(() => {
             pantry.append(s);
         }
         console.log(pantry);
+    }
 
-        $(this).tab('show')
-    })
+
+
+
+
     $('#myTab a[href="#excluded"]').tab('show');
 
 
@@ -256,7 +291,10 @@ $(document).ready(() => {
 
 });
 
-
+/**
+ * Gets favorites from backend and sets favorite array
+ *
+ */
 function getFavs() {
     favorites.length = 0;
     const params = {
@@ -271,25 +309,46 @@ function getFavs() {
             favorites.push(res);
         }
         console.log(favorites);
-        //profilePage();
 
     });
 }
+/**
+ * Removes a pantry item.
+ *
+ * @param {*} clicked_id id of ingrdient clicked
+ */
+function remove_pantry(clicked_id){
+    console.log("remove from pantry");
+    console.log(clicked_id);
+    console.log(pantryItems);
 
+    let postParameters = pantryItems[clicked_id];
+    console.log(postParameters);
+    $.post('/remove-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
+        data = JSON.parse(data);
+
+    })
+    pantry.find("#"+ clicked_id).remove();
+    getPantry();
+}
+/**
+ * Gets pantry items and stores them in pantryItems.
+ *
+ */
 function getPantry() {
+    console.log("get pantry");
     pantryItems.length = 0;
     const params = {
         uid: userProfile.getId(),
     };
-    $.post("/pantry", {"uid": userProfile.getId()}, response => {
-        const r = JSON.parse(response);
+    $.post("/pantry", params, response => {
+        const r = JSON.parse(response)
         for (let res of r) {
             pantryItems.push(res);
         }
-        console.log(pantryItems);
-        //profilePage();
 
     });
+
 }
 
 
@@ -312,6 +371,8 @@ function onSignIn(googleUser) {
     };
 
     getFavs();
+    getPantry();
+
     $.post("/login", loginData, function (response) {
 
     });
@@ -336,6 +397,7 @@ function signOut() {
         userProfile = undefined;
         localStorage.setItem("signedin", false);
         favorites = [];
+        pantryItems = [];
         $("#user-name").text("Please sign in to view profile!");
 
     });

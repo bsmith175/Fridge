@@ -11,13 +11,11 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Term-Project" target="11" />
-      <module name="Term_Project" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Term-Project" options="-Xlint:all" />
-      <module name="Term_Project" options="-Xlint:all" />
     </option>
   </component>
 </project>
