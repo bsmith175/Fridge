@@ -17,6 +17,11 @@
                    aria-selected="true">favorites</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#enjoy" role="tab" aria-controls="home"
+                   aria-selected="false">Recipes you might enjoy</a>
+
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" data-toggle="tab" href="#pantry" role="tab" aria-controls="home"
                    aria-selected="false">Pantry</a>
             </li>
@@ -25,6 +30,7 @@
                    aria-selected="false">Excluded</a>
 
             </li>
+
         </ul>
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="favorites" role="tabpanel" aria-labelledby="favorites-tab">

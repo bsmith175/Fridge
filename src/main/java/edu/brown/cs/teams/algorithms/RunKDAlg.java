@@ -108,7 +108,7 @@ public class RunKDAlg implements Command {
       for (Integer i : favoriteIds) {
         String[] tokens = AlgMain.getRecipeDb().getTokenIngredients(i);
         double[] embeddings = extractQuery(tokens, true);
-        List<MinimalRecipe> result = AlgMain.getTree().getNeighbors(1, embeddings);
+        List<MinimalRecipe> result = AlgMain.getTree().getNeighbors(5, embeddings);
         for (MinimalRecipe recipe : result) {
           resultIds.add(recipe.getId());
         }

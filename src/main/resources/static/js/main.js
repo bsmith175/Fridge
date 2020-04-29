@@ -7,6 +7,7 @@
 let userProfile = undefined;
 let favorites = [];
 let pantryItems = [];
+let suggestions = [];
 
 
 $(document).ready(() => {
@@ -20,20 +21,16 @@ $(document).ready(() => {
     favorites.length = 0;
 
 
-    function getSuggestions() {
-        $.post("/suggested-recipes", {data: favorites, "uid": -1}, response => {
-            make_cards(result_cards, JSON.parse(response))
 
+
+    function getSuggestions() {
+        $.post("/suggested-recipes", {
+            "uid": userProfile.getId()
+        }, response => {
+            suggestions = JSON.parse(response);
         });
     }
 
-    //getSuggestions();
-
-    $(".nate-button").click(function (e){
-        console.log("nate button");
-        getSuggestions();
-
-    })
     var next = 1;
     $(".add-more").click(function (e) {
         console.log("add")
@@ -61,7 +58,7 @@ $(document).ready(() => {
         });
     });
 
-    $(".add-to-pantry").click(function (e){
+    $(".add-to-pantry").click(function (e) {
 
     })
 
@@ -110,7 +107,13 @@ $(document).ready(() => {
 
     $('#myTab a[href="#favorites"]').on('click', function (e) {
         e.preventDefault()
-        profilePage();
+        profilePage(favorites);
+        $(this).tab('show')
+    })
+
+    $('#myTab a[href="#enjoy"]').on('click', function (e) {
+        getSuggestions();
+        profilePage(suggestions)
         $(this).tab('show')
     })
 
@@ -247,10 +250,10 @@ $(document).ready(() => {
 
     }
 
-    function profilePage() {
+    function profilePage(results) {
         console.log("profile");
         fav.empty();
-        make_cards(fav, favorites, false);
+        make_cards(fav, results, false);
 
     }
 
@@ -291,8 +294,6 @@ function getPantry() {
 
     });
 }
-
-
 
 
 function onSignIn(googleUser) {
