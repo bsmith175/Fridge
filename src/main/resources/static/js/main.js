@@ -27,9 +27,13 @@ $(document).ready(() => {
         });
     }
 
-    getSuggestions();
+    //getSuggestions();
 
+    $(".nate-button").click(function (e){
+        console.log("nate button");
+        getSuggestions();
 
+    })
     var next = 1;
     $(".add-more").click(function (e) {
         console.log("add")
