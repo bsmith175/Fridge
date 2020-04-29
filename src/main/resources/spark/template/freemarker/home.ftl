@@ -25,7 +25,7 @@
             </li>
             <li class="nav-item ">
                 <a class="nav-link" data-toggle="tab" href="#favorites" role="tab" aria-controls="home"
-                   aria-selected="true">favorites</a>
+                   aria-selected="true">Favorites</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" data-toggle="tab" href="#excluded" role="tab" aria-controls="home"

@@ -319,6 +319,7 @@ function getFavs() {
     });
 }
 
+
 /**
  * Removes a pantry item.
  *
