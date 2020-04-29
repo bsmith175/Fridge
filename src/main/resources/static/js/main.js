@@ -92,7 +92,7 @@ $(document).ready(() => {
         result_cards.empty();
         e.preventDefault();
         //add inputs to postParameters
-        const postParameters = [];
+        let postParameters = [];
         let elements = document.forms["fridge-form"].elements;
         console.log(elements);
         for (let i = 0; i < elements.length; i++) {
@@ -100,6 +100,7 @@ $(document).ready(() => {
                 postParameters.push(elements[i].value);
             }
         }
+        postParameters = postParameters.concat(pantryItems);
         console.log(postParameters)
         $.post("/recipe-recommend", $.param({text: postParameters}, true), response => {
             //parse response

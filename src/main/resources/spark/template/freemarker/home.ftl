@@ -3,7 +3,7 @@
     <div class="col">
 
         <div class=" rounded profile d-flex flex-row justify-content-center">
-            <div class="flex-col justify-content-center align-items-center;">
+            <div class="flex-col justify-content-center align-items-center replace-image">
 
                 <img class="profile-pic rounded-circle"
                      src="https://png.pngtree.com/png-vector/20190711/ourlarge/pngtree-cook-icon-for-your-project-png-image_1541448.jpg"
