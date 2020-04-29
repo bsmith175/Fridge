@@ -22,13 +22,10 @@ $(document).ready(() => {
     console.log($(".add-more"));
     favorites.length = 0;
 
-
-    function getSuggestions() {
-        $.post("/suggested-recipes", {
-            "uid": userProfile.getId()
-        }, response => {
-            suggestions = JSON.parse(response);
-        });
+    if (sessionStorage.getItem("signedin") === "true") {
+        getFavs();
+        getPantry();
+        getSuggestions();
     }
 
     var next = 1;
@@ -61,6 +58,7 @@ $(document).ready(() => {
 
     $(".add-to-pantry").click(function (e){
         console.log("add to pantry")
+        e.preventDefault();
         let postParameters = "";
         let elements = document.forms["pantry-form"].elements;
         for (let i = 0; i < elements.length; i++) {
@@ -71,10 +69,9 @@ $(document).ready(() => {
 
         $.post('/add-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
             data = JSON.parse(data);
-
         })
-
-
+        // $('#myTab a[href="#pantry"]').click();
+        // console.log("asdfasdf");
     })
 
     //Find Recipes Button clicked
@@ -123,13 +120,14 @@ $(document).ready(() => {
     $('#myTab a[href="#favorites"]').on('click', function (e) {
         e.preventDefault()
         profilePage(favorites);
-        $(this).tab('show')
+        //$(this).tab('show')
     })
 
     $('#myTab a[href="#enjoy"]').on('click', function (e) {
-        getSuggestions();
+        //getSuggestions();
+        e.preventDefault()
         profilePage(suggestions)
-        $(this).tab('show')
+        //$(this).tab('show')
     })
 
     $('#myTab a[href="#pantry"]').on('click', function (e) {
@@ -137,7 +135,8 @@ $(document).ready(() => {
         console.log("pantry");
         console.log(pantryItems);
         displayPantry();
-        $(this).tab('show');
+        // console.log(typeof $(this).tab('show'));
+        // $(this).tab('show');
 
     });
 
@@ -162,7 +161,7 @@ $(document).ready(() => {
 
 
 
-    $('#myTab a[href="#excluded"]').tab('show');
+    //$('#myTab a[href="#excluded"]').tab('show');
 
 
     function createTypeahead($els) {
@@ -346,6 +345,13 @@ function getPantry() {
     });
 
 }
+function getSuggestions() {
+    $.post("/suggested-recipes", {
+        "uid": userProfile.getId()
+    }, response => {
+        suggestions = JSON.parse(response);
+    });
+}
 
 
 function onSignIn(googleUser) {
@@ -353,7 +359,7 @@ function onSignIn(googleUser) {
     userProfile = googleUser.getBasicProfile();
 
     localStorage.setItem("signedin", "true");
-    console.log("signed in is true");
+    console.log("signed in");
     $("#user-name").text("Welcome, " + userProfile.getGivenName() + "!");
 
     // Performs page specific actions after user has signed in
@@ -366,6 +372,7 @@ function onSignIn(googleUser) {
 
     getFavs();
     getPantry();
+    getSuggestions();
 
     $.post("/login", loginData, function (response) {
 
