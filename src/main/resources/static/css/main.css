@@ -108,7 +108,48 @@ input[type="text"], textarea {
 .tab-content .tab-pane {
   background-color: rgba(255, 226, 202, 0.62);
   color: #ff9283;
-  min-height: 350px;
+  min-height: 200px;
   height: auto;
+
+}
+
+.food-images{
+  display: table;
+  border-collapse: collapse;
+  width: 100%;
+
+}
+.pantry-buttons {
+  background: rgba(255, 254, 240, 0.16);
+
+}
+
+.pantry-items{
+  margin: 0em ; !important;
+  margin-bottom:10px;
+  margin-left:10px;
+  font-size: large;
+  font-weight: bold;
+
+}
+
+.item {
+  display: table-cell;
+  vertical-align: top;
+}
+.item img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.bbc{
+  text-align: center;
+  font-family: 'Abel', cursive;
+  margin-top: 10px;
+  font-size: x-large;
+  font-style: oblique;
+
+
 
 }

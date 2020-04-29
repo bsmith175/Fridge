@@ -65,9 +65,10 @@ public class RunKDAlg implements Command {
   }
 
   @Override
-  public String runCommand(String[] command) throws CommandException {
-    if (command.length < 2) {
-      throw new CommandException("ERROR: Must enter in at least one ingredient");
+  public String runCommand(String[] command, boolean dairy,
+                           boolean meat, boolean nuts) throws CommandException {
+    if (command.length < 3) {
+      throw new CommandException("ERROR: Must enter in at least two ingredients");
     }
     try {
       double[] queryEmbedding = extractQuery(command, false);
@@ -83,7 +84,8 @@ public class RunKDAlg implements Command {
   }
 
   @Override
-  public List<JsonObject> runForGui(String[] command) throws CommandException {
+  public List<JsonObject> runForGui(String[] command, boolean dairy,
+                                    boolean meat, boolean nuts) throws CommandException {
     try {
       double[] queryEmbedding = extractQuery(command, true);
       List<MinimalRecipe> neighbors = AlgMain.getTree().getNeighbors(100, queryEmbedding);

@@ -15,15 +15,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class RunSuperiorAlg implements Command {
   @Override
-  public String runCommand(String[] command) throws CommandException {
+  public String runCommand(String[] command, boolean dairy,
+                           boolean meat, boolean nuts) throws CommandException {
     if (command.length < 2) {
       throw new CommandException("ERROR: Must enter an ingredient");
     }
     try {
-
       PriorityQueue<Recipe> recpq = preCommand(command);
       Recipe first = recpq.poll();
       Config.printRecIngreds(first);
@@ -66,20 +67,38 @@ public class RunSuperiorAlg implements Command {
     List<Recipe> reclist = Config.getFullRecipes();
     PriorityQueue<Recipe> recpq =
             new PriorityQueue<>(new RecipeDistanceComparator());
+
     recpq.addAll(reclist);
     return recpq;
   }
 
   @Override
-  public List<JsonObject> runForGui(String[] command) throws CommandException {
+  public List<JsonObject> runForGui(String[] command, boolean dairy,
+                                    boolean meat, boolean nuts) throws CommandException {
     if (command.length < 2) {
       throw new CommandException("ERROR: Must enter an ingredient");
     }
+    StringBuilder notAllowed = new StringBuilder();
+    if (dairy = true) {
+      notAllowed.append(Config.getDairy());
+      notAllowed.append("|");
+    }
+    if (nuts = true) {
+      notAllowed.append(Config.getNuts());
+      notAllowed.append("|");
+    }
+    if (meat = true) {
+      notAllowed.append(Config.getMeats());
+      notAllowed.append("|");
+    }
+    notAllowed.deleteCharAt(notAllowed.length()-1);
+    Pattern pattern = Pattern.compile(notAllowed.toString());
     try {
       PriorityQueue<Recipe> recpq = preCommand(command);
       List<JsonObject> guiResults = new ArrayList<>();
       for (int i = 0; i < 100; i ++) {
         JsonObject jsonRecipe = Config.getRecipeJson(recpq.poll().getId());
+        jsonRecipe.get("tokens");
         guiResults.add(jsonRecipe);
       }
       return guiResults;

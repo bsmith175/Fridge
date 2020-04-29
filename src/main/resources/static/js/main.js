@@ -6,13 +6,15 @@
 //user profile put in global scope
 let userProfile = undefined;
 let favorites = [];
+let pantryItems = [];
+
 
 $(document).ready(() => {
 
     const result_cards = $("#result-cards");
     const modal_title = $("#modal-title");
     const fav = $("#display-favs");
-    const pantry = $("#pantry");
+    const pantry = $("#pantry-item");
     const excluded = $("#excluded");
     console.log($(".add-more"));
     favorites.length = 0;
@@ -55,6 +57,10 @@ $(document).ready(() => {
         });
     });
 
+    $(".add-to-pantry").click(function (e){
+
+    })
+
     //Find Recipes Button clicked
     $(".find-recipe").click(function (e) {
         console.log("find recipe")
@@ -64,6 +70,7 @@ $(document).ready(() => {
         //add inputs to postParameters
         const postParameters = [];
         let elements = document.forms["fridge-form"].elements;
+        console.log(elements);
         for (let i = 0; i < elements.length; i++) {
             if (elements[i].value != "") {
                 postParameters.push(elements[i].value);
@@ -96,13 +103,31 @@ $(document).ready(() => {
     createTypeahead($('typeahead'));
     $('.type')
 
+
     $('#myTab a[href="#favorites"]').on('click', function (e) {
         e.preventDefault()
         profilePage();
         $(this).tab('show')
     })
+
+    $('#myTab a[href="#pantry"]').on('click', function (e) {
+        pantry.empty();
+        console.log(pantryItems);
+        e.preventDefault()
+        for (let i = 0; i < pantryItems.length; i++) {
+
+            const s = "<button type=\"button\" class=\"btn btn-lg btn-outline-info\">\n" + pantryItems[i]
+                + "<span class=\"badge badge-light\">x</span>\n"
+                + "                        </button>";
+            console.log(s);
+
+            pantry.append(s);
+        }
+        console.log(pantry);
+
+        $(this).tab('show')
+    })
     $('#myTab a[href="#excluded"]').tab('show');
-    $('#myTab a[href="#pantry"]').tab('show');
 
 
     function createTypeahead($els) {
@@ -203,7 +228,6 @@ $(document).ready(() => {
                 $.post("/heart", postParameters, response => {
                     const r = JSON.parse(response);
                     console.log(r);
-                    favorites.length = 0;
                     getFavs();
                     console.log(favorites);
 
@@ -230,6 +254,7 @@ $(document).ready(() => {
 
 
 function getFavs() {
+    favorites.length = 0;
     const params = {
         userID: userProfile.getId(),
         name: userProfile.getName(),
@@ -246,6 +271,25 @@ function getFavs() {
 
     });
 }
+
+function getPantry() {
+    pantryItems.length = 0;
+    const params = {
+        uid: userProfile.getId(),
+    };
+    $.post("/pantry", {"uid": userProfile.getId()}, response => {
+        const r = JSON.parse(response);
+        for (let res of r) {
+            pantryItems.push(res);
+        }
+        console.log(pantryItems);
+        //profilePage();
+
+    });
+}
+
+
+
 
 function onSignIn(googleUser) {
     // Store userprofile in global variable
