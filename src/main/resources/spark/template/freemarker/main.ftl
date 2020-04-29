@@ -33,8 +33,7 @@
         <div class="navbar-nav">
             <a class="nav-item nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
             <div class="dropdown-divider"></div>
-            <a class="nav-item nav-link" href="/home">Profile</a>
-
+            <a class="nav-item nav-link" id="profile" href="/home">Profile</a>
         </div>
     </div>
     <#--  Google Sign In  -->

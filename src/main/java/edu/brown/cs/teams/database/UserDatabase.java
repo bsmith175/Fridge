@@ -208,12 +208,20 @@ public class UserDatabase {
    * @throws SQLException - if exception occurs while updating database
    */
   public void addToPantry(String ingredient, String uid) throws SQLException {
-    PreparedStatement prep = conn.prepareStatement("INSERT INTO pantry VALUES(?, ?)");
-    prep.setString(1, ingredient);
+    String check = "SELECT EXISTS(SELECT * FROM pantry WHERE ingredient= ?  AND uid= ?);";
+    PreparedStatement prep = conn.prepareStatement(check);
+    prep.setString(1, ingredient.trim());
     prep.setString(2, uid);
-    prep.addBatch();
-    prep.executeUpdate();
+    ResultSet rs = prep.executeQuery();
+    rs.next();
 
+    if (!rs.getBoolean(1)) {
+      prep = conn.prepareStatement("INSERT INTO pantry VALUES(?, ?)");
+      prep.setString(1, ingredient);
+      prep.setString(2, uid);
+      prep.addBatch();
+      prep.executeUpdate();
+    }
   }
 
   /**
@@ -226,7 +234,7 @@ public class UserDatabase {
   public void removePantryitem(String ingredient, String uid) throws SQLException {
     PreparedStatement prep = conn.prepareStatement("DELETE FROM pantry WHERE uid=? AND ingredient=?");
     prep.setString(1, uid);
-    prep.setString(2, ingredient);
+    prep.setString(2, ingredient.trim());
     prep.executeUpdate();
   }
 

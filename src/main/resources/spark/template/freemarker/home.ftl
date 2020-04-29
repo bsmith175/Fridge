@@ -30,7 +30,7 @@
             </li>
             <li class="nav-item ">
                 <a class="nav-link" data-toggle="tab" href="#favorites" role="tab" aria-controls="home"
-                   aria-selected="true">favorites</a>
+                   aria-selected="true">Favorites</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" data-toggle="tab" href="#excluded" role="tab" aria-controls="home"
@@ -49,7 +49,7 @@
             <div class="tab-pane fade" id="pantry" role="tabpanel" aria-labelledby="profile-tab">
                 <div class="col">
                     <p class="pantry-items">Items Stored in Pantry: </p>
-                    <p class="pantry-explanation">Items stored in Pantry will be automatically be added to your ingredients list
+                    <p class="pantry-explanation">Items stored in Pantry will automatically be added to your ingredients list
                         when you look for recipes.</p>
                     <div class="pantry-buttons" id="pantry-item">
 
