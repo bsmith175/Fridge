@@ -12,9 +12,16 @@
             </div>
         </div>
         <ul class="nav nav-tabs" id="myTab" role="tablist">
+
+
             <li class="nav-item">
                 <a class="nav-link " data-toggle="tab" href="#pantry" role="tab" aria-controls="home"
                    aria-selected="false">Pantry</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#enjoy" role="tab" aria-controls="home"
+                   aria-selected="false">Recipes you might enjoy</a>
+
             </li>
             <li class="nav-item ">
                 <a class="nav-link" data-toggle="tab" href="#favorites" role="tab" aria-controls="home"
@@ -25,6 +32,7 @@
                    aria-selected="false">Excluded</a>
 
             </li>
+
         </ul>
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade" id="favorites" role="tabpanel" aria-labelledby="favorites-tab">

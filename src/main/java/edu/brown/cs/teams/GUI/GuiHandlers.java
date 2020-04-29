@@ -155,7 +155,6 @@ public class GuiHandlers {
         @Override
         public Object handle(Request request, Response response) throws Exception {
             QueryParamsMap qm = request.queryMap();
-            String[] favs = qm.get("text").values();
             String uid = qm.get("uid").values()[0];
             String result = GSON.toJson(RunKDAlg.getRecommendations(uid));
             return result;

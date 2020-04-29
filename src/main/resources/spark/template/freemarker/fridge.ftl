@@ -53,7 +53,7 @@
         <div class="row" id="result-cards"></div>
     </div>
 
-    <button type="submit" class="btn btn-outline-success nate-button ">Find Recipes</button>
+
 
 
 </#assign>
