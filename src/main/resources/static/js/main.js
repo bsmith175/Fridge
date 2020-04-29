@@ -24,8 +24,6 @@ $(document).ready(() => {
     favorites.length = 0;
 
 
-
-
     var next = 1;
     $(".add-more").click(function (e) {
         console.log("add")
@@ -54,7 +52,7 @@ $(document).ready(() => {
     });
 
 
-    $(".add-to-pantry").click(function (e){
+    $(".add-to-pantry").click(function (e) {
         console.log("add to pantry")
         let postParameters = "";
         let elements = document.forms["pantry-form"].elements;
@@ -66,11 +64,13 @@ $(document).ready(() => {
 
         $.post('/add-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
             data = JSON.parse(data);
+            getPantry();
+            displayPantry();
 
         })
+        return false;
 
     })
-
 
     //Find Recipes Button clicked
     $(".find-recipe").click(function (e) {
@@ -85,6 +85,7 @@ $(document).ready(() => {
         for (let i = 0; i < elements.length; i++) {
             if (elements[i].value != "") {
                 postParameters.push(elements[i].value);
+
             }
         }
         console.log(postParameters)
@@ -116,48 +117,48 @@ $(document).ready(() => {
 
     $('#myTab a[href="#favorites"]').on('click', function (e) {
         e.preventDefault()
+
         profilePage(fav, favorites);
-        $(this).tab('show')
+        //$(this).tab('show')
     })
 
     $('#myTab a[href="#enjoy"]').on('click', function (e) {
-        e.preventDefault()
-        console.log(suggestions)
+        //getSuggestions();
         profilePage(enjoy, suggestions)
-        $(this).tab('show')
+        //$(this).tab('show')
     })
 
     $('#myTab a[href="#pantry"]').on('click', function (e) {
         e.preventDefault();
-        console.log("pantry");
+        console.log("pantry tab clicked");
         console.log(pantryItems);
         displayPantry();
-        $(this).tab('show');
+        // console.log(typeof $(this).tab('show'));
+        // $(this).tab('show');
 
     });
 
-    function displayPantry(){
-        pantry.empty();
-        console.log(pantryItems.length)
+    function displayPantry() {
+        setTimeout(function () {
+            pantry.empty();
+            console.log(pantryItems.length)
 
-        for (let i = 0; i < pantryItems.length; i++) {
+            for (let i = 0; i < pantryItems.length; i++) {
 
-            const s = "<button type=\"button\" id=\""+i+"\" class=\"btn btn-lg btn-outline-info remove-pantry\" onclick='remove_pantry(this.id)'>\n"
-                + pantryItems[i]
-                + "<span class=\"badge badge-light\">x</span>\n"
-                + "                        </button>";
-            console.log(s);
+                const s = "<button type=\"button\" id=\"" + i + "\" class=\"btn btn-lg btn-outline-info remove-pantry\" onclick='remove_pantry(this.id)'>\n"
+                    + pantryItems[i]
+                    + "<span class=\"badge badge-light\">x</span>\n"
+                    + "                        </button>";
+                console.log(s);
 
-            pantry.append(s);
-        }
-        console.log(pantry);
+                pantry.append(s);
+            }
+            console.log(pantry);
+        }, 1000);
     }
 
 
-
-
-
-    $('#myTab a[href="#excluded"]').tab('show');
+    //$('#myTab a[href="#excluded"]').tab('show');
 
 
     function createTypeahead($els) {
@@ -238,7 +239,7 @@ $(document).ready(() => {
         });
         //like button
         $(".heart.fa").click(function (e) {
-            if (localStorage.getItem("signedin") != "true") {
+            if (sessionStorage.getItem("signedin") != "true") {
 
                 alert("Please sign in to favorite recipes!");
                 console.log("else didn't work");
@@ -259,7 +260,6 @@ $(document).ready(() => {
                     const r = JSON.parse(response);
                     console.log(r);
                     getFavs();
-                    getSuggestions();
                     console.log(favorites);
 
                     $(this).toggleClass("fa-heart fa-heart-o");
@@ -288,6 +288,7 @@ $(document).ready(() => {
  *
  */
 function getFavs() {
+    console.log("Getting favorites and setting storage");
     favorites.length = 0;
     const params = {
         userID: userProfile.getId(),
@@ -297,7 +298,7 @@ function getFavs() {
     };
     $.post("/favorites", {"uid": userProfile.getId()}, response => {
         const r = JSON.parse(response);
-        favorites = []
+        sessionStorage.setItem("favorites", response);
         for (let res of r) {
             favorites.push(res);
         }
@@ -305,25 +306,15 @@ function getFavs() {
 
     });
 }
-function getSuggestions() {
-    $.post("/suggested-recipes", {
-        "uid": userProfile.getId()
-    }, response => {
-        const r = JSON.parse(response);
-        suggestions = []
-        for (let res of r) {
-            suggestions.push(res);
-        }
-        console.log(suggestions);
-    });
-}
+
+
 /**
  * Removes a pantry item.
  *
  * @param {*} clicked_id id of ingrdient clicked
  */
-function remove_pantry(clicked_id){
-    console.log("remove from pantry");
+function remove_pantry(clicked_id) {
+    console.log("removing item from pantry");
     console.log(clicked_id);
     console.log(pantryItems);
 
@@ -333,21 +324,24 @@ function remove_pantry(clicked_id){
         data = JSON.parse(data);
 
     })
-    pantry.find("#"+ clicked_id).remove();
+    pantry.find("#" + clicked_id).remove();
     getPantry();
 }
+
 /**
  * Gets pantry items and stores them in pantryItems.
  *
  */
 function getPantry() {
-    console.log("get pantry");
+    console.log("getting pantry and setting in storage");
     pantryItems.length = 0;
     const params = {
         uid: userProfile.getId(),
     };
     $.post("/pantry", params, response => {
         const r = JSON.parse(response)
+        sessionStorage.setItem("pantry", response);
+
         for (let res of r) {
             pantryItems.push(res);
         }
@@ -356,30 +350,49 @@ function getPantry() {
 
 }
 
+function getSuggestions() {
+    console.log("getting suggested recipes and setting in storage");
+    $.post("/suggested-recipes", {
+        "uid": userProfile.getId()
+    }, response => {
+        sessionStorage.setItem("suggestions", response);
+        suggestions = JSON.parse(response);
+    });
+}
+
 
 function onSignIn(googleUser) {
     // Store userprofile in global variable
     userProfile = googleUser.getBasicProfile();
-
-    localStorage.setItem("signedin", "true");
-    console.log("signed in is true");
     $("#user-name").text("Welcome, " + userProfile.getGivenName() + "!");
 
-    // Performs page specific actions after user has signed in
+    if (sessionStorage.getItem("signedin") !== "true") {
 
-    const loginData = {
-        uid: userProfile.getId(),
-        firstName: userProfile.getName(),
-        profilePicture: userProfile.getImageUrl()
-    };
+        sessionStorage.setItem("signedin", "true");
+        console.log("Signing in new");
 
-    getFavs();
-    getPantry();
-    getSuggestions();
+        // Performs page specific actions after user has signed in
 
-    $.post("/login", loginData, function (response) {
+        const loginData = {
+            uid: userProfile.getId(),
+            firstName: userProfile.getName(),
+            profilePicture: userProfile.getImageUrl()
+        };
 
-    });
+        getFavs();
+        getSuggestions();
+        getPantry();
+
+        $.post("/login", loginData, function (response) {
+
+        });
+    } else {
+        console.log("Already signed in");
+        favorites = JSON.parse(sessionStorage.getItem("favorites"));
+        suggestions = JSON.parse(sessionStorage.getItem("suggestions"));
+        pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
+
+    }
 }
 
 /**
@@ -395,11 +408,12 @@ function onFailure(error) {
  * Sign out the user.
  */
 function signOut() {
+    console.log("Signing out");
     let auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
         // Reset userProfile variable
         userProfile = undefined;
-        localStorage.setItem("signedin", false);
+        sessionStorage.setItem("signedin", false);
         favorites = [];
         pantryItems = [];
         suggestions = [];
