@@ -3,14 +3,19 @@
     <div class="col">
 
         <div class=" rounded profile d-flex flex-row justify-content-center">
-            <div class="flex-col justify-content-center">
+            <div class="flex-col justify-content-center align-items-center;">
 
                 <img class="profile-pic rounded-circle"
                      src="https://png.pngtree.com/png-vector/20190711/ourlarge/pngtree-cook-icon-for-your-project-png-image_1541448.jpg"
                      alt="Card image cap" height="160" width="160">
-                <h3 class="welcome rounded" id="user-name">Please sign in to view profile! </h3>
+
             </div>
+
         </div>
+        <div class="d-flex justify-content-center align-items-center;">
+            <h3 class="welcome rounded" id="user-name">Please sign in to view profile! </h3>
+        </div>
+
         <ul class="nav nav-tabs" id="myTab" role="tablist">
 
 
@@ -38,23 +43,25 @@
             <div class="tab-pane fade" id="favorites" role="tabpanel" aria-labelledby="favorites-tab">
                 <div class="row" id="display-favs"></div>
             </div>
-            <div class = "tab-pane fade" id="enjoy" role="tabpanel" aria-labelledby="enjoy-tab">
+            <div class="tab-pane fade" id="enjoy" role="tabpanel" aria-labelledby="enjoy-tab">
                 <div class="row" id="display-enjoy"></div>
             </div>
             <div class="tab-pane fade" id="pantry" role="tabpanel" aria-labelledby="profile-tab">
                 <div class="col">
-                <p class="pantry-items">Items Stored in Pantry: </p>
-                <div class="pantry-buttons" id="pantry-item">
+                    <p class="pantry-items">Items Stored in Pantry: </p>
+                    <p class="pantry-explanation">Items stored in Pantry will be automatically be added to your ingredients list
+                        when you look for recipes.</p>
+                    <div class="pantry-buttons" id="pantry-item">
 
-                </div>
-                    <p class="pantry-items"> Add More Ingredients </p>
+                    </div>
+                    <p class="pantry-add-more"> Add More Ingredients: </p>
 
                     <form name="pantry-form">
                         <div class="typeahead form-group">
                             <input type="text" class="form-control typeahead" id="field1" name="field1"
                                    placeholder="Ingredient" autocomplete="off"/>
                         </div>
-                        <button type="submit" class="btn btn-outline-success add-to-pantry ">Add To Pantry</button>
+                        <button type="submit" class="btn btn-outline-info add-to-pantry ">Add To Pantry</button>
                     </form>
                 </div>
             </div>

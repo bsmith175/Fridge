@@ -9,6 +9,7 @@ let favorites = [];
 let pantryItems = [];
 let pantry = $("#pantry-item");
 let suggestions = [];
+let user_name = $("#user-name");
 
 
 $(document).ready(() => {
@@ -22,6 +23,7 @@ $(document).ready(() => {
     const excluded = $("#excluded");
     console.log($(".add-more"));
     favorites.length = 0;
+
 
 
     var next = 1;
@@ -69,6 +71,7 @@ $(document).ready(() => {
             displayPantry();
 
         })
+        document.forms["pantry-form"].reset();
         return false;
 
     })
@@ -148,14 +151,14 @@ $(document).ready(() => {
 
                 const s = "<button type=\"button\" id=\"" + i + "\" class=\"btn btn-lg btn-outline-info remove-pantry\" onclick='remove_pantry(this.id)'>\n"
                     + pantryItems[i]
-                    + "<span class=\"badge badge-light\">x</span>\n"
+                    + " <span class=\"badge badge-light\">x</span>\n"
                     + "                        </button>";
                 console.log(s);
 
                 pantry.append(s);
             }
             console.log(pantry);
-        }, 1000);
+        }, 200);
     }
 
 
@@ -230,11 +233,11 @@ $(document).ready(() => {
                 instructions = instructions + "<li>" + des + "</li>"
             }
             //add recipe to modal by appending html to modal classes
-            $('.modal-title').html("<h1>" + result.name + "</h1>")
-            $('.description').html("<p>" + result.description + "</p>")
-            $('.ingredients').html(ingredients)
-            $('.instructions').html(instructions)
-            $('.cook-time').html("<img src=\"data/recipe-clock.png\" alt=\"Flowers in Chania\">\n")
+            $('.modal-title').html("<h1>" + result.name + "</h1>");
+            $('.description').html("<p>" + result.description + "</p>");
+            $('.ingredients').html(ingredients);
+            $('.instructions').html(instructions);
+            $('.cook-time').html();
 
 
         });
@@ -368,7 +371,8 @@ function onSignIn(googleUser) {
 
         sessionStorage.setItem("signedin", "true");
         console.log("Signing in new");
-        $("#user-name").text("Welcome, " + userProfile.getGivenName() + "!");
+        user_name.text("Welcome, " + userProfile.getGivenName() + "!");
+        console.log($("#user-name"));
 
         // Performs page specific actions after user has signed in
 
@@ -392,6 +396,7 @@ function onSignIn(googleUser) {
         pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
 
     }
+    $('.navbar-nav').append("<a class=\"nav-item nav-link\" id=\"sign-out\" onclick=\"signOut();\">Sign out</a>");
 }
 
 /**
@@ -416,7 +421,10 @@ function signOut() {
         favorites = [];
         pantryItems = [];
         suggestions = [];
-        $("#user-name").text("Please sign in to view profile!");
+        $('.navbar-nav').find("#sign-out").remove();
+
+        user_name.text("Please sign in to view profile!");
+
 
     });
 }
