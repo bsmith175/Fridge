@@ -11,7 +11,9 @@ let pantry = $("#pantry-item");
 let suggestions = [];
 let user_name = $("#user-name");
 
-
+/**
+ * Exevuted upon page load.
+ */
 $(document).ready(() => {
 
     const result_cards = $("#result-cards");
@@ -19,30 +21,32 @@ $(document).ready(() => {
     const fav = $("#display-favs");
     const enjoy = $("#display-enjoy")
     pantry = $("#pantry-item");
-
     const excluded = $("#excluded");
-    console.log($(".add-more"));
-    favorites.length = 0;
 
 
-
-    var next = 1;
+    let next = 1;
+    /**
+     * Click function for add-more selector.
+     * When + button clicked in recipe form, dynamically adds
+     * input boxes and -/+ buttons.
+     */
     $(".add-more").click(function (e) {
         console.log("add")
         e.preventDefault();
         var addto = "#field" + next;
         var addRemove = "#field" + (next);
         next = next + 1;
-        var newIn = '<input  placeholder="Ingredient" class="typeahead form-control type" id="field' + next + '" name="field' + next + '" type="text" autocomplete="off">';
+        var newIn = '<input  placeholder="Ingredient" class="typeahead form-control type" id="field'
+            + next + '" name="field' + next + '" type="text" autocomplete="off">';
         var newInput = $(newIn);
         createTypeahead(newInput);
-        var removeBtn = '<button id="remove' + (next - 1) + '" class="btn remove-me" >-</button></div><div id="field">';
+        var removeBtn = '<button id="remove' + (next - 1) +
+            '" class="btn remove-me" >-</button></div><div id="field">';
         var removeButton = $(removeBtn);
         $(addto).after(newInput);
         $(addRemove).after(removeButton);
         $("#field" + next).attr('data-source', $(addto).attr('data-source'));
         $("#count").val(next);
-
         $('.remove-me').click(function (e) {
             console.log("remove")
             e.preventDefault();
@@ -53,7 +57,11 @@ $(document).ready(() => {
         });
     });
 
-
+    /**
+     * Click function for add-to-pantry selector.
+     * Triggered when pantry form is submitted to
+     * add a item to the pantry.
+     */
     $(".add-to-pantry").click(function (e) {
         console.log("add to pantry")
         let postParameters = "";
@@ -63,7 +71,6 @@ $(document).ready(() => {
                 postParameters = elements[i].value;
             }
         }
-
         $.post('/add-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
             data = JSON.parse(data);
             getPantry();
@@ -74,98 +81,41 @@ $(document).ready(() => {
         return false;
 
     })
-
-    //Find Recipes Button clicked
+    /**
+     * Click function for find-recipe selector.
+     * When fridge-from submitted, gets all the inputs from form and sends them to backend
+     * to get result recipes. Recipes are then made into cards and displayed.
+     */
     $(".find-recipe").click(function (e) {
         console.log("find recipe")
 
         result_cards.empty();
         e.preventDefault();
         //add inputs to postParameters
-        const postParameters = [];
+        let postParameters = [];
         let elements = document.forms["fridge-form"].elements;
         console.log(elements);
         for (let i = 0; i < elements.length; i++) {
             if (elements[i].value != "") {
                 postParameters.push(elements[i].value);
-
             }
         }
+        postParameters = postParameters.concat(pantryItems);
         console.log(postParameters)
         $.post("/recipe-recommend", $.param({text: postParameters}, true), response => {
             //parse response
             const r = JSON.parse(response);
             make_cards(result_cards, r, false);
 
-
         });
 
     });
 
-
-    $('.typeahead').typeahead({
-        source: function (query, process) {
-            console.log("typeahead");
-
-            return $.post('/suggest', {input: query}, function (data) {
-                data = JSON.parse(data);
-                console.log(data);
-                return process(data);
-            });
-        }
-    });
-    createTypeahead($('typeahead'));
-    $('.type')
-
-
-    $('#myTab a[href="#favorites"]').on('click', function (e) {
-        e.preventDefault()
-
-        profilePage(fav, favorites, true);
-        //$(this).tab('show')
-    })
-
-    $('#myTab a[href="#enjoy"]').on('click', function (e) {
-        //getSuggestions();
-        console.log(suggestions);
-
-        profilePage(enjoy, suggestions, false);
-        //$(this).tab('show')
-    })
-
-    $('#myTab a[href="#pantry"]').on('click', function (e) {
-        e.preventDefault();
-        console.log("pantry tab clicked");
-        console.log(pantryItems);
-        displayPantry();
-        // console.log(typeof $(this).tab('show'));
-        // $(this).tab('show');
-
-    });
-
-    function displayPantry() {
-        setTimeout(function () {
-            pantry.empty();
-            console.log(pantryItems.length)
-
-            for (let i = 0; i < pantryItems.length; i++) {
-
-                const s = "<button type=\"button\" id=\"" + i + "\" class=\"btn btn-lg btn-outline-info remove-pantry\" onclick='remove_pantry(this.id)'>\n"
-                    + pantryItems[i]
-                    + " <span class=\"badge badge-light\">x</span>\n"
-                    + "                        </button>";
-                console.log(s);
-
-                pantry.append(s);
-            }
-            console.log(pantry);
-        }, 200);
-    }
-
-
-    //$('#myTab a[href="#excluded"]').tab('show');
-
-
+    /**
+     * Attaches typeahead function to selector to allow autofill.
+     * Gets autofill data from /suggest
+     * @param $els jquery selector for an input
+     */
     function createTypeahead($els) {
         $els.typeahead({
             source: function (query, process) {
@@ -178,12 +128,89 @@ $(document).ready(() => {
         });
     }
 
-    function make_cards(e, r, favBool) {
-        console.log(r)
+    /**
+     * Attach createTypeahead to first fridge-form input element.
+     * Attached for rest of input when inputs are made.
+     */
+    createTypeahead($('.typeahead'));
+
+    /**
+     * Click handler for favorites tab in profile page.
+     * Displays favorites.
+     */
+    $('#myTab a[href="#favorites"]').on('click', function (e) {
+        if(favorites.length==0){
+            $('.favorite-explanation').text("You haven't added any favorites yet!");
+        }
+        $('.favorite-explanation').text("Your favorites!");
+
+        e.preventDefault()
+
+        profilePage(fav, favorites, true);
+        //$(this).tab('show')
+    })
+    /**
+     * Click handler for enjoy tab in profile page.
+     * Displays suggested recipes based on favorites.
+     */
+    $('#myTab a[href="#enjoy"]').on('click', function (e) {
+
+        if(suggestions.length==0){
+            $('.enjoy-explanation').text("Add more Favorites so that we can recommend you some recipes!");
+        }else{
+            e.preventDefault();
+            profilePage(enjoy, suggestions, false)
+        }
+
+    })
+    /**
+     * Click handler for pantry tab in profile page.
+     * Displays items stored in pantry.
+     */
+    $('#myTab a[href="#pantry"]').on('click', function (e) {
+        e.preventDefault();
+        console.log("pantry tab clicked");
+        console.log(pantryItems);
+        displayPantry();
+
+    });
+
+    /**
+     * Adds all the items in pantryItems to pantry selector.
+     * Uses timeout function to make sure that if getPantry is called before,
+     * displayPantry will be called after it finishes setting pantryItems.
+     */
+    function displayPantry() {
+        setTimeout(function () {
+            pantry.empty();
+            console.log(pantryItems.length)
+
+            for (let i = 0; i < pantryItems.length; i++) {
+
+                const s = "<button type=\"button\" id=\"" + i + "\" " +
+                    "class=\"btn btn-lg btn-outline-info remove-pantry\" " +
+                    "onclick='remove_pantry(this.id)'>\n"
+                    + pantryItems[i]
+                    + " <span class=\"badge badge-light\">x</span>\n"
+                    + "                        </button>";
+                pantry.append(s);
+            }
+        }, 200);
+    }
+
+
+
+    /**
+     * Makes Bootstrap cards out of recipe data and appends them to selector
+     * @param selector jquery selector to append cards too
+     * @param results array with recipes
+     */
+    function make_cards(selector, results, favBool) {
+        console.log(results)
 
         let cards = 0; //html id for each recipe card
-        for (let i = 0; i < r.length; i++) {
-            const res = r[i];
+        for (let i = 0; i < results.length; i++) {
+            const res = results[i];
             let heart_shape = "fa-heart-o";
             let length = favorites.length;
 
@@ -200,16 +227,18 @@ $(document).ready(() => {
                 "<div>\n" +
                 "  <i id=" + cards + " class=\"heart fa " + heart_shape + "\"></i>\n" +
                 "</div> </div>" +
-                "  <img class=\"card-img-top\" style = \"border: 1px green\"src=" + res.imageURL + " alt=\"Card image cap\">\n" +
+                "  <img class=\"card-img-top\" style = \"border: 1px green\"src=" + res.imageURL +
+                " alt=\"Card image cap\">\n" +
                 "  <div class=\"card-body\">\n" +
                 "    <h5 class=\"card-title\">" + res.name + "</h5>\n" +
                 "    <p class=\"card-text\">" + res.description + "</p>\n" +
-                "    <button id=" + cards + " type=\"button\" class=\"btn btn-outline-success openBtn\" data-toggle=\"modal\" data-target=\".bd-example-modal-lg\">View Recipe</button>\n" +
+                "    <button id=" + cards + " type=\"button\" class=\"btn btn-outline-success openBtn\" " +
+                "data-toggle=\"modal\" data-target=\".bd-example-modal-lg\">View Recipe</button>\n" +
                 "  </div>\n" +
                 "  </div>\n" +
                 "</div>";
             //add card to result_card selector.
-            e.append(card);
+            selector.append(card);
             cards = cards + 1;
         }
 
@@ -219,12 +248,12 @@ $(document).ready(() => {
             e.preventDefault();
             //get selected recipe by getting id
             const id = (e.target.id);
-            console.log(id);
             //get recipe by indexing into r array
-            const result = r[id];
+            const result = results[id];
+            console.log(result);
 
-            var ingredients = "";
-            var instructions = "";
+            let ingredients = "";
+            let instructions = "";
             //parse ingredients into html
             for (let ing of JSON.parse(result.ingredients)) {
                 ingredients = ingredients + "<li>" + ing + "</li>"
@@ -233,12 +262,29 @@ $(document).ready(() => {
             for (let des of JSON.parse(result.method)) {
                 instructions = instructions + "<li>" + des + "</li>"
             }
+            let time = (JSON.parse(result.time)[0]).cook;
+            console.log(time);
+            let min = "";
+            let hrs = "";
+            if (time.mins !== null){
+                min = time.mins;
+            }
+            if (time.hrs !== null){
+                hrs = time.hrs;
+            }
+            console.log(min);
+            console.log(hrs);
+
             //add recipe to modal by appending html to modal classes
             $('.modal-title').html("<h1>" + result.name + "</h1>");
-            $('.description').html("<p>" + result.description + "</p>");
+            $('.description').html("<p>\"" + result.description + "\"</p>");
             $('.ingredients').html(ingredients);
             $('.instructions').html(instructions);
-            $('.cook-time').html();
+            if(hrs!=="" && min!==""){
+                $('.cook-time').html("<h4>CookTime</h4>\n " +
+                    "<p class='cook-time'>" + hrs +" " + min + "  </p>");
+            }
+            $('.servings').html("<p>" + result.servings +"  </p>");
 
 
         });
@@ -252,7 +298,8 @@ $(document).ready(() => {
             } else {
                 //get recipe that was liked
                 const field_id = (event.target.id);
-                const recipe = r[field_id];
+                const recipe = results[field_id];
+
                 const id = recipe.id;
                 console.log(id);
                 //craft post parameters
@@ -270,7 +317,7 @@ $(document).ready(() => {
                         }
                     }
                     if (favBool) {
-                        e.find("#" + field_id).remove();
+                        selector.find("#" + field_id).remove();
                     }
                 } else {
                     console.log("Adding to favorites");
@@ -280,25 +327,30 @@ $(document).ready(() => {
                 //getFavs();
                 //console.log(favorites);
 
+
                 $(this).toggleClass("fa-heart fa-heart-o");
                 $.post("/heart", postParameters, response => {
                     console.log(response);
                 });
-            }
 
-        })
+            }
+         })
             .error(err => {
                 console.log("in the .error callback");
                 console.log(err);
             });
-
     }
 
+
+    /**
+     *
+     * @param e
+     * @param results
+     */
     function profilePage(e, results, favBool) {
         console.log("profile");
         e.empty();
         make_cards(e, results, favBool);
-
     }
 
 });
@@ -382,7 +434,11 @@ function getSuggestions() {
     });
 }
 
-
+/**
+ * Function called by google sign in to sign a user in.
+ * SessionStorage and loginData are configured.
+ * @param googleUser
+ */
 function onSignIn(googleUser) {
     // Store userprofile in global variable
     userProfile = googleUser.getBasicProfile();
@@ -421,7 +477,9 @@ function onSignIn(googleUser) {
         pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
 
     }
+
     $(".g-signin2").hide();
+    //Sign out option appears on nav bar
     $('.navbar-nav').append("<a class=\"nav-item nav-link\" id=\"sign-out\" onclick=\"signOut();\">Sign out</a>");
 }
 
