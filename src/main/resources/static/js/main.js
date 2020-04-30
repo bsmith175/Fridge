@@ -95,7 +95,7 @@ $(document).ready(() => {
         $.post("/recipe-recommend", $.param({text: postParameters}, true), response => {
             //parse response
             const r = JSON.parse(response);
-            make_cards(result_cards, r);
+            make_cards(result_cards, r, false);
 
 
         });
@@ -121,13 +121,15 @@ $(document).ready(() => {
     $('#myTab a[href="#favorites"]').on('click', function (e) {
         e.preventDefault()
 
-        profilePage(fav, favorites);
+        profilePage(fav, favorites, true);
         //$(this).tab('show')
     })
 
     $('#myTab a[href="#enjoy"]').on('click', function (e) {
         //getSuggestions();
-        profilePage(enjoy, suggestions)
+        console.log(suggestions);
+
+        profilePage(enjoy, suggestions, false);
         //$(this).tab('show')
     })
 
@@ -176,7 +178,7 @@ $(document).ready(() => {
         });
     }
 
-    function make_cards(e, r) {
+    function make_cards(e, r, favBool) {
         console.log(r)
 
         let cards = 0; //html id for each recipe card
@@ -192,7 +194,7 @@ $(document).ready(() => {
             }
 
             //html/bootstrap card for each recipe
-            const card = "<div class=\"col-sm d-flex\">\n" +
+            const card = "<div id=" + cards + " class=\"col-sm d-flex\">\n" +
                 "<dv class=\"card card-body flex-fill\" style=\"width: 18rem;\">\n" +
                 "  <div class=\"d-flex flex-row-reverse\">\n" +
                 "<div>\n" +
@@ -241,7 +243,7 @@ $(document).ready(() => {
 
         });
         //like button
-        $(".heart.fa").click(function (e) {
+        $(".heart.fa").click(function (event) {
             if (sessionStorage.getItem("signedin") !== "true") {
 
                 alert("Please sign in to favorite recipes!");
@@ -249,7 +251,7 @@ $(document).ready(() => {
 
             } else {
                 //get recipe that was liked
-                const field_id = (e.target.id);
+                const field_id = (event.target.id);
                 const recipe = r[field_id];
                 const id = recipe.id;
                 console.log(id);
@@ -261,10 +263,14 @@ $(document).ready(() => {
 
                 if (favorites.includes(recipe)) {
                     console.log("Already in favorites");
+                    console.log(recipe.id);
                     for (var i = 0; i < favorites.length; i++) {
-                        if (favorites[i] === recipe) {
+                        if (favorites[i].id === recipe.id) {
                             favorites.splice(i, 1);
                         }
+                    }
+                    if (favBool) {
+                        e.find("#" + field_id).remove();
                     }
                 } else {
                     console.log("Adding to favorites");
@@ -275,7 +281,6 @@ $(document).ready(() => {
                 //console.log(favorites);
 
                 $(this).toggleClass("fa-heart fa-heart-o");
-
                 $.post("/heart", postParameters, response => {
                     console.log(response);
                 });
@@ -289,10 +294,10 @@ $(document).ready(() => {
 
     }
 
-    function profilePage(e, results) {
+    function profilePage(e, results, favBool) {
         console.log("profile");
         e.empty();
-        make_cards(e, results, false);
+        make_cards(e, results, favBool);
 
     }
 
@@ -372,6 +377,8 @@ function getSuggestions() {
     }, response => {
         sessionStorage.setItem("suggestions", response);
         suggestions = JSON.parse(response);
+        console.log(suggestions);
+
     });
 }
 
@@ -398,6 +405,7 @@ function onSignIn(googleUser) {
 
         getFavs();
         getSuggestions();
+        console.log(suggestions);
         getPantry();
 
         $.post("/login", loginData, function (response) {
@@ -407,9 +415,13 @@ function onSignIn(googleUser) {
         console.log("Already signed in");
         favorites = JSON.parse(sessionStorage.getItem("favorites"));
         suggestions = JSON.parse(sessionStorage.getItem("suggestions"));
+        if (suggestions === null) {
+            getSuggestions();
+        }
         pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
 
     }
+    $(".g-signin2").hide();
     $('.navbar-nav').append("<a class=\"nav-item nav-link\" id=\"sign-out\" onclick=\"signOut();\">Sign out</a>");
 }
 
@@ -438,7 +450,7 @@ function signOut() {
         $('.navbar-nav').find("#sign-out").remove();
 
         user_name.text("Please sign in to view profile!");
-
+        $(".g-signin2").show();
 
     });
 }
