@@ -297,7 +297,7 @@ $(document).ready(() => {
             //add recipe to modal by appending html to modal classes
             $('.modal-title').html("<h1>" + result.name + "</h1>");
             $('.description').html("<p>\"" + result.description + "\"</p>");
-            $('.ingredients').html(ingredients);
+            $('.ingredients-list').html(ingredients);
             $('.instructions').html(instructions);
             if (hrs !== "" && min !== "") {
                 $('.cook-time').html("<h4>CookTime</h4>\n " +

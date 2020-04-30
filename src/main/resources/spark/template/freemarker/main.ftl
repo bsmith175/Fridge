@@ -64,7 +64,7 @@
 
                 </div>
                 <h4>Ingredients</h4>
-                <ul class="ingredients">
+                <ul class="ingredients-list">
 
                 </ul>
                 <h4>Instructions</h4>
