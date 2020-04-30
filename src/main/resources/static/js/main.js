@@ -23,7 +23,6 @@ $(document).ready(() => {
     pantry = $("#pantry-item");
     const excluded = $("#excluded");
 
-
     let next = 1;
     /**
      * Click function for add-more selector.
@@ -141,8 +140,9 @@ $(document).ready(() => {
     $('#myTab a[href="#favorites"]').on('click', function (e) {
         if(favorites.length==0){
             $('.favorite-explanation').text("You haven't added any favorites yet!");
+        }else{
+            $('.favorite-explanation').text("Your favorites!");
         }
-        $('.favorite-explanation').text("Your favorites!");
 
         e.preventDefault()
         profilePage(fav, favorites);
@@ -152,8 +152,9 @@ $(document).ready(() => {
      * Displays suggested recipes based on favorites.
      */
     $('#myTab a[href="#enjoy"]').on('click', function (e) {
-        if(suggestions.length==0){
+        if(!suggestions.length){
             $('.enjoy-explanation').text("Add more Favorites so that we can recommend you some recipes!");
+            enjoy.empty();
         }else{
             e.preventDefault();
             profilePage(enjoy, suggestions)
@@ -417,7 +418,10 @@ function onSignIn(googleUser) {
     // Store userprofile in global variable
     userProfile = googleUser.getBasicProfile();
     $("#user-name").text("Welcome, " + userProfile.getGivenName() + "!");
-
+    $(".replace-image").empty();
+    $(".replace-image").append("<img class=\"profile-pic rounded-circle\"\n" +
+        "                     src=\""+userProfile.getImageUrl()+"\"\n" +
+        "                     alt=\"Card image cap\" height=\"160\" width=\"160\">");
     if (sessionStorage.getItem("signedin") !== "true") {
 
         sessionStorage.setItem("signedin", "true");
@@ -448,6 +452,7 @@ function onSignIn(googleUser) {
 
     }
     //Sign out option appears on nav bar
+    $('.navbar-nav').find("#sign-out").remove();
     $('.navbar-nav').append("<a class=\"nav-item nav-link\" id=\"sign-out\" onclick=\"signOut();\">Sign out</a>");
 }
 
@@ -474,6 +479,11 @@ function signOut() {
         pantryItems = [];
         suggestions = [];
         $('.navbar-nav').find("#sign-out").remove();
+        $(".replace-image").empty();
+        $(".replace-image").append("<img class=\"profile-pic rounded-circle\"\n" +
+            "                     src=\"https://png.pngtree.com/png-vector/20190711/ourlarge/pngtree-cook-icon-for-your-project-png-image_1541448.jpg\"\n" +
+            "                     alt=\"Card image cap\" height=\"160\" width=\"160\">");
+
 
         user_name.text("Please sign in to view profile!");
 
