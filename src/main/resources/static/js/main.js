@@ -104,7 +104,7 @@ $(document).ready(() => {
         $.post("/recipe-recommend", $.param({text: postParameters}, true), response => {
             //parse response
             const r = JSON.parse(response);
-            make_cards(result_cards, r);
+            make_cards(result_cards, r, false);
 
         });
 
@@ -145,19 +145,22 @@ $(document).ready(() => {
         }
 
         e.preventDefault()
-        profilePage(fav, favorites);
+
+        profilePage(fav, favorites, true);
+        //$(this).tab('show')
     })
     /**
      * Click handler for enjoy tab in profile page.
      * Displays suggested recipes based on favorites.
      */
     $('#myTab a[href="#enjoy"]').on('click', function (e) {
+
         if(!suggestions.length){
             $('.enjoy-explanation').text("Add more Favorites so that we can recommend you some recipes!");
             enjoy.empty();
         }else{
             e.preventDefault();
-            profilePage(enjoy, suggestions)
+            profilePage(enjoy, suggestions, false)
         }
 
     })
@@ -197,12 +200,13 @@ $(document).ready(() => {
     }
 
 
+
     /**
      * Makes Bootstrap cards out of recipe data and appends them to selector
      * @param selector jquery selector to append cards too
      * @param results array with recipes
      */
-    function make_cards(selector, results) {
+    function make_cards(selector, results, favBool) {
         console.log(results)
 
         let cards = 0; //html id for each recipe card
@@ -218,7 +222,7 @@ $(document).ready(() => {
             }
 
             //html/bootstrap card for each recipe
-            const card = "<div class=\"col-sm d-flex\">\n" +
+            const card = "<div id=" + cards + " class=\"col-sm d-flex\">\n" +
                 "<dv class=\"card card-body flex-fill\" style=\"width: 18rem;\">\n" +
                 "  <div class=\"d-flex flex-row-reverse\">\n" +
                 "<div>\n" +
@@ -286,16 +290,17 @@ $(document).ready(() => {
 
         });
         //like button
-        $(".heart.fa").click(function (e) {
-            if (sessionStorage.getItem("signedin") != "true") {
+        $(".heart.fa").click(function (event) {
+            if (sessionStorage.getItem("signedin") !== "true") {
 
                 alert("Please sign in to favorite recipes!");
                 console.log("else didn't work");
 
             } else {
                 //get recipe that was liked
-                const field_id = (e.target.id);
+                const field_id = (event.target.id);
                 const recipe = results[field_id];
+
                 const id = recipe.id;
                 console.log(id);
                 //craft post parameters
@@ -303,31 +308,50 @@ $(document).ready(() => {
                     recipe_id: id,
                     user_id: userProfile.getId()
                 };
-                $.post("/heart", postParameters, response => {
-                    const r = JSON.parse(response);
-                    console.log(r);
-                    getFavs();
-                    console.log(favorites);
 
-                    $(this).toggleClass("fa-heart fa-heart-o");
+                if (favorites.includes(recipe)) {
+                    console.log("Already in favorites");
+                    console.log(recipe.id);
+                    for (var i = 0; i < favorites.length; i++) {
+                        if (favorites[i].id === recipe.id) {
+                            favorites.splice(i, 1);
+                        }
+                    }
+                    if (favBool) {
+                        selector.find("#" + field_id).remove();
+                    }
+                } else {
+                    console.log("Adding to favorites");
+                    favorites.push(recipe);
+                }
+                sessionStorage.setItem("favorites", JSON.stringify(favorites));
+                //getFavs();
+                //console.log(favorites);
+
+
+                $(this).toggleClass("fa-heart fa-heart-o");
+                $.post("/heart", postParameters, response => {
+                    console.log(response);
                 });
+
             }
-        })
+         })
             .error(err => {
                 console.log("in the .error callback");
                 console.log(err);
             });
     }
 
+
     /**
      *
      * @param e
      * @param results
      */
-    function profilePage(e, results) {
+    function profilePage(e, results, favBool) {
         console.log("profile");
         e.empty();
-        make_cards(e, results, false);
+        make_cards(e, results, favBool);
     }
 
 });
@@ -406,6 +430,8 @@ function getSuggestions() {
     }, response => {
         sessionStorage.setItem("suggestions", response);
         suggestions = JSON.parse(response);
+        console.log(suggestions);
+
     });
 }
 
@@ -439,6 +465,7 @@ function onSignIn(googleUser) {
 
         getFavs();
         getSuggestions();
+        console.log(suggestions);
         getPantry();
 
         $.post("/login", loginData, function (response) {
@@ -448,9 +475,14 @@ function onSignIn(googleUser) {
         console.log("Already signed in");
         favorites = JSON.parse(sessionStorage.getItem("favorites"));
         suggestions = JSON.parse(sessionStorage.getItem("suggestions"));
+        if (suggestions === null) {
+            getSuggestions();
+        }
         pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
 
     }
+
+    $(".g-signin2").hide();
     //Sign out option appears on nav bar
     $('.navbar-nav').find("#sign-out").remove();
     $('.navbar-nav').append("<a class=\"nav-item nav-link\" id=\"sign-out\" onclick=\"signOut();\">Sign out</a>");
@@ -486,7 +518,7 @@ function signOut() {
 
 
         user_name.text("Please sign in to view profile!");
-
+        $(".g-signin2").show();
 
     });
 }
