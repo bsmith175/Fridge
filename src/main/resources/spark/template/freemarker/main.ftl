@@ -24,7 +24,7 @@
 </head>
 <body style="background-color: #cee5f2">
 <nav class="navbar navbar-expand-lg navbar-dark ">
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" href="/">
         <img src="https://i.ibb.co/3h8sWjb/myFridge.png" height="80" width="45" class="d-inline-block align-top" alt="">
     </a>
     <a class="navbar-brand" href="/">
