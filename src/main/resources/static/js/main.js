@@ -30,28 +30,31 @@ $(document).ready(() => {
      * input boxes and -/+ buttons.
      */
     $(".add-more").click(function (e) {
+
         console.log("add")
         e.preventDefault();
-        var addto = "#field" + next;
-        var addRemove = "#field" + (next);
         next = next + 1;
-        var newIn = '<input  placeholder="Ingredient" class="typeahead form-control type" id="field'
-            + next + '" name="field' + next + '" type="text" autocomplete="off">';
-        var newInput = $(newIn);
+        let newInput = $('<input  placeholder="Ingredient" class="typeahead ' +
+            'form-control type\"  name="field' + next +
+            '" type="text" autocomplete="off"/>');
         createTypeahead(newInput);
-        var removeBtn = '<button id="remove' + (next - 1) +
-            '" class="btn remove-me" >-</button></div><div id="field">';
-        var removeButton = $(removeBtn);
-        $(addto).after(newInput);
-        $(addRemove).after(removeButton);
-        $("#field" + next).attr('data-source', $(addto).attr('data-source'));
-        $("#count").val(next);
+
+        let removeBtn = $('<button id="' + (next) +
+            '" class="btn remove-me" >-</button>');
+
+
+        let str = $("<div class=\"input-group\"  id=\"field" + next +
+            "\" name=\"field" + next + "\"></div>");
+        str.append(newInput);
+        str.append(removeBtn);
+        $(".ingredients").append(str);
+
         $('.remove-me').click(function (e) {
             console.log("remove")
             e.preventDefault();
-            var fieldNum = this.id.charAt(this.id.length - 1);
-            var fieldID = "#field" + fieldNum;
-            $(this).remove();
+            let fieldID = "#field" + this.id;
+            //need to Keep both(last one needs to be clicked twice??)
+            $(fieldID).remove();
             $(fieldID).remove();
         });
     });
@@ -120,7 +123,6 @@ $(document).ready(() => {
             source: function (query, process) {
                 return $.post('/suggest', {input: query}, function (data) {
                     data = JSON.parse(data);
-                    console.log(data);
                     return process(data);
                 });
             }
@@ -138,9 +140,9 @@ $(document).ready(() => {
      * Displays favorites.
      */
     $('#myTab a[href="#favorites"]').on('click', function (e) {
-        if(favorites.length==0){
+        if (favorites.length == 0) {
             $('.favorite-explanation').text("You haven't added any favorites yet!");
-        }else{
+        } else {
             $('.favorite-explanation').text("Your favorites!");
         }
 
@@ -155,10 +157,10 @@ $(document).ready(() => {
      */
     $('#myTab a[href="#enjoy"]').on('click', function (e) {
 
-        if(!suggestions.length){
+        if (!suggestions.length) {
             $('.enjoy-explanation').text("Add more Favorites so that we can recommend you some recipes!");
             enjoy.empty();
-        }else{
+        } else {
             e.preventDefault();
             profilePage(enjoy, suggestions, false)
         }
@@ -198,7 +200,6 @@ $(document).ready(() => {
             }
         }, 200);
     }
-
 
 
     /**
@@ -267,10 +268,10 @@ $(document).ready(() => {
             console.log(time);
             let min = "";
             let hrs = "";
-            if (time.mins !== null){
+            if (time.mins !== null) {
                 min = time.mins;
             }
-            if (time.hrs !== null){
+            if (time.hrs !== null) {
                 hrs = time.hrs;
             }
             console.log(min);
@@ -281,11 +282,11 @@ $(document).ready(() => {
             $('.description').html("<p>\"" + result.description + "\"</p>");
             $('.ingredients').html(ingredients);
             $('.instructions').html(instructions);
-            if(hrs!=="" && min!==""){
+            if (hrs !== "" && min !== "") {
                 $('.cook-time').html("<h4>CookTime</h4>\n " +
-                    "<p class='cook-time'>" + hrs +" " + min + "  </p>");
+                    "<p class='cook-time'>" + hrs + " " + min + "  </p>");
             }
-            $('.servings').html("<p>" + result.servings +"  </p>");
+            $('.servings').html("<p>" + result.servings + "  </p>");
 
 
         });
@@ -335,7 +336,7 @@ $(document).ready(() => {
                 });
 
             }
-         })
+        })
             .error(err => {
                 console.log("in the .error callback");
                 console.log(err);
@@ -446,7 +447,7 @@ function onSignIn(googleUser) {
     $("#user-name").text("Welcome, " + userProfile.getGivenName() + "!");
     $(".replace-image").empty();
     $(".replace-image").append("<img class=\"profile-pic rounded-circle\"\n" +
-        "                     src=\""+userProfile.getImageUrl()+"\"\n" +
+        "                     src=\"" + userProfile.getImageUrl() + "\"\n" +
         "                     alt=\"Card image cap\" height=\"160\" width=\"160\">");
     if (sessionStorage.getItem("signedin") !== "true") {
 

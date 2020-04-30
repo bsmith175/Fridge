@@ -37,13 +37,11 @@
 
             <form name="fridge-form">
                 <div class="typeahead form-group">
-                    <div class="col">
-                        <div class="col col-lg-2">
-
-                        <input type="text" class="form-control typeahead" id="field1" name="field1"
-                               placeholder="Ingredient" autocomplete="off"/>
+                    <div class="row ingredients">
+                        <div class="input-group" id="field1" name="field1">
+                            <input type="text" class="form-control typeahead" name="field1"
+                                   placeholder="Ingredient" autocomplete="off"/>
                             <button id="b1" class="btn add-more" type="button">+</button>
-
                         </div>
                     </div>
                 </div>
