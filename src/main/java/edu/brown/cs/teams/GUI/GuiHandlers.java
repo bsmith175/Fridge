@@ -56,11 +56,8 @@ public class GuiHandlers {
         Command command = new RunKDAlg();
         Spark.get("/", new FridgeHandler(), freeMarker);
         Spark.get("/home", new HomeHandler(), freeMarker);
+
         Spark.post("/suggested-recipes", new SuggestedHandler());
-
-
-
-        Spark.post("/recipe", new RecipeHandler());
         Spark.post("/suggest", new ingredientSuggestHandler());
 
         Spark.post("/recipe-recommend", new RecipeSuggestHandler(command));
@@ -218,33 +215,6 @@ public class GuiHandlers {
             Map<String, Object> variables = ImmutableMap.of("title",
                     "Fridge: Whats in Your Fridge", "message", "");
             return new ModelAndView(variables, "home.ftl");
-        }
-    }
-
-    /**
-     * A handler to produce our autocorrect service site.
-     *
-     * @return ModelAndView to render.
-     * (autocorrect.ftl).
-     */
-    private static class RecipeHandler implements Route {
-        @Override
-        public String handle(Request req, Response res) throws ParseException {
-            try (FileReader reader = new FileReader("data/smallJ.json")) {
-                JSONParser parser = new JSONParser();
-                JSONArray array = (JSONArray) parser.parse(reader);
-                List<String> result = new ArrayList<>();
-
-                result = new Gson().fromJson(String.valueOf(array), ArrayList.class);
-                Map<String, Object> variables = ImmutableMap.of("results", result);
-                return GSON.toJson(variables);
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
         }
     }
 
