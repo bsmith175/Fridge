@@ -11,7 +11,8 @@ input[type="number"] {
 }
 
 
-
+.card{
+}
 
 .button:focus {
   background-color: #afffc3;
@@ -39,7 +40,8 @@ input[type="number"] {
 .navbar,
 .btn,
 .container{
-  font-family: 'Abel', sans-serif;}
+  font-family: 'Abel', sans-serif;
+}
 
 
 .dropdown-divider{
@@ -66,6 +68,7 @@ input[type="text"], textarea {
 
 .welcome {
   background-color: rgba(242, 175, 152, 0.79);
+  font-style: oblique;
 
 }
 
@@ -95,7 +98,7 @@ input[type="text"], textarea {
 
 .nav-tabs .nav-item .nav-link.active {
   color: #edfffc;
-  background-color: rgb(255, 155, 113);
+  background-color: #8eb6ff;
 
 }
 
@@ -105,9 +108,75 @@ input[type="text"], textarea {
 }
 
 .tab-content .tab-pane {
-  background-color: rgba(255, 226, 202, 0.62);
-  color: #ff9283;
-  min-height: 350px;
+  background-color: #eef6ff;
+
+  color: black;
+  min-height: 200px;
   height: auto;
 
 }
+
+.food-images{
+  display: table;
+  border-collapse: collapse;
+  width: 100%;
+
+}
+.pantry-buttons {
+  background: rgba(255, 254, 240, 0.16);
+
+}
+
+.pantry-items{
+  margin: 0em ; !important;
+  font-size: large;
+  font-weight: bold;
+  font-family: 'Abel', sans-serif;
+
+}
+.enjoy-explanation,
+.pantry-explanation{
+  margin: 0em ; !important;
+  margin-bottom:10px;
+  font-family: 'Abel', sans-serif;
+
+  font-size: medium;
+  font-weight: bold;
+}
+
+.enjoy-explanation{
+  justify-content: center;
+  font-size: large; !important;
+
+}
+
+
+.pantry-add-more{
+  margin-top:10px;
+
+}
+
+.item {
+  display: table-cell;
+  vertical-align: top;
+}
+.item img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.bbc{
+  text-align: center;
+  font-family: 'Abel', cursive;
+  margin-top: 10px;
+  font-size: x-large;
+  font-style: oblique;
+
+}
+
+.cook-time{
+  margin-left: 10px;
+
+}
+

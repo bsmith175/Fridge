@@ -1,16 +1,22 @@
 package edu.brown.cs.teams.GUI;
 
+import com.google.api.client.auth.openidconnect.IdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import edu.brown.cs.teams.algorithms.RunSuperiorAlg;
+import edu.brown.cs.teams.constants.Constants;
 import edu.brown.cs.teams.io.Command;
 import edu.brown.cs.teams.algorithms.RunKDAlg;
 import edu.brown.cs.teams.algorithms.AlgMain;
 import edu.brown.cs.teams.ingredientParse.IngredientSuggest;
 import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.login.AccountUser;
+import org.eclipse.jetty.server.HttpTransport;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -23,7 +29,11 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import java.util.Map;
 
 //can have more objects for different types of handlers
@@ -31,6 +41,8 @@ public class GuiHandlers {
 
     private static final Gson GSON = new Gson();
     private static IngredientSuggest suggest;
+    private static GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory()).setAudience(Collections.singletonList(Constants.GOOGLE_CLIENT_ID)).build();
+
 
     public GuiHandlers() throws Exception {
         suggest = new IngredientSuggest();
@@ -56,7 +68,9 @@ public class GuiHandlers {
         Spark.post("/heart", new favoriteButtonHandler());
         Spark.post("/login", new userLoginHandler());
 
-
+        Spark.post("/pantry", new pantryHandler());
+        Spark.post("/add-pantry", new pantryAddHandler());
+        Spark.post("/remove-pantry", new removePantryHandler());
     }
     //Handles a user login. Takes user data from the Google User and adds to the database if possible.
     private static class userLoginHandler implements Route {
@@ -64,23 +78,32 @@ public class GuiHandlers {
         @Override
         public Object handle(Request request, Response response) throws Exception {
             QueryParamsMap qm = request.queryMap();
-            String uid = qm.value("uid");
-            String name = qm.value("firstName");
-            String pfp = qm.value("profilePicture");
-            AccountUser user = new AccountUser(uid, name, pfp);
+            String tokenString = qm.value("idToken");
 
             JsonObject responseJSON = new JsonObject();
-            responseJSON.addProperty("uid", uid);
-            responseJSON.addProperty("name", name);
-            responseJSON.addProperty("profilePicture", pfp);
 
-            try {
-                AlgMain.getUserDb().addNewUser(user);
-                responseJSON.addProperty("newUser", true);
-            } catch (SQLException e) {
-                responseJSON.addProperty("newUser", false);
+            GoogleIdToken idToken = verifier.verify(tokenString);
+            if (idToken != null) {
+                Payload payload = idToken.getPayload();
+                String uid = payload.getSubject();
+                String name = (String) payload.get("name");
+                String pfp = (String) payload.get("picture");
+                AccountUser user = new AccountUser(uid, name, pfp);
+                responseJSON.addProperty("uid", uid);
+                responseJSON.addProperty("name", name);
+                responseJSON.addProperty("profilePicture", pfp);
+                try {
+                    AlgMain.getUserDb().addNewUser(user);
+                    responseJSON.addProperty("newUser", true);
+                } catch (SQLException e) {
+                    responseJSON.addProperty("newUser", false);
+                }
+                responseJSON.addProperty("success", true);
+
+            } else {
+                responseJSON.addProperty("success", false);
+
             }
-
             return responseJSON.toString();
         }
     }
@@ -154,7 +177,6 @@ public class GuiHandlers {
         @Override
         public Object handle(Request request, Response response) throws Exception {
             QueryParamsMap qm = request.queryMap();
-            String[] favs = qm.get("text").values();
             String uid = qm.get("uid").values()[0];
             String result = GSON.toJson(RunKDAlg.getRecommendations(uid));
             return result;
@@ -223,6 +245,69 @@ public class GuiHandlers {
                 e.printStackTrace();
             }
             return null;
+        }
+    }
+
+    //Handler for adding a list of ingredients to the pantry.
+    private static class pantryAddHandler implements Route {
+
+        //Takes in array of ingredients entered by user, just like for a recipe search.
+        //additionally has another parameter, "uid", which is the user's ID.
+        @Override
+        public Object handle(Request request, Response response) throws Exception {
+            QueryParamsMap qm = request.queryMap();
+            String uid = qm.value("uid");
+            String term = qm.value("text");
+            JsonObject responseJSON = new JsonObject();
+
+            try {
+                AlgMain.getUserDb().addToPantry(term, uid);
+                responseJSON.addProperty("success", true);
+            } catch (SQLException e) {
+                responseJSON.addProperty("success", false);
+            }
+
+            return responseJSON.toString();
+        }
+    }
+
+    //removes an ingredient from user's pantry. Takes in parameters "text" - the ingredient to remove
+    // and "uid" - the user ID.
+    private static class removePantryHandler implements Route {
+
+        @Override
+        public Object handle(Request request, Response response) throws Exception {
+            QueryParamsMap qm = request.queryMap();
+            String term = qm.value("text");
+            String uid = qm.value("uid");
+            JsonObject responseJSON = new JsonObject();
+
+            try {
+                AlgMain.getUserDb().removePantryitem(term, uid);
+                responseJSON.addProperty("success", true);
+
+            } catch (SQLException e) {
+                responseJSON.addProperty("success", false);
+            }
+            return responseJSON.toString();
+        }
+    }
+
+    //returns a list of ingredient names in the user's pantry. Takes in one parameter
+    //"uid" - the user ID
+    private static class pantryHandler implements Route {
+
+        @Override
+        public Object handle(Request request, Response response) throws Exception {
+            QueryParamsMap qm = request.queryMap();
+            String uid = qm.value("uid");
+            String responseJSON = "";
+            try {
+                 responseJSON = GSON.toJson(AlgMain.getUserDb().getPantry(uid));
+                 return responseJSON;
+            } catch (SQLException e) {
+                return responseJSON;
+            }
         }
     }
 

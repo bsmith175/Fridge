@@ -2,6 +2,8 @@
 <head>
     <meta charset="utf-8">
     <title>${title}</title>
+    <link rel="icon" href="https://i.ibb.co/zsZQCCg/my-Fridge-2.png" height="80" width="45">
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="google-signin-client_id" content="727828985870-25d5atf1g5r853t5n6o90u0dansh9ao2.apps.googleusercontent.com">
 
@@ -24,8 +26,12 @@
 <body style="background-color: #cee5f2">
 <nav class="navbar navbar-expand-lg navbar-dark ">
     <a class="navbar-brand" href="/">
+        <img src="https://i.ibb.co/3h8sWjb/myFridge.png" height="80" width="45" class="d-inline-block align-top" alt="">
+    </a>
+    <a class="navbar-brand" href="/">
         What's In My Fridge?
     </a>
+
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -34,8 +40,7 @@
         <div class="navbar-nav">
             <a class="nav-item nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
             <div class="dropdown-divider"></div>
-            <a class="nav-item nav-link" href="/home">Profile</a>
-            <a class="nav-item nav-link" onclick="signOut();">Sign out</a>
+            <a class="nav-item nav-link" id="profile" href="/home">Profile</a>
         </div>
     </div>
     <#--  Google Sign In  -->
@@ -66,8 +71,10 @@
                 <ol class="instructions">
 
                 </ol>
-                <h4>CookTime</h4>
                 <div class="cook-time">
+
+                </div>
+                <div class="servings">
 
                 </div>
             </div>
