@@ -12,8 +12,6 @@ public class Constants {
     public static final String DB_USERNAME = "bsmith28_ben";
     //TODO: encrypt this
     public static final String DB_PWD = "wiyf1!";
-
-
-    public static final int ERR_CODE_UNIQUE = 23505;
+    public static final String GOOGLE_CLIENT_ID = "727828985870-25d5atf1g5r853t5n6o90u0dansh9ao2.apps.googleusercontent.com";
 
 }

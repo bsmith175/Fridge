@@ -444,49 +444,56 @@ function getSuggestions() {
 function onSignIn(googleUser) {
     // Store userprofile in global variable
     userProfile = googleUser.getBasicProfile();
-    $("#user-name").text("Welcome, " + userProfile.getGivenName() + "!");
-    $(".replace-image").empty();
-    $(".replace-image").append("<img class=\"profile-pic rounded-circle\"\n" +
-        "                     src=\"" + userProfile.getImageUrl() + "\"\n" +
-        "                     alt=\"Card image cap\" height=\"160\" width=\"160\">");
-    if (sessionStorage.getItem("signedin") !== "true") {
+    var id_token = googleUser.getAuthResponse().id_token;
+    const loginData = {
+        idToken: id_token,
+    };
 
-        sessionStorage.setItem("signedin", "true");
-        console.log("Signing in new");
-        user_name.text("Welcome, " + userProfile.getGivenName() + "!");
+    $.post("/login", loginData, function (response) {
+        const responseData = JSON.parse(response);
+        if (responseData.success) {
+            $("#user-name").text("Welcome, " + userProfile.getGivenName() + "!");
+            $(".replace-image").empty();
+            $(".replace-image").append("<img class=\"profile-pic rounded-circle\"\n" +
+                "                     src=\"" + userProfile.getImageUrl() + "\"\n" +
+                "                     alt=\"Card image cap\" height=\"160\" width=\"160\">");
+
+            if (sessionStorage.getItem("signedin") !== "true") {
+
+                sessionStorage.setItem("signedin", "true");
+                console.log("Signing in new");
+                user_name.text("Welcome, " + userProfile.getGivenName() + "!");
 
 
-        // Performs page specific actions after user has signed in
+                // Performs page specific actions after user has signed in
+                getFavs();
+                getSuggestions();
+                console.log(suggestions);
+                getPantry();
 
-        const loginData = {
-            uid: userProfile.getId(),
-            firstName: userProfile.getName(),
-            profilePicture: userProfile.getImageUrl()
-        };
+            } else {
+                console.log("Already signed in");
+                favorites = JSON.parse(sessionStorage.getItem("favorites"));
+                suggestions = JSON.parse(sessionStorage.getItem("suggestions"));
+                if (suggestions === null) {
+                    getSuggestions();
+                }
+                pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
 
-        getFavs();
-        getSuggestions();
-        console.log(suggestions);
-        getPantry();
+            }
 
-        $.post("/login", loginData, function (response) {
+            $(".g-signin2").hide();
+            //Sign out option appears on nav bar
+            $('.navbar-nav').find("#sign-out").remove();
+            $('.navbar-nav').append("<a class=\"nav-item nav-link\" id=\"sign-out\" onclick=\"signOut();\">Sign out</a>");
 
-        });
-    } else {
-        console.log("Already signed in");
-        favorites = JSON.parse(sessionStorage.getItem("favorites"));
-        suggestions = JSON.parse(sessionStorage.getItem("suggestions"));
-        if (suggestions === null) {
-            getSuggestions();
+        } else {
+            console.log("Error authenticating user");
         }
-        pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
 
-    }
+    });
 
-    $(".g-signin2").hide();
-    //Sign out option appears on nav bar
-    $('.navbar-nav').find("#sign-out").remove();
-    $('.navbar-nav').append("<a class=\"nav-item nav-link\" id=\"sign-out\" onclick=\"signOut();\">Sign out</a>");
+
 }
 
 /**

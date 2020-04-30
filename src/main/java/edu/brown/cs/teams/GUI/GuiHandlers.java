@@ -1,16 +1,22 @@
 package edu.brown.cs.teams.GUI;
 
+import com.google.api.client.auth.openidconnect.IdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import edu.brown.cs.teams.algorithms.RunSuperiorAlg;
+import edu.brown.cs.teams.constants.Constants;
 import edu.brown.cs.teams.io.Command;
 import edu.brown.cs.teams.algorithms.RunKDAlg;
 import edu.brown.cs.teams.algorithms.AlgMain;
 import edu.brown.cs.teams.ingredientParse.IngredientSuggest;
 import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.login.AccountUser;
+import org.eclipse.jetty.server.HttpTransport;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -22,7 +28,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import java.util.Map;
 
 //can have more objects for different types of handlers
@@ -30,6 +40,8 @@ public class GuiHandlers {
 
     private static final Gson GSON = new Gson();
     private static IngredientSuggest suggest;
+    private static GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory()).setAudience(Collections.singletonList(Constants.GOOGLE_CLIENT_ID)).build();
+
 
     public GuiHandlers() throws Exception {
         suggest = new IngredientSuggest();
@@ -65,23 +77,32 @@ public class GuiHandlers {
         @Override
         public Object handle(Request request, Response response) throws Exception {
             QueryParamsMap qm = request.queryMap();
-            String uid = qm.value("uid");
-            String name = qm.value("firstName");
-            String pfp = qm.value("profilePicture");
-            AccountUser user = new AccountUser(uid, name, pfp);
+            String tokenString = qm.value("idToken");
 
             JsonObject responseJSON = new JsonObject();
-            responseJSON.addProperty("uid", uid);
-            responseJSON.addProperty("name", name);
-            responseJSON.addProperty("profilePicture", pfp);
 
-            try {
-                AlgMain.getUserDb().addNewUser(user);
-                responseJSON.addProperty("newUser", true);
-            } catch (SQLException e) {
-                responseJSON.addProperty("newUser", false);
+            GoogleIdToken idToken = verifier.verify(tokenString);
+            if (idToken != null) {
+                Payload payload = idToken.getPayload();
+                String uid = payload.getSubject();
+                String name = (String) payload.get("name");
+                String pfp = (String) payload.get("picture");
+                AccountUser user = new AccountUser(uid, name, pfp);
+                responseJSON.addProperty("uid", uid);
+                responseJSON.addProperty("name", name);
+                responseJSON.addProperty("profilePicture", pfp);
+                try {
+                    AlgMain.getUserDb().addNewUser(user);
+                    responseJSON.addProperty("newUser", true);
+                } catch (SQLException e) {
+                    responseJSON.addProperty("newUser", false);
+                }
+                responseJSON.addProperty("success", true);
+
+            } else {
+                responseJSON.addProperty("success", false);
+
             }
-
             return responseJSON.toString();
         }
     }
