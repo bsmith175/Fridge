@@ -19,7 +19,7 @@ $(document).ready(() => {
     const result_cards = $("#result-cards");
     const modal_title = $("#modal-title");
     const fav = $("#display-favs");
-    const enjoy = $("#display-enjoy")
+    const enjoy = $("#display-enjoy");
     pantry = $("#pantry-item");
     const excluded = $("#excluded");
 
@@ -147,8 +147,7 @@ $(document).ready(() => {
         }
 
         e.preventDefault()
-
-        profilePage(fav, favorites, true);
+        profilePage(fav,  [...favorites], true);
         //$(this).tab('show')
     })
     /**
@@ -300,10 +299,11 @@ $(document).ready(() => {
             } else {
                 //get recipe that was liked
                 const field_id = (event.target.id);
+
+
                 const recipe = results[field_id];
 
                 const id = recipe.id;
-                console.log(id);
                 //craft post parameters
                 const postParameters = {
                     recipe_id: id,

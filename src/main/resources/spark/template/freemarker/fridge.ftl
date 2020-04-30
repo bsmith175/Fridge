@@ -1,7 +1,7 @@
 <#assign content>
     <div class="food-images">
         <div class="item">
-            <img src="//www.bbcgoodfood.com/sites/default/files/styles/recipe/public/recipe_images/recipe-image-legacy-id--363924_12.jpg?itok=wogfslT7"
+            <img src="//www.bbcgoodfood.com/sites/default/files/styles/recipe/public/recipe_images/shortcake_0.jpg?itok=VkRq0Fgj"
                  alt="Smiley face" height="200" width="200">
         </div>
         <div class="item">
