@@ -22,6 +22,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +41,7 @@ public class GuiHandlers {
     }
     public void setHandlers(FreeMarkerEngine freeMarker) {
         // Specify the algorithm to run here!!
-        Command command = new RunKDAlg();
+        Command command = new RunSuperiorAlg();
         Spark.get("/", new FridgeHandler(), freeMarker);
         Spark.get("/home", new HomeHandler(), freeMarker);
         Spark.post("/suggested-recipes", new SuggestedHandler());
@@ -171,8 +172,11 @@ public class GuiHandlers {
         public Object handle(Request request, Response response) throws CommandException {
             QueryParamsMap qm = request.queryMap();
             String[] ingredients = qm.get("text").values();
-            List<JsonObject> results = command.runForGui(ingredients, false,
-                    false, false);
+            boolean meats = Boolean.parseBoolean(qm.get("meats").value());
+            boolean dairy = Boolean.parseBoolean(qm.get("dairy").value());
+            boolean nuts = Boolean.parseBoolean(qm.get("nuts").value());
+            List<JsonObject> results = command.runForGui(ingredients, dairy,
+                    meats, nuts);
             String result = GSON.toJson(results);
             return result;
         }

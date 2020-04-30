@@ -47,7 +47,7 @@ public class RunSuperiorAlg implements Command {
     JSONParser parser = new JSONParser();
     JSONObject object = (JSONObject) parser.parse(reader);
     List<Ingredient> ingredients = new ArrayList<>();
-    for (String word : Arrays.copyOfRange(command, 1, command.length)) {
+    for (String word : Arrays.copyOfRange(command, 0, command.length)) {
       word = word.replaceAll("\"", "");
       try {
         double[] embedding = gson.fromJson(object.get(word).toString(),
@@ -74,32 +74,42 @@ public class RunSuperiorAlg implements Command {
 
   @Override
   public List<JsonObject> runForGui(String[] command, boolean dairy,
-                                    boolean meat, boolean nuts) throws CommandException {
-    if (command.length < 2) {
+                                    boolean meat, boolean nuts)
+          throws CommandException {
+    if (command.length < 1) {
       throw new CommandException("ERROR: Must enter an ingredient");
     }
     StringBuilder notAllowed = new StringBuilder();
-    if (dairy = true) {
+    boolean any = false;
+    if (dairy == true) {
       notAllowed.append(Config.getDairy());
       notAllowed.append("|");
+      any = true;
     }
-    if (nuts = true) {
+    if (nuts == true) {
       notAllowed.append(Config.getNuts());
       notAllowed.append("|");
+      any = true;
     }
-    if (meat = true) {
+    if (meat == true) {
       notAllowed.append(Config.getMeats());
       notAllowed.append("|");
+      any = true;
     }
-    notAllowed.deleteCharAt(notAllowed.length()-1);
-    Pattern pattern = Pattern.compile(notAllowed.toString());
+    if (any == true) {
+      notAllowed.deleteCharAt(notAllowed.length() - 1);
+    }
+    String restrictions = notAllowed.toString();
     try {
       PriorityQueue<Recipe> recpq = preCommand(command);
       List<JsonObject> guiResults = new ArrayList<>();
-      for (int i = 0; i < 100; i ++) {
+      for (int i = 0; i < 100; i++) {
         JsonObject jsonRecipe = Config.getRecipeJson(recpq.poll().getId());
-        jsonRecipe.get("tokens");
-        guiResults.add(jsonRecipe);
+        Gson gson = new Gson();
+        String tokenList = gson.fromJson(jsonRecipe.get("tokens"), String.class);
+        if (!Pattern.matches(restrictions, tokenList)){
+          guiResults.add(jsonRecipe);
+        }
       }
       return guiResults;
     } catch (IOException | ParseException | SQLException e) {

@@ -53,7 +53,6 @@ public final class Main {
     parser.accepts("port").withRequiredArg().ofType(Integer.class)
         .defaultsTo(DEFAULT_PORT);
     parser.accepts("database");
-
     parser.accepts("ben");
     parser.accepts("alg1");
     parser.accepts("alg2");

@@ -73,27 +73,33 @@ public class Recipe extends CartesianPoint {
    */
   public List<Ingredient> compareToIngredients(
           List<Ingredient> ingredients) {
-    List<Ingredient> candidateList = new ArrayList<>();
-    //generate user candidate for every recipe ingredient
-    for (Ingredient ing : this.ingredients) {
-      Ingredient candidate = Config.generateCandidate(ingredients, ing);
-      if (candidate != null) {
-        candidateList.add(candidate);
+    try {
+      List<Ingredient> candidateList = new ArrayList<>();
+      //generate user candidate for every recipe ingredient
+      for (Ingredient ing : this.ingredients) {
+        Ingredient candidate = Config.generateCandidate(ingredients, ing);
+        if (candidate != null) {
+          candidateList.add(candidate);
+        }
       }
+      //approxmating a reicpe vector from user candidate ingredients
+      double[] candidatesVec = Config.ingredAdd(candidateList);
+      //distance from recipe to user approximated recipe
+      double distance = 0.0;
+      if (candidateList.size() != 0) {
+        distance = Config.cosineSimilarity(this.recipeVec,
+                candidatesVec);
+      }
+      //penalizing based on number of missing ingredients
+      this.similarity =
+              distance *
+                      ((this.ingredients.size() - candidateList.size()) * -0.001 +
+                              1);
+      return candidateList;
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
     }
-    //approxmating a reicpe vector from user candidate ingredients
-    double[] candidatesVec = Config.ingredAdd(candidateList);
-    //distance from recipe to user approximated recipe
-    double distance = 0.0;
-    if (candidateList.size() != 0) {
-      distance = Config.cosineSimilarity(this.recipeVec,
-              candidatesVec);
-    }
-    //penalizing based on number of missing ingredients
-    this.similarity =
-            distance *
-                    ((this.recipeVec.length - candidatesVec.length) * 0.15 + 1);
-    return candidateList;
   }
 
 

@@ -6,6 +6,10 @@
 //user profile put in global scope
 let userProfile = undefined;
 let favorites = [];
+let restriction_toggles = [];
+let meats = false;
+let dairy = false;
+let nuts = false;
 
 $(document).ready(() => {
 
@@ -44,6 +48,19 @@ $(document).ready(() => {
         });
     });
 
+    $(".no-meats").click(function (e) {
+        console.log("meats_clicked")
+        meats = !meats;
+    })
+    $(".no-dairy").click(function (e) {
+        console.log("dairy_clicked")
+        dairy = !dairy
+    })
+    $(".no-nuts").click(function (e) {
+        console.log("nuts_clicked")
+        nuts = !nuts
+    })
+
     //Find Recipes Button clicked
     $(".find-recipe").click(function (e) {
         console.log("find recipe")
@@ -60,7 +77,7 @@ $(document).ready(() => {
             }
         }
         console.log(postParameters)
-        $.post("/recipe-recommend", $.param({text: postParameters}, true), response => {
+        $.post("/recipe-recommend", $.param({text: postParameters, meats: meats, nuts: nuts, dairy: dairy}, true), response => {
             //parse response
             const r = JSON.parse(response);
             make_cards(result_cards, r);

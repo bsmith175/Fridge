@@ -14,7 +14,7 @@ public final class Config {
   private static RecipeDatabase db;
 
   private static String nuts =
-          "(cashew|pistachio|pinyon|almond|pecan)";
+          "(cashew|pistachio|pinyon|almond|pecan| nut)";
 
   private static String meats = "(bear|beef|buffalo|bison|calf|caribou" +
           "|goat|ham|horse|kangaroo|lamb|marrow|moose" +
@@ -71,6 +71,7 @@ public final class Config {
    */
   public static Ingredient generateCandidate(
           List<Ingredient> ingredients, Ingredient ingr) {
+    int num = ingredients.size();
     Ingredient best = null;
     double closest = 0.0;
     for (Ingredient i : ingredients) {
@@ -80,7 +81,7 @@ public final class Config {
         closest = similarity;
       }
     }
-    if (closest > 0.0) {
+    if (closest > 1-num*0.03) {
       return best;
     } else {
       return null;
@@ -126,6 +127,13 @@ public final class Config {
     return result;
   }
 
+  public static double euclidDistance(double x[], double y[]) {
+    double ds = 0.0;
+    for(int n = 0; n < x.length; n++)
+      ds += Math.pow(x[n] - y[n], 2.0);
+    ds = Math.sqrt(ds);
+    return  ds;
+  }
 
   public static JsonObject getRecipeJson(int id) throws SQLException {
     return db.getRecipeContentFromID(id);

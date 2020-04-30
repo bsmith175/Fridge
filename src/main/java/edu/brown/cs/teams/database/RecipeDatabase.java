@@ -360,6 +360,7 @@ public class RecipeDatabase {
       recipe.addProperty("author", rs.getString(3));
       recipe.addProperty("description", rs.getString(4));
       recipe.addProperty("ingredients", rs.getString(5));
+      recipe.addProperty("tokens", rs.getString(6));
       recipe.addProperty("method", rs.getString(7));
       recipe.addProperty("time", rs.getString(8));
       recipe.addProperty("servings", rs.getString(9));
