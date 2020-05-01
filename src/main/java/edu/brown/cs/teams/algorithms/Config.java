@@ -14,7 +14,7 @@ public final class Config {
   private static RecipeDatabase db;
 
   private static String nuts =
-          "(cashew|pistachio|pinyon|almond|pecan| nut)";
+          "(cashew|pistachio|pinyon|almond|pecan| nut|\"nut)";
 
   private static String meats = "(bear|beef|buffalo|bison|calf|caribou" +
           "|goat|ham|horse|kangaroo|lamb|marrow|moose" +

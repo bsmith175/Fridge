@@ -107,7 +107,10 @@ public class RunSuperiorAlg implements Command {
         JsonObject jsonRecipe = Config.getRecipeJson(recpq.poll().getId());
         Gson gson = new Gson();
         String tokenList = gson.fromJson(jsonRecipe.get("tokens"), String.class);
-        if (!Pattern.matches(restrictions, tokenList)){
+        if (tokenList.replaceFirst(restrictions, "").length() == tokenList.length()){
+//          System.out.println(restrictions);
+//          System.out.println(tokenList);
+//          System.out.println(!Pattern.matches(restrictions, tokenList));
           guiResults.add(jsonRecipe);
         }
       }

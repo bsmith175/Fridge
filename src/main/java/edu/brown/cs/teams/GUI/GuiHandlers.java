@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import edu.brown.cs.teams.algorithms.RunSuperiorAlg;
 import edu.brown.cs.teams.constants.Constants;
 import edu.brown.cs.teams.io.Command;
 import edu.brown.cs.teams.algorithms.RunKDAlg;
@@ -40,13 +41,12 @@ public class GuiHandlers {
     }
     public void setHandlers(FreeMarkerEngine freeMarker) {
         // Specify the algorithm to run here!!
-        Command command = new RunKDAlg();
+        Command command = new RunSuperiorAlg();
         Spark.get("/", new FridgeHandler(), freeMarker);
         Spark.get("/home", new HomeHandler(), freeMarker);
+
+
         Spark.post("/suggested-recipes", new SuggestedHandler());
-
-
-
         Spark.post("/suggest", new ingredientSuggestHandler());
 
         Spark.post("/recipe-recommend", new RecipeSuggestHandler(command));

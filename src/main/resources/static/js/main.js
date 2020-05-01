@@ -25,7 +25,6 @@ $(document).ready(() => {
     const fav = $("#display-favs");
     const enjoy = $("#display-enjoy");
     pantry = $("#pantry-item");
-    const excluded = $("#excluded");
 
     let next = 1;
     /**
@@ -69,11 +68,11 @@ $(document).ready(() => {
     })
     $(".no-dairy").click(function (e) {
         console.log("dairy_clicked")
-        dairy = !dairy
+        dairy = !dairy;
     })
     $(".no-nuts").click(function (e) {
         console.log("nuts_clicked")
-        nuts = !nuts
+        nuts = !nuts;
     })
 
     //Find Recipes Button clicked
@@ -536,6 +535,9 @@ function signOut() {
         favorites = [];
         pantryItems = [];
         suggestions = [];
+        meats=false;
+        nuts=false;
+        dairy=false;
         $('.navbar-nav').find("#sign-out").remove();
         $(".replace-image").empty();
         $(".replace-image").append("<img class=\"profile-pic rounded-circle\"\n" +
