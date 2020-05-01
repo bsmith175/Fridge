@@ -536,6 +536,9 @@ function signOut() {
         favorites = [];
         pantryItems = [];
         suggestions = [];
+        meats=false;
+        nuts=false;
+        dairy=false;
         $('.navbar-nav').find("#sign-out").remove();
         $(".replace-image").empty();
         $(".replace-image").append("<img class=\"profile-pic rounded-circle\"\n" +
