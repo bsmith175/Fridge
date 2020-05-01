@@ -1,8 +1,6 @@
 package edu.brown.cs.teams.GUI;
 
-import com.google.api.client.auth.openidconnect.IdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
@@ -12,23 +10,14 @@ import edu.brown.cs.teams.algorithms.RunSuperiorAlg;
 import edu.brown.cs.teams.constants.Constants;
 import edu.brown.cs.teams.io.Command;
 import edu.brown.cs.teams.algorithms.RunKDAlg;
-import edu.brown.cs.teams.algorithms.AlgMain;
+import edu.brown.cs.teams.algorithms.AlgUtils;
 import edu.brown.cs.teams.ingredientParse.IngredientSuggest;
 import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.login.AccountUser;
-import org.eclipse.jetty.server.HttpTransport;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import spark.*;
 import spark.template.freemarker.FreeMarkerEngine;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -60,7 +49,8 @@ public class GuiHandlers {
         Spark.post("/suggested-recipes", new SuggestedHandler());
         Spark.post("/suggest", new ingredientSuggestHandler());
 
-        Spark.post("/recipe-recommend", new RecipeSuggestHandler(command));
+        Spark.post("/recipe-recommend",
+                new RecipeSuggestHandler(new RunSuperiorAlg()));
         Spark.post("/favorites", new favoritesPageHandler());
         Spark.post("/heart", new favoriteButtonHandler());
         Spark.post("/login", new userLoginHandler());
@@ -90,7 +80,7 @@ public class GuiHandlers {
                 responseJSON.addProperty("name", name);
                 responseJSON.addProperty("profilePicture", pfp);
                 try {
-                    AlgMain.getUserDb().addNewUser(user);
+                    AlgUtils.getUserDb().addNewUser(user);
                     responseJSON.addProperty("newUser", true);
                 } catch (SQLException e) {
                     responseJSON.addProperty("newUser", false);
@@ -113,12 +103,12 @@ public class GuiHandlers {
             QueryParamsMap qm = request.queryMap();
             String uid = qm.value("uid");
 
-            List<Integer> recipeIDs = AlgMain.getUserDb().getFavorites(uid);
+            List<Integer> recipeIDs = AlgUtils.getUserDb().getFavorites(uid);
             JsonArray responseJSON = new JsonArray();
             for (Integer curID : recipeIDs) {
 
                 //this is where the json array is created
-                JsonObject obj = AlgMain.getRecipeDb().getRecipeContentFromID(curID);
+                JsonObject obj = AlgUtils.getRecipeDb().getRecipeContentFromID(curID);
                 if (obj == null) {
                     throw new IllegalArgumentException("ERROR in favoritesHandler:  recipe doesn't exist");
                 }
@@ -142,10 +132,10 @@ public class GuiHandlers {
             String uid = qm.value("user_id");
             JsonObject responseJSON = new JsonObject();
             try {
-                if (AlgMain.getUserDb().addToFavorites(rid, uid)) {
+                if (AlgUtils.getUserDb().addToFavorites(rid, uid)) {
                     responseJSON.addProperty("added", true);
                 } else {
-                    AlgMain.getUserDb().removeFavorite(rid, uid);
+                    AlgUtils.getUserDb().removeFavorite(rid, uid);
                     responseJSON.addProperty("added", false);
                 }
             } catch (SQLException throwable) {
@@ -231,7 +221,7 @@ public class GuiHandlers {
             JsonObject responseJSON = new JsonObject();
 
             try {
-                AlgMain.getUserDb().addToPantry(term, uid);
+                AlgUtils.getUserDb().addToPantry(term, uid);
                 responseJSON.addProperty("success", true);
             } catch (SQLException e) {
                 responseJSON.addProperty("success", false);
@@ -253,7 +243,7 @@ public class GuiHandlers {
             JsonObject responseJSON = new JsonObject();
 
             try {
-                AlgMain.getUserDb().removePantryitem(term, uid);
+                AlgUtils.getUserDb().removePantryitem(term, uid);
                 responseJSON.addProperty("success", true);
 
             } catch (SQLException e) {
@@ -273,7 +263,7 @@ public class GuiHandlers {
             String uid = qm.value("uid");
             String responseJSON = "";
             try {
-                 responseJSON = GSON.toJson(AlgMain.getUserDb().getPantry(uid));
+                 responseJSON = GSON.toJson(AlgUtils.getUserDb().getPantry(uid));
                  return responseJSON;
             } catch (SQLException e) {
                 return responseJSON;

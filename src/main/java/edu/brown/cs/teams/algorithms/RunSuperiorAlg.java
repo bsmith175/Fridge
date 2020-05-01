@@ -15,7 +15,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class RunSuperiorAlg implements Command {
   @Override
@@ -27,13 +26,13 @@ public class RunSuperiorAlg implements Command {
     try {
       PriorityQueue<Recipe> recpq = preCommand(command);
       Recipe first = recpq.poll();
-      Config.printRecIngreds(first);
+      AlgUtils.printRecIngreds(first);
       first = recpq.poll();
-      Config.printRecIngreds(first);
+      AlgUtils.printRecIngreds(first);
       first = recpq.poll();
-      Config.printRecIngreds(first);
+      AlgUtils.printRecIngreds(first);
       first = recpq.poll();
-      Config.printRecIngreds(first);
+      AlgUtils.printRecIngreds(first);
       return Integer.toString(first.getId());
     } catch (IOException | ParseException e) {
       throw new CommandException(e.getMessage());
@@ -61,10 +60,10 @@ public class RunSuperiorAlg implements Command {
       }
     }
 
-    for (Recipe recipe : Config.getFullRecipes()) {
+    for (Recipe recipe : AlgUtils.getFullRecipes()) {
       recipe.compareToIngredients(ingredients);
     }
-    List<Recipe> reclist = Config.getFullRecipes();
+    List<Recipe> reclist = AlgUtils.getFullRecipes();
     PriorityQueue<Recipe> recpq =
             new PriorityQueue<>(new RecipeDistanceComparator());
 
@@ -82,17 +81,17 @@ public class RunSuperiorAlg implements Command {
     StringBuilder notAllowed = new StringBuilder();
     boolean any = false;
     if (dairy == true) {
-      notAllowed.append(Config.getDairy());
+      notAllowed.append(AlgUtils.getDairy());
       notAllowed.append("|");
       any = true;
     }
     if (nuts == true) {
-      notAllowed.append(Config.getNuts());
+      notAllowed.append(AlgUtils.getNuts());
       notAllowed.append("|");
       any = true;
     }
     if (meat == true) {
-      notAllowed.append(Config.getMeats());
+      notAllowed.append(AlgUtils.getMeats());
       notAllowed.append("|");
       any = true;
     }
@@ -104,7 +103,7 @@ public class RunSuperiorAlg implements Command {
       PriorityQueue<Recipe> recpq = preCommand(command);
       List<JsonObject> guiResults = new ArrayList<>();
       for (int i = 0; i < 100; i++) {
-        JsonObject jsonRecipe = Config.getRecipeJson(recpq.poll().getId());
+        JsonObject jsonRecipe = AlgUtils.getRecipeJson(recpq.poll().getId());
         Gson gson = new Gson();
         String tokenList = gson.fromJson(jsonRecipe.get("tokens"), String.class);
         if (tokenList.replaceFirst(restrictions, "").length() == tokenList.length()){

@@ -11,7 +11,6 @@ import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.io.REPL;
 import edu.brown.cs.teams.recipe.MinimalRecipe;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -60,7 +59,7 @@ public class RunKDAlg implements Command {
         embeddings[i-1] = embedding;
       }
     }
-    double[] queryEmbedding = Config.arrayAdd(embeddings);
+    double[] queryEmbedding = AlgUtils.arrayAdd(embeddings);
     return queryEmbedding;
   }
 
@@ -72,10 +71,11 @@ public class RunKDAlg implements Command {
     }
     try {
       double[] queryEmbedding = extractQuery(command, false);
-      List<MinimalRecipe> neighbors = AlgMain.getTree().getNeighbors(100, queryEmbedding);
+      List<MinimalRecipe> neighbors = AlgUtils
+              .getTree().getNeighbors(100, queryEmbedding);
       String result = "";
       for (MinimalRecipe recipe : neighbors) {
-        result += AlgMain.getRecipeDb().getRecipe(recipe.getId());
+        result += AlgUtils.getRecipeDb().getRecipe(recipe.getId());
       }
       return result;
     } catch (IOException | ParseException e) {
@@ -88,9 +88,10 @@ public class RunKDAlg implements Command {
                                     boolean meat, boolean nuts) throws CommandException {
     try {
       double[] queryEmbedding = extractQuery(command, true);
-      List<MinimalRecipe> neighbors = AlgMain.getTree().getNeighbors(100, queryEmbedding);
+      List<MinimalRecipe> neighbors = AlgUtils
+              .getTree().getNeighbors(100, queryEmbedding);
       List<JsonObject> results = new ArrayList<>();
-      RecipeDatabase db = AlgMain.getRecipeDb();
+      RecipeDatabase db = AlgUtils.getRecipeDb();
       for (MinimalRecipe recipe : neighbors) {
         results.add(db.getRecipeContentFromID(recipe.getId()));
       }
@@ -103,18 +104,19 @@ public class RunKDAlg implements Command {
 
   public static List<JsonObject> getRecommendations(String uid) throws CommandException {
     try {
-      List<Integer> favoriteIds = AlgMain.getUserDb().getFavorites(uid);
+      List<Integer> favoriteIds = AlgUtils.getUserDb().getFavorites(uid);
       Set<Integer> resultIds = new LinkedHashSet<>();
       for (Integer i : favoriteIds) {
-        String[] tokens = AlgMain.getRecipeDb().getTokenIngredients(i);
+        String[] tokens = AlgUtils.getRecipeDb().getTokenIngredients(i);
         double[] embeddings = extractQuery(tokens, true);
-        List<MinimalRecipe> result = AlgMain.getTree().getNeighbors(5, embeddings);
+        List<MinimalRecipe> result = AlgUtils
+                .getTree().getNeighbors(5, embeddings);
         for (MinimalRecipe recipe : result) {
           resultIds.add(recipe.getId());
         }
       }
       List<JsonObject> recipes = new ArrayList<>();
-      RecipeDatabase db = AlgMain.getRecipeDb();
+      RecipeDatabase db = AlgUtils.getRecipeDb();
       for (Integer id: resultIds) {
         if (!favoriteIds.contains(id)) {
           recipes.add(db.getRecipeContentFromID(id));

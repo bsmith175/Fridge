@@ -1,7 +1,7 @@
 package edu.brown.cs.teams.recipe;
 
 import edu.brown.cs.teams.kdtree.CartesianPoint;
-import edu.brown.cs.teams.algorithms.Config;
+import edu.brown.cs.teams.algorithms.AlgUtils;
 
 import java.util.*;
 
@@ -9,7 +9,6 @@ public class Recipe extends CartesianPoint {
   private int id;
   private Set<Ingredient> ingredients;
   private double similarity;
-  private double[] recipeVec;
 
   /**
    * Constructor for Cartesian point.
@@ -22,7 +21,6 @@ public class Recipe extends CartesianPoint {
     this.id = id;
     this.ingredients = ingredients;
     this.similarity = 0.0;
-    this.genRecipeVec();
   }
 
   /**
@@ -56,15 +54,6 @@ public class Recipe extends CartesianPoint {
   }
 
   /**
-   * Makes a vector for this recipe.
-   *
-   * @return the vector of concatenated ingredient vectors in this recipe
-   */
-  public void genRecipeVec() {
-    this.recipeVec = Config.ingredAdd(this.ingredients);
-  }
-
-  /**
    * Generates the closest list of ingredients to a recipe from an ingredient
    * list.
    *
@@ -77,17 +66,17 @@ public class Recipe extends CartesianPoint {
       List<Ingredient> candidateList = new ArrayList<>();
       //generate user candidate for every recipe ingredient
       for (Ingredient ing : this.ingredients) {
-        Ingredient candidate = Config.generateCandidate(ingredients, ing);
+        Ingredient candidate = AlgUtils.generateCandidate(ingredients, ing);
         if (candidate != null) {
           candidateList.add(candidate);
         }
       }
       //approxmating a reicpe vector from user candidate ingredients
-      double[] candidatesVec = Config.ingredAdd(candidateList);
+      double[] candidatesVec = AlgUtils.ingredAdd(candidateList);
       //distance from recipe to user approximated recipe
       double distance = 0.0;
       if (candidateList.size() != 0) {
-        distance = Config.cosineSimilarity(this.recipeVec,
+        distance = AlgUtils.cosineSimilarity(super.getPosition(),
                 candidatesVec);
       }
       //penalizing based on number of missing ingredients

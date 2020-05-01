@@ -3,11 +3,10 @@ package edu.brown.cs.teams.database;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import edu.brown.cs.teams.constants.Constants;
-import edu.brown.cs.teams.login.AccountUser;
 import edu.brown.cs.teams.recipe.Ingredient;
 import edu.brown.cs.teams.recipe.MinimalRecipe;
 import edu.brown.cs.teams.recipe.Recipe;
-import edu.brown.cs.teams.algorithms.Config;
+import edu.brown.cs.teams.algorithms.AlgUtils;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
 
@@ -236,7 +235,7 @@ public class RecipeDatabase {
               }
               newTokens.add(tokens[i]);
             }
-            double[] totalEmbedding = Config.arrayAdd(embeddings);
+            double[] totalEmbedding = AlgUtils.arrayAdd(embeddings);
             int id = rs.getInt(1);
             MinimalRecipe recipe = new MinimalRecipe(totalEmbedding, id);
             recipes.add(recipe);
@@ -299,7 +298,7 @@ public class RecipeDatabase {
                 newTokens.add(new Ingredient(tokens[i], embeddings[i]));
               }
             }
-            double[] totalEmbedding = Config.arrayAdd(embeddings);
+            double[] totalEmbedding = AlgUtils.arrayAdd(embeddings);
             int id = rs.getInt(1);
             Recipe recipe = new Recipe(totalEmbedding, id, newTokens);
             recipes.add(recipe);
