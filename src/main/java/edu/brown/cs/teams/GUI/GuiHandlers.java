@@ -1,14 +1,11 @@
 package edu.brown.cs.teams.GUI;
 
-import com.google.api.client.auth.openidconnect.IdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import edu.brown.cs.teams.algorithms.RunSuperiorAlg;
 import edu.brown.cs.teams.constants.Constants;
 import edu.brown.cs.teams.io.Command;
 import edu.brown.cs.teams.algorithms.RunKDAlg;
@@ -16,19 +13,9 @@ import edu.brown.cs.teams.algorithms.AlgMain;
 import edu.brown.cs.teams.ingredientParse.IngredientSuggest;
 import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.login.AccountUser;
-import org.eclipse.jetty.server.HttpTransport;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import spark.*;
 import spark.template.freemarker.FreeMarkerEngine;
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -60,7 +47,6 @@ public class GuiHandlers {
 
 
 
-        Spark.post("/recipe", new RecipeHandler());
         Spark.post("/suggest", new ingredientSuggestHandler());
 
         Spark.post("/recipe-recommend", new RecipeSuggestHandler(command));
@@ -221,32 +207,6 @@ public class GuiHandlers {
         }
     }
 
-    /**
-     * A handler to produce our autocorrect service site.
-     *
-     * @return ModelAndView to render.
-     * (autocorrect.ftl).
-     */
-    private static class RecipeHandler implements Route {
-        @Override
-        public String handle(Request req, Response res) throws ParseException {
-            try (FileReader reader = new FileReader("data/smallJ.json")) {
-                JSONParser parser = new JSONParser();
-                JSONArray array = (JSONArray) parser.parse(reader);
-                List<String> result = new ArrayList<>();
-
-                result = new Gson().fromJson(String.valueOf(array), ArrayList.class);
-                Map<String, Object> variables = ImmutableMap.of("results", result);
-                return GSON.toJson(variables);
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
 
     //Handler for adding a list of ingredients to the pantry.
     private static class pantryAddHandler implements Route {
