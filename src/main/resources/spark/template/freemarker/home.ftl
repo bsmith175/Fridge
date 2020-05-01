@@ -65,8 +65,6 @@
                     </form>
                 </div>
             </div>
-            <div class="tab-pane fade" id="excluded" role="tabpanel" aria-labelledby="contact-tab">
-            </div>
         </div>
     </div>
 
