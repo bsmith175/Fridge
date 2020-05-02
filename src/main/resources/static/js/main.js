@@ -549,7 +549,7 @@ function onSignIn(googleUser) {
                 suggestions = JSON.parse(sessionStorage.getItem("suggestions"));
                 pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
 
-                if (suggestions === null || suggestions.length == 0) {
+                if (suggestions === null ) {
                     getSuggestions();
                 }
                 console.log(suggestions);
