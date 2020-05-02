@@ -176,7 +176,7 @@ $(document).ready(() => {
     $('#myTab a[href="#enjoy"]').on('click', function (e) {
         let newButton = $("#new-suggest");
         newButton.css("visibility", "visible");
-        if (!suggestions.length) {
+        if (suggestions === null || !suggestions.length) {
 
             $('.enjoy-explanation').text("Add more Favorites so that we can recommend you some recipes!");
             enjoy.empty();
@@ -386,7 +386,7 @@ $(document).ready(() => {
         spinner.css("display", "inline-block");
         newButton.css("margin-left", "47rem");
         suggestions = [];
-        var load = function() {
+        let load = function() {
             console.log(suggestions);
             profilePage(enjoy, suggestions, false)
             spinner.css("display", "none");
@@ -470,7 +470,9 @@ function getSuggestions(callback) {
         sessionStorage.setItem("suggestions", response);
         suggestions = JSON.parse(response);
         console.log(suggestions);
-        callback();
+        if (typeof callback !== 'undefined') {
+            callback();
+        }
     });
 
 }
@@ -496,6 +498,8 @@ function onSignIn(googleUser) {
             $(".replace-image").append("<img class=\"profile-pic rounded-circle\"\n" +
                 "                     src=\"" + userProfile.getImageUrl() + "\"\n" +
                 "                     alt=\"Card image cap\" height=\"160\" width=\"160\">");
+            console.log(sessionStorage.getItem("signedin"));
+            console.log(sessionStorage.getItem("suggestions"));
 
             if (sessionStorage.getItem("signedin") !== "true") {
 
@@ -512,9 +516,11 @@ function onSignIn(googleUser) {
 
             } else {
                 console.log("Already signed in");
-                favorites = JSON.parse(sessionStorage.getItem("favorites"));
+                if (favorites === null || favorites.length == 0) {
+                    favorites = JSON.parse(sessionStorage.getItem("favorites"));
+                }
                 suggestions = JSON.parse(sessionStorage.getItem("suggestions"));
-                if (suggestions.length == 0) {
+                if (suggestions === null || suggestions.length == 0) {
                     getSuggestions();
                 }
                 console.log(suggestions);
@@ -555,7 +561,7 @@ function signOut() {
     auth2.signOut().then(function () {
         // Reset userProfile variable
         userProfile = undefined;
-        sessionStorage.setItem("signedin", false);
+        sessionStorage.clear();
         favorites = [];
         pantryItems = [];
         suggestions = [];
