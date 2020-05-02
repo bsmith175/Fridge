@@ -84,6 +84,7 @@ input[type="text"], textarea {
 .find-recipe {
   background: rgba(157, 242, 151, 0.79);
   color: #158043;
+  margin-top: 10px;
 }
 
 .food-form{
@@ -198,3 +199,12 @@ input[type="text"], textarea {
   float: left;
 }
 
+.card-title{
+  font-size: large;
+  font-weight: bold;
+}
+
+.fridge-buttons{
+  margin-left: 0px;
+  padding: 0px;
+}
