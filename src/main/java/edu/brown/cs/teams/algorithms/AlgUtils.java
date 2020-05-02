@@ -18,7 +18,7 @@ import edu.brown.cs.teams.recipe.Recipe;
  * Class to store the information relevant to the algorithms being run. Also
  * has convenient util static methods.
  */
-public final class AlgUtils {
+public class AlgUtils {
   private static RecipeDatabase rdb;
   private static UserDatabase udb;
   private static List<Recipe> fullRecipes =
@@ -30,7 +30,7 @@ public final class AlgUtils {
   /**
    * Constructor for AlgUtils.
    */
-  private AlgUtils() {
+  public AlgUtils() {
   }
 
   /**

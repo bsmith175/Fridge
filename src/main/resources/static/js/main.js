@@ -381,12 +381,6 @@ $(document).ready(() => {
 function getFavs() {
     console.log("Getting favorites and setting storage");
     favorites.length = 0;
-    const params = {
-        userID: userProfile.getId(),
-        name: userProfile.getName(),
-        email: userProfile.getEmail(),
-        profilePic: userProfile.getImageUrl()
-    };
     $.post("/favorites", {"uid": userProfile.getId()}, response => {
         const r = JSON.parse(response);
         sessionStorage.setItem("favorites", response);

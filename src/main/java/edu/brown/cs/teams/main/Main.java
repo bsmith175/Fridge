@@ -80,6 +80,7 @@ public final class Main {
     }
 
     try {
+      new AlgUtils();
       r = new RecipeDatabase(Constants.DATABASE_FILE, false);
       String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
               ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
@@ -87,9 +88,9 @@ public final class Main {
               false);
       System.out.println("Getting recipes");
       AlgUtils.setDb(r, u);
+      AlgUtils.buildRecList();
       List<MinimalRecipe> recipes = AlgUtils.getMinimalRecipesList();
       AlgUtils.setTree(AlgUtils.getTree().buildKDTree(recipes));
-      AlgUtils.buildRecList();
       System.out.println("ready to query");
     } catch (CommandException e) {
       System.out.println(e.getMessage());
