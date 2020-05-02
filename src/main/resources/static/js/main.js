@@ -89,7 +89,7 @@ $(document).ready(() => {
         let elements = document.forms["pantry-form"].elements;
         for (let i = 0; i < elements.length; i++) {
 
-            if (elements[i].value != "") {
+            if (elements[i].value != "" && elements[i].value != " ") {
                 console.log((elements[i]).value);
 
                 postParameters = elements[i].value;
