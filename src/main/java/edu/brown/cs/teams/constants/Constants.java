@@ -7,5 +7,7 @@ public class Constants {
 
     public static final String EMBEDDINGS_FILE = "data/ingredient_vectors.json";
 
+    public static final String GOOGLE_CLIENT_ID = System.getenv("GOOGLE_ID");
+
 
 }
