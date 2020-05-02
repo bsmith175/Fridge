@@ -35,6 +35,9 @@
                 <div class="col d-flex justify-content-center">
                     <p class="enjoy-explanation favorite-explanation" id="enjoy-explanation">""</p>
                 </div>
+                <div class="col d-flex justify-content-center">
+                    <span class="spinner-border spinner-border-sm"  role="status" aria-hidden="true"></span>
+                </div>
                 <div class="row" id="display-favs"></div>
             </div>
             <div class="tab-pane fade" id="enjoy" role="tabpanel" aria-labelledby="enjoy-tab">

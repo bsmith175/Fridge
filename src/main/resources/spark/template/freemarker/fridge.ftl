@@ -45,10 +45,21 @@
                         </div>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-outline-success find-recipe ">Find Recipes</button>
-                <button type="button" class="btn btn-outline-danger no-meats" data-toggle="button" aria-pressed="false" autocomplete="off">No Meat</button>
-                <button type="button" class="btn btn-outline-primary no-dairy" data-toggle="button" aria-pressed="false" autocomplete="off">No Dairy</button>
-                <button type="button" class="btn btn-outline-secondary no-nuts" data-toggle="button" aria-pressed="false" autocomplete="off">No Nuts</button>
+                <div class="col fridge-buttons">
+                    <div>
+                        <button type="button" class="btn btn-outline-danger no-meats" data-toggle="button"
+                                aria-pressed="false" autocomplete="off">No Meat
+                        </button>
+                        <button type="button" class="btn btn-outline-primary no-dairy" data-toggle="button"
+                                aria-pressed="false" autocomplete="off">No Dairy
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary no-nuts" data-toggle="button"
+                                aria-pressed="false" autocomplete="off">No Nuts
+                        </button>
+                    </div>
+                    <button type="submit" class="btn btn-outline-success find-recipe ">Find Recipes</button>
+
+                </div>
             </form>
         </div>
 
