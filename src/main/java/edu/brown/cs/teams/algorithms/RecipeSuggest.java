@@ -23,7 +23,17 @@ import java.util.PriorityQueue;
  * Class to suggest recipe, implements the command interface.
  */
 public class RecipeSuggest implements Command {
+
+  private boolean dairy;
+  private boolean meats;
+  private boolean nuts;
   public static final int NUM_RESULTS = 100;
+
+  public RecipeSuggest(boolean meats, boolean dairy, boolean nuts){
+    this.meats = meats;
+    this.dairy = dairy;
+    this.nuts = nuts;
+  }
 
   /**
    * executable repl command.
@@ -96,25 +106,23 @@ public class RecipeSuggest implements Command {
   }
 
   @Override
-  public List<JsonObject> runForGui(String[] command, boolean dairy,
-                                    boolean meat, boolean nuts)
-          throws CommandException {
+  public List<JsonObject> runForGui(String[] command) throws CommandException {
     if (command.length < 1) {
       throw new CommandException("ERROR: Must enter an ingredient");
     }
     StringBuilder notAllowed = new StringBuilder();
     boolean any = false;
-    if (dairy) {
+    if (this.dairy) {
       notAllowed.append(AlgUtils.getDairy());
       notAllowed.append("|");
       any = true;
     }
-    if (nuts) {
+    if (this.nuts) {
       notAllowed.append(AlgUtils.getNuts());
       notAllowed.append("|");
       any = true;
     }
-    if (meat) {
+    if (this.meats) {
       notAllowed.append(AlgUtils.getMeats());
       notAllowed.append("|");
       any = true;
@@ -127,7 +135,8 @@ public class RecipeSuggest implements Command {
       PriorityQueue<Recipe> recpq = preCommand(command);
       List<JsonObject> guiResults = new ArrayList<>();
       for (int i = 0; i < NUM_RESULTS; i++) {
-        JsonObject jsonRecipe = AlgUtils.getRecipeJson(recpq.poll().getId());
+        Recipe rec = recpq.poll();
+        JsonObject jsonRecipe = rec.getRecipeJson();
         Gson gson = new Gson();
         String tokenList =
                 gson.fromJson(jsonRecipe.get("tokens"), String.class);

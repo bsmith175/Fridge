@@ -20,6 +20,7 @@ import spark.template.freemarker.FreeMarkerEngine;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -30,19 +31,17 @@ public class GuiHandlers {
 
     private static final Gson GSON = new Gson();
     private static IngredientSuggest suggest;
+    private static RunKDAlg favoritesSuggest;
     private static GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory()).setAudience(Collections.singletonList(Constants.GOOGLE_CLIENT_ID)).build();
 
 
     public GuiHandlers() throws Exception {
         suggest = new IngredientSuggest();
-//        String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
-//            ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
-//        AlgMain.setDb(new RecipeDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, false));
+        favoritesSuggest = new RunKDAlg();
 
     }
     public void setHandlers(FreeMarkerEngine freeMarker) {
         // Specify the algorithm to run here!!
-        Command command = new RecipeSuggest();
         Spark.get("/", new FridgeHandler(), freeMarker);
         Spark.get("/home", new HomeHandler(), freeMarker);
 
@@ -50,7 +49,7 @@ public class GuiHandlers {
         Spark.post("/suggest", new ingredientSuggestHandler());
 
         Spark.post("/recipe-recommend",
-                new RecipeSuggestHandler(new RecipeSuggest()));
+                new RecipeSuggestHandler());
         Spark.post("/favorites", new favoritesPageHandler());
         Spark.post("/heart", new favoriteButtonHandler());
         Spark.post("/login", new userLoginHandler());
@@ -165,16 +164,12 @@ public class GuiHandlers {
         public Object handle(Request request, Response response) throws Exception {
             QueryParamsMap qm = request.queryMap();
             String uid = qm.get("uid").values()[0];
-            String result = GSON.toJson(RunKDAlg.getRecommendations(uid));
+            String result = GSON.toJson(favoritesSuggest.getRecommendations(uid));
             return result;
         }
     }
 
     private static class RecipeSuggestHandler implements Route {
-        private Command command;
-        public RecipeSuggestHandler(Command command){
-            this.command = command;
-        }
 
         // Returns the suggested recipes
         @Override
@@ -184,8 +179,8 @@ public class GuiHandlers {
             boolean meats = Boolean.parseBoolean(qm.get("meats").value());
             boolean dairy = Boolean.parseBoolean(qm.get("dairy").value());
             boolean nuts = Boolean.parseBoolean(qm.get("nuts").value());
-            List<JsonObject> results = command.runForGui(ingredients, dairy,
-                    meats, nuts);
+            RecipeSuggest suggest = new RecipeSuggest(meats, dairy, nuts);
+            List<JsonObject> results = suggest.runForGui(ingredients);
             String result = GSON.toJson(results);
             return result;
         }

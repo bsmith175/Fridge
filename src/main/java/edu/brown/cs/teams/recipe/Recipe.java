@@ -1,8 +1,10 @@
 package edu.brown.cs.teams.recipe;
 
+import com.google.gson.JsonObject;
 import edu.brown.cs.teams.kdtree.CartesianPoint;
 import edu.brown.cs.teams.algorithms.AlgUtils;
 
+import java.sql.SQLException;
 import java.util.*;
 
 public class Recipe extends CartesianPoint {
@@ -39,20 +41,6 @@ public class Recipe extends CartesianPoint {
     return id;
   }
 
-  // Gets cosine similarity
-  @Override
-  public double getDistance(double[] target) {
-    double dotProduct = 0.0;
-    double normA = 0.0;
-    double normB = 0.0;
-    for (int i = 0; i < target.length; i++) {
-      dotProduct += super.getPosition()[i] * target[i];
-      normA += Math.pow(super.getPosition()[i], 2);
-      normB += Math.pow(target[i], 2);
-    }
-    return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
-  }
-
   /**
    * Generates the closest list of ingredients to a recipe from an ingredient
    * list.
@@ -66,7 +54,7 @@ public class Recipe extends CartesianPoint {
       List<Ingredient> candidateList = new ArrayList<>();
       //generate user candidate for every recipe ingredient
       for (Ingredient ing : this.ingredients) {
-        Ingredient candidate = AlgUtils.generateCandidate(ingredients, ing);
+        Ingredient candidate = ing.generateCandidate(ingredients);
         if (candidate != null) {
           candidateList.add(candidate);
         }
@@ -76,8 +64,7 @@ public class Recipe extends CartesianPoint {
       //distance from recipe to user approximated recipe
       double distance = 0.0;
       if (candidateList.size() != 0) {
-        distance = AlgUtils.cosineSimilarity(super.getPosition(),
-                candidatesVec);
+        distance = super.getDistance(candidatesVec);
       }
       //penalizing based on number of missing ingredients
       this.similarity =
@@ -89,6 +76,15 @@ public class Recipe extends CartesianPoint {
       e.printStackTrace();
       return null;
     }
+  }
+
+  /**
+   * Method to get the json version of a recipe (to output to gui).
+   * @return a json that can be parsed in the front-end
+   * @throws SQLException for invalid query
+   */
+  public JsonObject getRecipeJson() throws SQLException {
+    return AlgUtils.getRecipeDb().getRecipeContentFromID(this.id);
   }
 
 

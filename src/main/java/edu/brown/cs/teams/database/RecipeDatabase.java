@@ -209,52 +209,6 @@ public class RecipeDatabase {
 
   //------------------------- Recipe table queries----------------
 
-  public List<MinimalRecipe> getRecipes(String vectorFileName)
-      throws CommandException {
-    String query = "SELECT * FROM recipe";
-    JSONParser parser = new JSONParser();
-    Gson gson = new Gson();
-    List<MinimalRecipe> recipes = new ArrayList<>();
-    try (FileReader reader = new FileReader(vectorFileName)) {
-      JSONObject object = (JSONObject) parser.parse(reader);
-      try (PreparedStatement prep = conn.prepareStatement(query)) {
-        try (ResultSet rs = prep.executeQuery()) {
-          while (rs.next()) {
-            String[] tokens = rs.getString(6)
-                .substring(1, rs.getString(6).length() - 1)
-                .replaceAll("\"", "")
-                .split(",");
-            Set<String> newTokens = new HashSet<>();
-            double[][] embeddings = new double[tokens.length][300];
-            for (int i = 0; i < tokens.length; i++) {
-              if (object.get(tokens[i]) == null) {
-                embeddings[i] = new double[300];
-              } else {
-                embeddings[i] = gson.fromJson(object.get(tokens[i]).toString(),
-                    double[].class);
-              }
-              newTokens.add(tokens[i]);
-            }
-            double[] totalEmbedding = AlgUtils.arrayAdd(embeddings);
-            int id = rs.getInt(1);
-            MinimalRecipe recipe = new MinimalRecipe(totalEmbedding, id);
-            recipes.add(recipe);
-          }
-        }
-      } catch (SQLException e) {
-        throw new CommandException(e.getMessage());
-      }
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
-    return recipes;
-  }
-
-
   public String getRecipe(int id) throws CommandException {
     String query = "SELECT * FROM recipe WHERE recipe.id = ?";
     try (PreparedStatement prep = conn.prepareStatement(query)) {
@@ -274,7 +228,7 @@ public class RecipeDatabase {
 
 
   public List<Recipe> getFullRecipes(String vectorFileName)
-      throws SQLException {
+      throws CommandException {
     String query = "SELECT id, tokens FROM recipe";
     JSONParser parser = new JSONParser();
     Gson gson = new Gson();
@@ -289,16 +243,15 @@ public class RecipeDatabase {
                 .replaceAll("\"", "")
                 .split(",");
             Set<Ingredient> newTokens = new HashSet<>();
-            double[][] embeddings = new double[tokens.length][300];
 
             for (int i = 0; i < tokens.length; i++) {
-              embeddings[i] = gson.fromJson(object.get(tokens[i]).toString(),
+              double[] embedding = gson.fromJson(object.get(tokens[i]).toString(),
                   double[].class);
               if (tokens[i] != "") {
-                newTokens.add(new Ingredient(tokens[i], embeddings[i]));
+                newTokens.add(new Ingredient(tokens[i], embedding));
               }
             }
-            double[] totalEmbedding = AlgUtils.arrayAdd(embeddings);
+            double[] totalEmbedding = AlgUtils.ingredAdd(newTokens);
             int id = rs.getInt(1);
             Recipe recipe = new Recipe(totalEmbedding, id, newTokens);
             recipes.add(recipe);
@@ -306,13 +259,14 @@ public class RecipeDatabase {
         }
       }
     } catch (FileNotFoundException e) {
-      e.printStackTrace();
+      throw new CommandException(e.getMessage());
     } catch (IOException e) {
-      e.printStackTrace();
+      throw new CommandException(e.getMessage());
     } catch (ParseException e) {
-      e.printStackTrace();
+      throw new CommandException(e.getMessage());
+    } catch (SQLException e) {
+      throw new CommandException(e.getMessage());
     }
-
     return recipes;
   }
 

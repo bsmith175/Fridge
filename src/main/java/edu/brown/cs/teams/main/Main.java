@@ -86,7 +86,6 @@ public final class Main {
               ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
       u = new UserDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD,
               false);
-//      new AlgUtils();
       System.out.println("Getting recipes");
       AlgUtils.setDb(r, u);
       List<MinimalRecipe> recipes = AlgUtils.getMinimalRecipesList();
@@ -105,8 +104,7 @@ public final class Main {
     if (options.has("repl")) {
       // Allow the repl to run both commands
       HashMap<String, Command> commands = new HashMap<>();
-      commands.put("suggest", new RunKDAlg());
-      commands.put("recommend", new RecipeSuggest());
+      commands.put("recommend", new RecipeSuggest(false, false, false));
       REPL = new REPL(commands);
       REPL.runREPL();
     }

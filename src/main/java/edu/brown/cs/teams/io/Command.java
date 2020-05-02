@@ -20,12 +20,8 @@ public interface Command {
   /**
    * Executes the command received from the GUI.
    * @param command a command to be executed from the gui
-   * @param dairy true if dairy is restricted
-   * @param meat true if meat is restricted
-   * @param nuts true if nuts are restricted
    * @return an ordered list of json objects representing recipes.
    * @throws CommandException if command is invalid
    */
-  List<JsonObject> runForGui(String[] command, boolean dairy,
-                             boolean meat, boolean nuts) throws CommandException;
+  List<JsonObject> runForGui(String[] command) throws CommandException;
 }
