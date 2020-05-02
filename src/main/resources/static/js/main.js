@@ -173,7 +173,7 @@ $(document).ready(() => {
      */
     $('#myTab a[href="#enjoy"]').on('click', function (e) {
 
-        if (!suggestions.length) {
+        if (!favorites.length) {
             $('.enjoy-explanation').text("Add more Favorites so that we can recommend you some recipes!");
             enjoy.empty();
         } else {
@@ -448,8 +448,6 @@ function getSuggestions() {
     }, response => {
         sessionStorage.setItem("suggestions", response);
         suggestions = JSON.parse(response);
-        console.log(suggestions);
-
     });
 }
 
@@ -492,7 +490,7 @@ function onSignIn(googleUser) {
                 console.log("Already signed in");
                 favorites = JSON.parse(sessionStorage.getItem("favorites"));
                 suggestions = JSON.parse(sessionStorage.getItem("suggestions"));
-                if (suggestions === null) {
+                if (suggestions.length == 0) {
                     getSuggestions();
                 }
                 pantryItems = JSON.parse(sessionStorage.getItem("pantry"));

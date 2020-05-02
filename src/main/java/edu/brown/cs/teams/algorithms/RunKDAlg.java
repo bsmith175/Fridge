@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Set;
 
 public class RunKDAlg {
-  public RunKDAlg() {
-  }
 
 
   /**

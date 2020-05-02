@@ -55,15 +55,14 @@ public final class Main {
     parser.accepts("sqlite_init");
     parser.accepts("postgres_init");
     OptionSet options = parser.parse(args);
-    RecipeDatabase r = null;
-    UserDatabase u = null;
+    RecipeDatabase r;
+    UserDatabase u;
 
     if (options.has("init")) {
       try {
         r = new RecipeDatabase(Constants.DATABASE_FILE, true);
         r.makeTable();
         r.parseJson();
-
         String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
                 ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
         u = new UserDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD,
