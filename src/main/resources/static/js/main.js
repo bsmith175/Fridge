@@ -81,25 +81,71 @@ $(document).ready(() => {
      * Triggered when pantry form is submitted to
      * add a item to the pantry.
      */
-    $(".add-to-pantry").click(function (e) {
+    let pantry_counter = 0;
+
+    $(".add-to-pantry").click(function () {
         console.log("add to pantry")
         let postParameters = "";
         let elements = document.forms["pantry-form"].elements;
         for (let i = 0; i < elements.length; i++) {
-            if (elements[i].value != "") {
+
+            if (elements[i].value != "" && elements[i].value != " ") {
+                console.log((elements[i]).value);
+
                 postParameters = elements[i].value;
             }
         }
-        $.post('/add-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
-            data = JSON.parse(data);
-            getPantry();
-            displayPantry();
+        if (postParameters!= ""){
+            $.post('/add-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
+                data = JSON.parse(data);
+                console.log(data)
+                //getPantry();
+                //displayPantry();
 
-        })
+                const s = "<button type=\"button\" id=\"" + pantry_counter + "\" name=\"" + postParameters+
+                    "\" class=\"btn btn-lg btn-outline-info remove-pantry\" " +
+                    "onclick='remove_pantry(this.id)'>\n"
+                    + postParameters
+                    + " <span class=\"badge badge-light\">x</span>\n"
+                    + "                        </button>";
+                pantry.append(s);
+                pantryItems.push(postParameters);
+                console.log(pantryItems);
+
+
+            });
+            pantry_counter = pantry_counter + 1;
+        }
         document.forms["pantry-form"].reset();
+       // sessionStorage.setItem("pantry", pantryItems);
+
         return false;
 
     })
+    /**
+     * Adds all the items in pantryItems to pantry selector.
+     * Uses timeout function to make sure that if getPantry is called before,
+     * displayPantry will be called after it finishes setting pantryItems.
+     */
+    function displayPantry() {
+        setTimeout(function () {
+            pantry.empty();
+            console.log(pantryItems.length);
+
+            for (let i = 0; i < pantryItems.length; i++) {
+
+                const s = "<button type=\"button\" id=\"" + pantry_counter + "\" name=\"" + pantryItems[i] +
+                    "\" class=\"btn btn-lg btn-outline-info remove-pantry\" " +
+                    "onclick='remove_pantry(this.id,setSessionPantry)'>\n"
+                    + pantryItems[i]
+                    + " <span class=\"badge badge-light\">x</span>\n"
+                    + "                        </button>";
+                pantry.append(s);
+                pantry_counter = pantry_counter + 1;
+
+            }
+        }, 400);
+    }
     /**
      * Click function for find-recipe selector.
      * When fridge-from submitted, gets all the inputs from form and sends them to backend
@@ -201,28 +247,7 @@ $(document).ready(() => {
 
     });
 
-    /**
-     * Adds all the items in pantryItems to pantry selector.
-     * Uses timeout function to make sure that if getPantry is called before,
-     * displayPantry will be called after it finishes setting pantryItems.
-     */
-    function displayPantry() {
-        setTimeout(function () {
-            pantry.empty();
-            console.log(pantryItems.length)
 
-            for (let i = 0; i < pantryItems.length; i++) {
-
-                const s = "<button type=\"button\" id=\"" + i + "\" " +
-                    "class=\"btn btn-lg btn-outline-info remove-pantry\" " +
-                    "onclick='remove_pantry(this.id)'>\n"
-                    + pantryItems[i]
-                    + " <span class=\"badge badge-light\">x</span>\n"
-                    + "                        </button>";
-                pantry.append(s);
-            }
-        }, 200);
-    }
 
 
     /**
@@ -425,20 +450,35 @@ function getFavs() {
  *
  * @param {*} clicked_id id of ingrdient clicked
  */
-function remove_pantry(clicked_id) {
+function remove_pantry(clicked_id, callback) {
     console.log("removing item from pantry");
     console.log(clicked_id);
     console.log(pantryItems);
-
-    let postParameters = pantryItems[clicked_id];
+    let postParameters =  $('#'+clicked_id).attr('name');
     console.log(postParameters);
     $.post('/remove-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
         data = JSON.parse(data);
 
+        console.log(data);
     })
     pantry.find("#" + clicked_id).remove();
-    getPantry();
+    for (let i = 0; i < pantryItems.length; i++) {
+        if (pantryItems[i] === postParameters) {
+            pantryItems.splice(i, 1);
+        }
+    }
+    console.log(pantryItems);
+    if (typeof callback !== 'undefined') {
+        callback();
+    }
+
+
 }
+
+function setSessionPantry(){
+   // sessionStorage.setItem("pantry", pantryItems);
+}
+
 
 /**
  * Gets pantry items and stores them in pantryItems.
@@ -516,8 +556,9 @@ function onSignIn(googleUser) {
 
             } else {
                 console.log("Already signed in");
+                favorites = JSON.parse(sessionStorage.getItem("favorites"));
                 if (favorites === null || favorites.length === 0) {
-                    favorites = JSON.parse(sessionStorage.getItem("favorites"));
+                    getFavs();
                 }
                 console.log(favorites);
 
@@ -525,8 +566,13 @@ function onSignIn(googleUser) {
                 if (suggestions === null || suggestions.length == 0) {
                     getSuggestions();
                 }
+                //pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
+                if (pantryItems === null || pantryItems.length == 0) {
+                    getPantry();
+                }
 
-                pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
+
+                console.log(pantryItems);
 
             }
 
