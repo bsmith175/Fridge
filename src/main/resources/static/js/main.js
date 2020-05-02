@@ -81,21 +81,38 @@ $(document).ready(() => {
      * Triggered when pantry form is submitted to
      * add a item to the pantry.
      */
+    let pantry_counter = 0;
+
     $(".add-to-pantry").click(function (e) {
         console.log("add to pantry")
         let postParameters = "";
         let elements = document.forms["pantry-form"].elements;
         for (let i = 0; i < elements.length; i++) {
+
             if (elements[i].value != "") {
+                console.log((elements[i]).value);
+
                 postParameters = elements[i].value;
             }
         }
-        $.post('/add-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
-            data = JSON.parse(data);
-            getPantry();
-            displayPantry();
+        if (postParameters!= ""){
+            $.post('/add-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
+                data = JSON.parse(data);
+                console.log(data)
+                //getPantry();
+                //displayPantry();
 
-        })
+                const s = "<button type=\"button\" id=\"" + pantry_counter + "\" name=\"" + postParameters+
+                    "\" class=\"btn btn-lg btn-outline-info remove-pantry\" " +
+                    "onclick='remove_pantry(this.id)'>\n"
+                    + postParameters
+                    + " <span class=\"badge badge-light\">x</span>\n"
+                    + "                        </button>";
+                pantry.append(s);
+                pantryItems.push(postParameters);
+
+            });
+        }
         document.forms["pantry-form"].reset();
         return false;
 
@@ -157,6 +174,8 @@ $(document).ready(() => {
      * Displays favorites.
      */
     $('#myTab a[href="#favorites"]').on('click', function (e) {
+        $("#new-suggest").css("visibility", "hidden");
+
         if (favorites.length == 0) {
             $('.favorite-explanation').text("You haven't added any favorites yet!");
         } else {
@@ -172,8 +191,10 @@ $(document).ready(() => {
      * Displays suggested recipes based on favorites.
      */
     $('#myTab a[href="#enjoy"]').on('click', function (e) {
-
+        let newButton = $("#new-suggest");
+        newButton.css("visibility", "visible");
         if (!suggestions.length) {
+
             $('.enjoy-explanation').text("Add more Favorites so that we can recommend you some recipes!");
             enjoy.empty();
         } else {
@@ -182,12 +203,15 @@ $(document).ready(() => {
         }
 
     })
+
+
     /**
      * Click handler for pantry tab in profile page.
      * Displays items stored in pantry.
      */
     $('#myTab a[href="#pantry"]').on('click', function (e) {
         e.preventDefault();
+        $("#new-suggest").css("visibility", "hidden");
         console.log("pantry tab clicked");
         console.log(pantryItems);
         displayPantry();
@@ -200,21 +224,25 @@ $(document).ready(() => {
      * displayPantry will be called after it finishes setting pantryItems.
      */
     function displayPantry() {
+
         setTimeout(function () {
             pantry.empty();
-            console.log(pantryItems.length)
+            console.log(pantryItems.length);
 
             for (let i = 0; i < pantryItems.length; i++) {
 
-                const s = "<button type=\"button\" id=\"" + i + "\" " +
-                    "class=\"btn btn-lg btn-outline-info remove-pantry\" " +
+                const s = "<button type=\"button\" id=\"" + pantry_counter + "\" name=\"" + pantryItems[i]+
+                    "\" class=\"btn btn-lg btn-outline-info remove-pantry\" " +
                     "onclick='remove_pantry(this.id)'>\n"
                     + pantryItems[i]
                     + " <span class=\"badge badge-light\">x</span>\n"
                     + "                        </button>";
                 pantry.append(s);
+                pantry_counter = pantry_counter + 1;
             }
-        }, 200);
+        }, 400);
+
+
     }
 
 
@@ -372,7 +400,27 @@ $(document).ready(() => {
         make_cards(e, results, favBool);
     }
 
+    $("#new-suggest").on("click", function () {
+        let newButton = $("#new-suggest");
+        let spinner = $("#loadSpinner");
+        $("#loaderText").text("Loading...");
+        spinner.css("display", "inline-block");
+        newButton.css("margin-left", "47rem");
+        suggestions = [];
+        var load = function() {
+            console.log(suggestions);
+            profilePage(enjoy, suggestions, false)
+            spinner.css("display", "none");
+            newButton.css("margin-left", "43.6rem");
+            $("#loaderText").html("Suggest new recipes!");
+
+        }
+        getSuggestions(load);
+    });
+
+
 });
+
 
 /**
  * Gets favorites from backend and sets favorite array
@@ -381,12 +429,6 @@ $(document).ready(() => {
 function getFavs() {
     console.log("Getting favorites and setting storage");
     favorites.length = 0;
-    const params = {
-        userID: userProfile.getId(),
-        name: userProfile.getName(),
-        email: userProfile.getEmail(),
-        profilePic: userProfile.getImageUrl()
-    };
     $.post("/favorites", {"uid": userProfile.getId()}, response => {
         const r = JSON.parse(response);
         sessionStorage.setItem("favorites", response);
@@ -408,15 +450,18 @@ function remove_pantry(clicked_id) {
     console.log("removing item from pantry");
     console.log(clicked_id);
     console.log(pantryItems);
-
-    let postParameters = pantryItems[clicked_id];
+    let postParameters =  $('#'+clicked_id).attr('name');
     console.log(postParameters);
     $.post('/remove-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
         data = JSON.parse(data);
 
     })
     pantry.find("#" + clicked_id).remove();
-    getPantry();
+    for (var i = 0; i < pantryItems.length; i++) {
+        if (pantryItems[i] === postParameters) {
+            pantryItems.splice(i, 1);
+        }
+    }
 }
 
 /**
@@ -437,11 +482,14 @@ function getPantry() {
             pantryItems.push(res);
         }
 
+        console.log(pantryItems);
+
     });
+
 
 }
 
-function getSuggestions() {
+function getSuggestions(callback) {
     console.log("getting suggested recipes and setting in storage");
     $.post("/suggested-recipes", {
         "uid": userProfile.getId()
@@ -449,8 +497,9 @@ function getSuggestions() {
         sessionStorage.setItem("suggestions", response);
         suggestions = JSON.parse(response);
         console.log(suggestions);
-
+        callback();
     });
+
 }
 
 /**
@@ -492,10 +541,13 @@ function onSignIn(googleUser) {
                 console.log("Already signed in");
                 favorites = JSON.parse(sessionStorage.getItem("favorites"));
                 suggestions = JSON.parse(sessionStorage.getItem("suggestions"));
-                if (suggestions === null) {
+                pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
+
+                if (suggestions.length == 0) {
                     getSuggestions();
                 }
-                pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
+                console.log(suggestions);
+
 
             }
 
@@ -535,9 +587,9 @@ function signOut() {
         favorites = [];
         pantryItems = [];
         suggestions = [];
-        meats = false;
-        dairy = false;
-        nuts = false;
+        meats=false;
+        nuts=false;
+        dairy=false;
         $('.navbar-nav').find("#sign-out").remove();
         $(".replace-image").empty();
         $(".replace-image").append("<img class=\"profile-pic rounded-circle\"\n" +

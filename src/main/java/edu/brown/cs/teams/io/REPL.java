@@ -14,23 +14,16 @@ import java.util.regex.Pattern;
  */
 public class REPL {
   private static BufferedReader userReader =
-      new BufferedReader(new InputStreamReader(System.in));
+          new BufferedReader(new InputStreamReader(System.in));
   private HashMap<String, Command> commands;
 
   /**
    * Constructor for the REPL class.
+   *
    * @param commands map from command name to command object
    */
   public REPL(HashMap<String, Command> commands) {
     this.commands = commands;
-  }
-
-  /**
-   * Getter for the commands field.
-   * @return Map from command name to command object
-   */
-  public HashMap<String, Command> getCommands() {
-    return this.commands;
   }
 
   /**
@@ -46,7 +39,7 @@ public class REPL {
         if (input.length > 0) {
           Command command = this.commands.get(input[0]);
           if (command != null) {
-            String output = command.runCommand(input, false, false, false);
+            String output = command.runCommand(input);
             if (!output.equals("")) {
               System.out.println(output);
             }
@@ -75,7 +68,7 @@ public class REPL {
       // regex code obtained from:
       // https://stackoverflow.com/questions/366202/regex-for-splitting-a-string-using-space-when-not-surrounded-by-single-or-double
       // a TA on piazza said it was fine to use the code as long as I cited it.
-      List<String> matchList = new ArrayList<String>();
+      List<String> matchList = new ArrayList<>();
       Pattern regex = Pattern.compile("[^\\s\"']+|\"[^\"]*\"|'[^']*'");
       Matcher regexMatcher = regex.matcher(line);
       while (regexMatcher.find()) {
@@ -90,6 +83,7 @@ public class REPL {
 
   /**
    * Removes quotes from a string and throws an exception if quotes are not found.
+   *
    * @param s string to remove quotes from
    * @return s without wrapping quotes
    * @throws CommandException if the string doesn't have quotes.
@@ -100,7 +94,7 @@ public class REPL {
       return s.substring(1, length - 1);
     } else {
       throw new CommandException("ERROR: argument is not wrapped in"
-          + " quotes correctly: " + s);
+              + " quotes correctly: " + s);
     }
   }
 }
