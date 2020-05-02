@@ -516,11 +516,11 @@ function onSignIn(googleUser) {
 
             } else {
                 console.log("Already signed in");
-                
+
                 favorites = JSON.parse(sessionStorage.getItem("favorites"));
 
                 if (favorites === null || favorites.length === 0) {
-                    favorites = JSON.parse(sessionStorage.getItem("favorites"));
+                    getFavs();
                 }
                 console.log(favorites);
 
@@ -529,8 +529,11 @@ function onSignIn(googleUser) {
                 if (suggestions === null || suggestions.length == 0) {
                     getSuggestions();
                 }
+                console.log(suggestions);
+
 
                 pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
+                console.log(pantryItems);
 
             }
 
