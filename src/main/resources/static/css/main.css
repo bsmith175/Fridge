@@ -106,6 +106,8 @@ input[type="text"], textarea {
 .tab-content {
   border: 1px solid #dee2e6;
   border-top: transparent;
+  font-family: 'Abel', sans-serif;
+
 }
 
 .tab-content .tab-pane {
@@ -186,7 +188,7 @@ input[type="text"], textarea {
   height: 2.6rem;
   visibility: hidden;
   float: right;
-  margin-left: 43.6rem;
+  /*margin-left: 43.6rem;*/
 }
 #loadSpinner{
   display: none;
@@ -200,8 +202,8 @@ input[type="text"], textarea {
 }
 
 .card-title{
-  font-size: large;
-  font-weight: bold;
+  font-size: large; !important;
+  font-weight: bold; !important;
 }
 
 .fridge-buttons{
