@@ -516,12 +516,16 @@ function onSignIn(googleUser) {
 
             } else {
                 console.log("Already signed in");
+                
+                favorites = JSON.parse(sessionStorage.getItem("favorites"));
+
                 if (favorites === null || favorites.length === 0) {
                     favorites = JSON.parse(sessionStorage.getItem("favorites"));
                 }
                 console.log(favorites);
 
                 suggestions = JSON.parse(sessionStorage.getItem("suggestions"));
+
                 if (suggestions === null || suggestions.length == 0) {
                     getSuggestions();
                 }
