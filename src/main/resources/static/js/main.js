@@ -81,38 +81,21 @@ $(document).ready(() => {
      * Triggered when pantry form is submitted to
      * add a item to the pantry.
      */
-    let pantry_counter = 0;
-
     $(".add-to-pantry").click(function (e) {
         console.log("add to pantry")
         let postParameters = "";
         let elements = document.forms["pantry-form"].elements;
         for (let i = 0; i < elements.length; i++) {
-
-            if (elements[i].value != "" && elements[i].value != " ") {
-                console.log((elements[i]).value);
-
+            if (elements[i].value != "") {
                 postParameters = elements[i].value;
             }
         }
-        if (postParameters!= ""){
-            $.post('/add-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
-                data = JSON.parse(data);
-                console.log(data)
-                //getPantry();
-                //displayPantry();
+        $.post('/add-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
+            data = JSON.parse(data);
+            getPantry();
+            displayPantry();
 
-                const s = "<button type=\"button\" id=\"" + pantry_counter + "\" name=\"" + postParameters+
-                    "\" class=\"btn btn-lg btn-outline-info remove-pantry\" " +
-                    "onclick='remove_pantry(this.id)'>\n"
-                    + postParameters
-                    + " <span class=\"badge badge-light\">x</span>\n"
-                    + "                        </button>";
-                pantry.append(s);
-                pantryItems.push(postParameters);
-
-            });
-        }
+        })
         document.forms["pantry-form"].reset();
         return false;
 
@@ -224,25 +207,21 @@ $(document).ready(() => {
      * displayPantry will be called after it finishes setting pantryItems.
      */
     function displayPantry() {
-
         setTimeout(function () {
             pantry.empty();
-            console.log(pantryItems.length);
+            console.log(pantryItems.length)
 
             for (let i = 0; i < pantryItems.length; i++) {
 
-                const s = "<button type=\"button\" id=\"" + pantry_counter + "\" name=\"" + pantryItems[i]+
-                    "\" class=\"btn btn-lg btn-outline-info remove-pantry\" " +
+                const s = "<button type=\"button\" id=\"" + i + "\" " +
+                    "class=\"btn btn-lg btn-outline-info remove-pantry\" " +
                     "onclick='remove_pantry(this.id)'>\n"
                     + pantryItems[i]
                     + " <span class=\"badge badge-light\">x</span>\n"
                     + "                        </button>";
                 pantry.append(s);
-                pantry_counter = pantry_counter + 1;
             }
-        }, 400);
-
-
+        }, 200);
     }
 
 
@@ -450,18 +429,15 @@ function remove_pantry(clicked_id) {
     console.log("removing item from pantry");
     console.log(clicked_id);
     console.log(pantryItems);
-    let postParameters =  $('#'+clicked_id).attr('name');
+
+    let postParameters = pantryItems[clicked_id];
     console.log(postParameters);
     $.post('/remove-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
         data = JSON.parse(data);
 
     })
     pantry.find("#" + clicked_id).remove();
-    for (var i = 0; i < pantryItems.length; i++) {
-        if (pantryItems[i] === postParameters) {
-            pantryItems.splice(i, 1);
-        }
-    }
+    getPantry();
 }
 
 /**
@@ -482,10 +458,7 @@ function getPantry() {
             pantryItems.push(res);
         }
 
-        console.log(pantryItems);
-
     });
-
 
 }
 
@@ -543,17 +516,17 @@ function onSignIn(googleUser) {
 
             } else {
                 console.log("Already signed in");
-                if (favorites === null || favorites.length == 0) {
+                if (favorites === null || favorites.length === 0) {
                     favorites = JSON.parse(sessionStorage.getItem("favorites"));
                 }
-                suggestions = JSON.parse(sessionStorage.getItem("suggestions"));
-                pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
+                console.log(favorites);
 
-                if (suggestions === null ) {
+                suggestions = JSON.parse(sessionStorage.getItem("suggestions"));
+                if (suggestions === null || suggestions.length == 0) {
                     getSuggestions();
                 }
-                console.log(suggestions);
 
+                pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
 
             }
 
