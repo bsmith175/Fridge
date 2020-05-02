@@ -180,3 +180,21 @@ input[type="text"], textarea {
 
 }
 
+
+#new-suggest{
+  height: 2.6rem;
+  visibility: hidden;
+  float: right;
+  margin-left: 43.6rem;
+}
+#loadSpinner{
+  display: none;
+  margin-right: 5px;
+  margin-top: 3px;
+  float: left;
+}
+
+#loaderText{
+  float: right;
+}
+

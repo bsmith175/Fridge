@@ -29,7 +29,10 @@ public class GuiHandlers {
 
     private static final Gson GSON = new Gson();
     private static IngredientSuggest suggest;
-    private static GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory()).setAudience(Collections.singletonList(Constants.GOOGLE_CLIENT_ID)).build();
+    private static GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier
+            .Builder(new NetHttpTransport(), new JacksonFactory())
+            .setAudience(Collections.singletonList(Constants.GOOGLE_CLIENT_ID))
+            .build();
 
 
     public GuiHandlers() throws Exception {
@@ -41,7 +44,7 @@ public class GuiHandlers {
     }
     public void setHandlers(FreeMarkerEngine freeMarker) {
         // Specify the algorithm to run here!!
-        Command command = new RunSuperiorAlg();
+        Command command = new RunKDAlg();
         Spark.get("/", new FridgeHandler(), freeMarker);
         Spark.get("/home", new HomeHandler(), freeMarker);
 
@@ -194,7 +197,8 @@ public class GuiHandlers {
         @Override
         public ModelAndView handle(Request req, Response res) {
             Map<String, Object> variables = ImmutableMap.of("title",
-                    "Fridge: Whats in Your Fridge", "message", "");
+                    "Fridge: Whats in Your Fridge", "message", "",
+                    "google_client_id", Constants.GOOGLE_CLIENT_ID);
             return new ModelAndView(variables, "fridge.ftl");
         }
     }
@@ -202,7 +206,8 @@ public class GuiHandlers {
         @Override
         public ModelAndView handle(Request req, Response res) {
             Map<String, Object> variables = ImmutableMap.of("title",
-                    "Fridge: Whats in Your Fridge", "message", "");
+                    "Fridge: Whats in Your Fridge", "message", "",
+                    "google_client_id", Constants.GOOGLE_CLIENT_ID);
             return new ModelAndView(variables, "home.ftl");
         }
     }

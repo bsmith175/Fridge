@@ -5,7 +5,7 @@
     <link rel="icon" href="https://i.ibb.co/zsZQCCg/my-Fridge-2.png" height="80" width="45">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="google-signin-client_id" content="727828985870-25d5atf1g5r853t5n6o90u0dansh9ao2.apps.googleusercontent.com">
+    <meta name="google-signin-client_id" content="${google_client_id}">
 
     <!-- In real-world webapps, css is usually minified and
          concatenated. Here, separate normalize from our code, and

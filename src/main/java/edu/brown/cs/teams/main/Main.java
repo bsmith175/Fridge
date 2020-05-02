@@ -19,6 +19,8 @@ import joptsimple.OptionSet;
 import org.json.JSONException;
 
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -68,10 +70,14 @@ public final class Main {
               r = new RecipeDatabase(Constants.DATABASE_FILE, true);
               r.makeTable();
               r.parseJson();
+            URI dbURI = new URI(System.getenv("DATABASE_URL"));
+            String username = dbURI.getUserInfo().split(":")[0];
+            String pwd = dbURI.getUserInfo().split(":")[1];
 
-              String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
-                      ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
-              u = new UserDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, true);
+            String dbURL = "jdbc:postgresql://" + dbURI.getHost() + ':' + dbURI
+                    .getPort() + dbURI.getPath();
+
+              u = new UserDatabase(dbURL, username, pwd, true);
               u.initUserDB();
           } catch (ClassNotFoundException e) {
               e.printStackTrace();
@@ -81,17 +87,27 @@ public final class Main {
               e.printStackTrace();
           } catch (CommandException e) {
               e.printStackTrace();
+          } catch (URISyntaxException e) {
+            e.printStackTrace();
           }
       }
 
     if (options.has("alg1")) {
       try {
+
+//        String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
+//                  ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
+//        u = new UserDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, false);
         r = new RecipeDatabase(Constants.DATABASE_FILE, false);
 
-        String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
-                  ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
-        u = new UserDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, false);
+        URI dbURI = new URI(System.getenv("DB_URL"));
+        String username = dbURI.getUserInfo().split(":")[0];
+        String pwd = dbURI.getUserInfo().split(":")[1];
 
+        String dbURL = "jdbc:postgresql://" + dbURI.getHost() + ':' + dbURI
+                .getPort() + dbURI.getPath();
+
+        u = new UserDatabase(dbURL, username, pwd, false);
         new AlgMain();
         System.out.println("Getting recipes");
         AlgMain.setDb(r, u);
@@ -106,15 +122,22 @@ public final class Main {
         e.printStackTrace();
       } catch (ClassNotFoundException e) {
         e.printStackTrace();
+      } catch (URISyntaxException e) {
+        e.printStackTrace();
       }
     }
     if (options.has("alg2")) {
       try {
         r = new RecipeDatabase(Constants.DATABASE_FILE, false);
-        String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
-                  ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
-        u = new UserDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, false);
 
+        URI dbURI = new URI(System.getenv("DB_URL"));
+        String username = dbURI.getUserInfo().split(":")[0];
+        String pwd = dbURI.getUserInfo().split(":")[1];
+
+        String dbURL = "jdbc:postgresql://" + dbURI.getHost() + ':' + dbURI
+                .getPort() + dbURI.getPath();
+
+        u = new UserDatabase(dbURL, username, pwd, false);
         AlgMain.setDb(r, u);
         Config.setDb(r);
         Config.buildRecList();
@@ -124,6 +147,8 @@ public final class Main {
       } catch (SQLException e) {
         e.printStackTrace();
       } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      } catch (URISyntaxException e) {
         e.printStackTrace();
       }
     }

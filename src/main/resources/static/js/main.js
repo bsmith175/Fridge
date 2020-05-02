@@ -157,6 +157,8 @@ $(document).ready(() => {
      * Displays favorites.
      */
     $('#myTab a[href="#favorites"]').on('click', function (e) {
+        $("#new-suggest").css("visibility", "hidden");
+
         if (favorites.length == 0) {
             $('.favorite-explanation').text("You haven't added any favorites yet!");
         } else {
@@ -172,7 +174,8 @@ $(document).ready(() => {
      * Displays suggested recipes based on favorites.
      */
     $('#myTab a[href="#enjoy"]').on('click', function (e) {
-
+        let newButton = $("#new-suggest");
+        newButton.css("visibility", "visible");
         if (!suggestions.length) {
             $('.enjoy-explanation').text("Add more Favorites so that we can recommend you some recipes!");
             enjoy.empty();
@@ -182,12 +185,15 @@ $(document).ready(() => {
         }
 
     })
+
+
     /**
      * Click handler for pantry tab in profile page.
      * Displays items stored in pantry.
      */
     $('#myTab a[href="#pantry"]').on('click', function (e) {
         e.preventDefault();
+        $("#new-suggest").css("visibility", "hidden");
         console.log("pantry tab clicked");
         console.log(pantryItems);
         displayPantry();
@@ -372,7 +378,27 @@ $(document).ready(() => {
         make_cards(e, results, favBool);
     }
 
+    $("#new-suggest").on("click", function () {
+        let newButton = $("#new-suggest");
+        let spinner = $("#loadSpinner");
+        $("#loaderText").text("Loading...");
+        spinner.css("display", "inline-block");
+        newButton.css("margin-left", "47rem");
+        suggestions = [];
+        var load = function() {
+            console.log(suggestions);
+            profilePage(enjoy, suggestions, false)
+            spinner.css("display", "none");
+            newButton.css("margin-left", "43.6rem");
+            $("#loaderText").html("Suggest new recipes!");
+
+        }
+        getSuggestions(load);
+    });
+
+
 });
+
 
 /**
  * Gets favorites from backend and sets favorite array
@@ -441,7 +467,7 @@ function getPantry() {
 
 }
 
-function getSuggestions() {
+function getSuggestions(callback) {
     console.log("getting suggested recipes and setting in storage");
     $.post("/suggested-recipes", {
         "uid": userProfile.getId()
@@ -449,8 +475,9 @@ function getSuggestions() {
         sessionStorage.setItem("suggestions", response);
         suggestions = JSON.parse(response);
         console.log(suggestions);
-
+        callback();
     });
+
 }
 
 /**
@@ -495,6 +522,8 @@ function onSignIn(googleUser) {
                 if (suggestions === null) {
                     getSuggestions();
                 }
+                console.log(suggestions);
+
                 pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
 
             }
