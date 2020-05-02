@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import edu.brown.cs.teams.algorithms.RunSuperiorAlg;
+import edu.brown.cs.teams.algorithms.RecipeSuggest;
 import edu.brown.cs.teams.constants.Constants;
 import edu.brown.cs.teams.io.Command;
 import edu.brown.cs.teams.algorithms.RunKDAlg;
@@ -42,7 +42,7 @@ public class GuiHandlers {
     }
     public void setHandlers(FreeMarkerEngine freeMarker) {
         // Specify the algorithm to run here!!
-        Command command = new RunSuperiorAlg();
+        Command command = new RecipeSuggest();
         Spark.get("/", new FridgeHandler(), freeMarker);
         Spark.get("/home", new HomeHandler(), freeMarker);
 
@@ -50,7 +50,7 @@ public class GuiHandlers {
         Spark.post("/suggest", new ingredientSuggestHandler());
 
         Spark.post("/recipe-recommend",
-                new RecipeSuggestHandler(new RunSuperiorAlg()));
+                new RecipeSuggestHandler(new RecipeSuggest()));
         Spark.post("/favorites", new favoritesPageHandler());
         Spark.post("/heart", new favoriteButtonHandler());
         Spark.post("/login", new userLoginHandler());

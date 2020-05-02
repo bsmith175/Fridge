@@ -3,7 +3,7 @@ package edu.brown.cs.teams.main;
 
 import edu.brown.cs.teams.GUI.GuiHandlers;
 import edu.brown.cs.teams.algorithms.RunKDAlg;
-import edu.brown.cs.teams.algorithms.RunSuperiorAlg;
+import edu.brown.cs.teams.algorithms.RecipeSuggest;
 import edu.brown.cs.teams.algorithms.AlgUtils;
 import edu.brown.cs.teams.constants.Constants;
 import edu.brown.cs.teams.database.RecipeDatabase;
@@ -86,7 +86,7 @@ public final class Main {
               ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
       u = new UserDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD,
               false);
-      new AlgUtils();
+//      new AlgUtils();
       System.out.println("Getting recipes");
       AlgUtils.setDb(r, u);
       List<MinimalRecipe> recipes = AlgUtils.getMinimalRecipesList();
@@ -105,8 +105,8 @@ public final class Main {
     if (options.has("repl")) {
       // Allow the repl to run both commands
       HashMap<String, Command> commands = new HashMap<>();
-      commands.put("alg1", new RunKDAlg());
-      commands.put("alg2", new RunSuperiorAlg());
+      commands.put("suggest", new RunKDAlg());
+      commands.put("recommend", new RecipeSuggest());
       REPL = new REPL(commands);
       REPL.runREPL();
     }

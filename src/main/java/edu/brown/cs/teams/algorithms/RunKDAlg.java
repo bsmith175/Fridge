@@ -64,8 +64,7 @@ public class RunKDAlg implements Command {
   }
 
   @Override
-  public String runCommand(String[] command, boolean dairy,
-                           boolean meat, boolean nuts) throws CommandException {
+  public String runCommand(String[] command) throws CommandException {
     if (command.length < 3) {
       throw new CommandException("ERROR: Must enter in at least two ingredients");
     }

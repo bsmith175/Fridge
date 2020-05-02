@@ -1,18 +1,18 @@
 package edu.brown.cs.teams.algorithms;
 
 import edu.brown.cs.teams.database.UserDatabase;
-import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.database.RecipeDatabase;
 import edu.brown.cs.teams.kdtree.KDTree;
 import edu.brown.cs.teams.recipe.MinimalRecipe;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import edu.brown.cs.teams.recipe.Ingredient;
 import edu.brown.cs.teams.recipe.Recipe;
 
-import java.util.*;
 
 import com.google.gson.JsonObject;
 
@@ -20,35 +20,19 @@ import com.google.gson.JsonObject;
  * Class to store the information relevant to the algorithms being run. Also
  * has convenient util static methods.
  */
-public class AlgUtils {
-  private static KDTree<MinimalRecipe> tree;
-  private static List<MinimalRecipe> recipeList;
+public final class AlgUtils {
   private static RecipeDatabase rdb;
   private static UserDatabase udb;
-
   private static List<Recipe> fullRecipes =
           new ArrayList<>();
-
-  private static String nuts =
-          "(cashew|pistachio|pinyon|almond|pecan| nut|\"nut)";
-  private static String meats = "(bear|beef|buffalo|bison|calf|caribou" +
-          "|goat|ham|horse|kangaroo|lamb|marrow|moose" +
-          "|mutton|opossum|pork|bacon|rabbit|snake|squirrrel|tripe|" +
-          "turtle|veal|venison|prosciutto|cornish|duck" +
-          "|goose|grouse|ostrich|partridge|pheasant|quail|squab" +
-          "|turkey|sausage|chicken|rib)(?!((\\s*)(chees|milk|egg)))";
-
-  private static String dairy = "(milk|whey|cheese|yogurt|paneer|(\\s+)cream)";
+  public static final int EMBED_SIZE = 300;
+  public static final double SIMILARITY_FACTOR = 0.03;
+  private static KDTree<MinimalRecipe> tree = new KDTree<>(EMBED_SIZE);
 
   /**
-   * Constructor for AlgMain.
-   *
-   * @throws SQLException
-   * @throws CommandException
-   * @throws ClassNotFoundException
+   * Constructor for AlgUtils.
    */
-  public AlgUtils() {
-    AlgUtils.tree = new KDTree<>(300);
+  private AlgUtils() {
   }
 
   /**
@@ -82,7 +66,7 @@ public class AlgUtils {
   /**
    * Setter method for the kd tree.
    *
-   * @param tree
+   * @param tree the kdtree to set to
    */
   public static void setTree(KDTree<MinimalRecipe> tree) {
     AlgUtils.tree = tree;
@@ -97,6 +81,7 @@ public class AlgUtils {
     List<MinimalRecipe> listMin = new ArrayList<>();
     for (Recipe rec : fullRecipes) {
       MinimalRecipe minRec = new MinimalRecipe(rec.getPosition(), rec.getId());
+      listMin.add(minRec);
     }
     return listMin;
   }
@@ -116,11 +101,11 @@ public class AlgUtils {
    * builds the full recipe list from the database and stores it in Config
    * class.
    *
-   * @throws SQLException
+   * @throws SQLException for invalid queries.
    */
   public static void buildRecList() throws SQLException {
-    fullRecipes.addAll(rdb.getFullRecipes("data/ingredient_vectors" +
-            ".json"));
+    String filename = "data/ingredient_vectors.json";
+    fullRecipes.addAll(rdb.getFullRecipes(filename));
   }
 
   /**
@@ -129,7 +114,8 @@ public class AlgUtils {
    * @return list of nuts in a string
    */
   public static String getNuts() {
-    return nuts;
+    //filter regex for dairy, meat, nuts
+    return "(cashew|pistachio|pinyon|almond|pecan| nut|\"nut)";
   }
 
   /**
@@ -138,7 +124,12 @@ public class AlgUtils {
    * @return meat list string
    */
   public static String getMeats() {
-    return meats;
+    return "(bear|beef|buffalo|bison|calf|caribou"
+            + "|goat|ham|horse|kangaroo|lamb|marrow|moose"
+            + "|mutton|opossum|pork|bacon|rabbit|snake|squirrrel|tripe|"
+            + "turtle|veal|venison|prosciutto|cornish|duck"
+            + "|goose|grouse|ostrich|partridge|pheasant|quail|squab"
+            + "|turkey|sausage|chicken|rib)(?!((\\s*)(chees|milk|egg)))";
   }
 
   /**
@@ -147,7 +138,7 @@ public class AlgUtils {
    * @return dairy list string
    */
   public static String getDairy() {
-    return dairy;
+    return "(milk|whey|cheese|yogurt|paneer|(\\s+)cream)";
   }
 
 
@@ -181,7 +172,7 @@ public class AlgUtils {
         closest = similarity;
       }
     }
-    if (closest > 1 - num * 0.03) {
+    if (closest > 1 - num * SIMILARITY_FACTOR) {
       return best;
     } else {
       return null;
@@ -217,7 +208,7 @@ public class AlgUtils {
    * @return the vector sum of the ingredient vectors as a double array
    */
   public static double[] arrayAdd(double[][] arrays) {
-    double[] result = new double[300];
+    double[] result = new double[EMBED_SIZE];
     for (int i = 0; i < result.length; i++) {
       for (double[] currArr : arrays) {
         result[i] += currArr[i];
@@ -237,7 +228,7 @@ public class AlgUtils {
    * @return the vector sum of the ingredient vectors as a double array
    */
   public static double[] ingredAdd(Collection<Ingredient> ingreds) {
-    double[] result = new double[300];
+    double[] result = new double[EMBED_SIZE];
     for (int i = 0; i < result.length; i++) {
       for (Ingredient ingr : ingreds) {
         double[] embedding = ingr.getVec();
@@ -253,27 +244,9 @@ public class AlgUtils {
    *
    * @param id the recipe id
    * @return a json that can be parsed in the front-end
-   * @throws SQLException
+   * @throws SQLException for invalid query
    */
   public static JsonObject getRecipeJson(int id) throws SQLException {
     return rdb.getRecipeContentFromID(id);
-  }
-
-
-  public static void setDb(RecipeDatabase newDB) {
-    rdb = newDB;
-  }
-
-  /**
-   * Method to print the ingredients of a recipe to the repl.
-   *
-   * @param r the recipe
-   */
-  public static void printRecIngreds(Recipe r) {
-    System.out.println();
-    System.out.println(r.getId() + "   ->     ");
-    for (Ingredient i : r.getIngredients()) {
-      System.out.print(i.getId() + " ");
-    }
   }
 }

@@ -14,31 +14,55 @@ import edu.brown.cs.teams.recipe.RecipeDistanceComparator;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.PriorityQueue;
 
-public class RunSuperiorAlg implements Command {
+/**
+ * Class to suggest recipe, implements the command interface.
+ */
+public class RecipeSuggest implements Command {
+  public static final int NUM_RESULTS = 100;
+
+  /**
+   * executable repl command.
+   * @param command user input string split on whitespace
+   * @return the string output of the algorithm
+   * @throws CommandException when command is invalid
+   */
   @Override
-  public String runCommand(String[] command, boolean dairy,
-                           boolean meat, boolean nuts) throws CommandException {
+  public String runCommand(String[] command) throws CommandException {
     if (command.length < 2) {
       throw new CommandException("ERROR: Must enter an ingredient");
     }
     try {
       PriorityQueue<Recipe> recpq = preCommand(command);
-      Recipe first = recpq.poll();
-      AlgUtils.printRecIngreds(first);
-      first = recpq.poll();
-      AlgUtils.printRecIngreds(first);
-      first = recpq.poll();
-      AlgUtils.printRecIngreds(first);
-      first = recpq.poll();
-      AlgUtils.printRecIngreds(first);
-      return Integer.toString(first.getId());
+      StringBuilder output = new StringBuilder();
+      for (int i = 0; i < 5; i++) {
+        Recipe first = recpq.poll();
+        output.append("1.\r\n");
+        output.append("ID: ").append(first.getId()).append("\r\n");
+        output.append("Tokens: ");
+        for (Ingredient ingr : first.getIngredients()) {
+          output.append(ingr.getId()).append(", ");
+        }
+        output.delete(output.length() - 2, output.length()).append("\r\n");
+        output.append("----------");
+      }
+      return output.toString();
     } catch (IOException | ParseException e) {
       throw new CommandException(e.getMessage());
     }
   }
 
+  /**
+   * helper method to reduce rendundant code between repl and gui output.
+   * @param command
+   * @return
+   * @throws IOException
+   * @throws ParseException
+   */
   private PriorityQueue<Recipe> preCommand(String[] command) throws IOException,
           ParseException {
     Gson gson = new Gson();
@@ -55,8 +79,8 @@ public class RunSuperiorAlg implements Command {
         Ingredient ingredient = new Ingredient(word, embedding);
         ingredients.add(ingredient);
       } catch (NullPointerException e) {
-        System.out.println(word + " is not a valid ingredient in our " +
-                "database. It will be ignored");
+        System.out.println(word + " is not a valid ingredient in our "
+                + "database. It will be ignored");
       }
     }
 
@@ -80,36 +104,35 @@ public class RunSuperiorAlg implements Command {
     }
     StringBuilder notAllowed = new StringBuilder();
     boolean any = false;
-    if (dairy == true) {
+    if (dairy) {
       notAllowed.append(AlgUtils.getDairy());
       notAllowed.append("|");
       any = true;
     }
-    if (nuts == true) {
+    if (nuts) {
       notAllowed.append(AlgUtils.getNuts());
       notAllowed.append("|");
       any = true;
     }
-    if (meat == true) {
+    if (meat) {
       notAllowed.append(AlgUtils.getMeats());
       notAllowed.append("|");
       any = true;
     }
-    if (any == true) {
+    if (any) {
       notAllowed.deleteCharAt(notAllowed.length() - 1);
     }
     String restrictions = notAllowed.toString();
     try {
       PriorityQueue<Recipe> recpq = preCommand(command);
       List<JsonObject> guiResults = new ArrayList<>();
-      for (int i = 0; i < 100; i++) {
+      for (int i = 0; i < NUM_RESULTS; i++) {
         JsonObject jsonRecipe = AlgUtils.getRecipeJson(recpq.poll().getId());
         Gson gson = new Gson();
-        String tokenList = gson.fromJson(jsonRecipe.get("tokens"), String.class);
-        if (tokenList.replaceFirst(restrictions, "").length() == tokenList.length()){
-//          System.out.println(restrictions);
-//          System.out.println(tokenList);
-//          System.out.println(!Pattern.matches(restrictions, tokenList));
+        String tokenList =
+                gson.fromJson(jsonRecipe.get("tokens"), String.class);
+        if (tokenList.replaceFirst(restrictions, "").length()
+                == tokenList.length()) {
           guiResults.add(jsonRecipe);
         }
       }
