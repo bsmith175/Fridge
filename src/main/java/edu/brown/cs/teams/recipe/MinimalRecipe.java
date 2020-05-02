@@ -5,7 +5,7 @@ import edu.brown.cs.teams.kdtree.DistanceMetric;
 
 import java.util.HashSet;
 
-public class MinimalRecipe extends CartesianPoint implements DistanceMetric {
+public class MinimalRecipe extends CartesianPoint {
   private int id;
   /**
    * Constructor for Cartesian point.

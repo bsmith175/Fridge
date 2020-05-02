@@ -6,11 +6,11 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import edu.brown.cs.teams.algorithms.RunSuperiorAlg;
+import edu.brown.cs.teams.algorithms.RecipeSuggest;
 import edu.brown.cs.teams.constants.Constants;
 import edu.brown.cs.teams.io.Command;
 import edu.brown.cs.teams.algorithms.RunKDAlg;
-import edu.brown.cs.teams.algorithms.AlgMain;
+import edu.brown.cs.teams.algorithms.AlgUtils;
 import edu.brown.cs.teams.ingredientParse.IngredientSuggest;
 import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.login.AccountUser;
@@ -19,6 +19,7 @@ import spark.template.freemarker.FreeMarkerEngine;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -33,18 +34,17 @@ public class GuiHandlers {
             .Builder(new NetHttpTransport(), new JacksonFactory())
             .setAudience(Collections.singletonList(Constants.GOOGLE_CLIENT_ID))
             .build();
+    private static RunKDAlg favoritesSuggest;
 
 
     public GuiHandlers() throws Exception {
         suggest = new IngredientSuggest();
-//        String dbURL = "jdbc:postgresql://" + Constants.DB_HOST +
-//            ":" + Constants.DB_PORT + "/" + Constants.DB_NAME;
-//        AlgMain.setDb(new RecipeDatabase(dbURL, Constants.DB_USERNAME, Constants.DB_PWD, false));
+        favoritesSuggest = new RunKDAlg();
 
     }
     public void setHandlers(FreeMarkerEngine freeMarker) {
         // Specify the algorithm to run here!!
-        Command command = new RunKDAlg();
+
         Spark.get("/", new FridgeHandler(), freeMarker);
         Spark.get("/home", new HomeHandler(), freeMarker);
 
@@ -52,7 +52,8 @@ public class GuiHandlers {
         Spark.post("/suggested-recipes", new SuggestedHandler());
         Spark.post("/suggest", new ingredientSuggestHandler());
 
-        Spark.post("/recipe-recommend", new RecipeSuggestHandler(command));
+        Spark.post("/recipe-recommend",
+                new RecipeSuggestHandler());
         Spark.post("/favorites", new favoritesPageHandler());
         Spark.post("/heart", new favoriteButtonHandler());
         Spark.post("/login", new userLoginHandler());
@@ -82,7 +83,7 @@ public class GuiHandlers {
                 responseJSON.addProperty("name", name);
                 responseJSON.addProperty("profilePicture", pfp);
                 try {
-                    AlgMain.getUserDb().addNewUser(user);
+                    AlgUtils.getUserDb().addNewUser(user);
                     responseJSON.addProperty("newUser", true);
                 } catch (SQLException e) {
                     responseJSON.addProperty("newUser", false);
@@ -105,12 +106,12 @@ public class GuiHandlers {
             QueryParamsMap qm = request.queryMap();
             String uid = qm.value("uid");
 
-            List<Integer> recipeIDs = AlgMain.getUserDb().getFavorites(uid);
+            List<Integer> recipeIDs = AlgUtils.getUserDb().getFavorites(uid);
             JsonArray responseJSON = new JsonArray();
             for (Integer curID : recipeIDs) {
 
                 //this is where the json array is created
-                JsonObject obj = AlgMain.getRecipeDb().getRecipeContentFromID(curID);
+                JsonObject obj = AlgUtils.getRecipeDb().getRecipeContentFromID(curID);
                 if (obj == null) {
                     throw new IllegalArgumentException("ERROR in favoritesHandler:  recipe doesn't exist");
                 }
@@ -134,10 +135,10 @@ public class GuiHandlers {
             String uid = qm.value("user_id");
             JsonObject responseJSON = new JsonObject();
             try {
-                if (AlgMain.getUserDb().addToFavorites(rid, uid)) {
+                if (AlgUtils.getUserDb().addToFavorites(rid, uid)) {
                     responseJSON.addProperty("added", true);
                 } else {
-                    AlgMain.getUserDb().removeFavorite(rid, uid);
+                    AlgUtils.getUserDb().removeFavorite(rid, uid);
                     responseJSON.addProperty("added", false);
                 }
             } catch (SQLException throwable) {
@@ -167,16 +168,12 @@ public class GuiHandlers {
         public Object handle(Request request, Response response) throws Exception {
             QueryParamsMap qm = request.queryMap();
             String uid = qm.get("uid").values()[0];
-            String result = GSON.toJson(RunKDAlg.getRecommendations(uid));
+            String result = GSON.toJson(favoritesSuggest.getRecommendations(uid));
             return result;
         }
     }
 
     private static class RecipeSuggestHandler implements Route {
-        private Command command;
-        public RecipeSuggestHandler(Command command){
-            this.command = command;
-        }
 
         // Returns the suggested recipes
         @Override
@@ -186,8 +183,8 @@ public class GuiHandlers {
             boolean meats = Boolean.parseBoolean(qm.get("meats").value());
             boolean dairy = Boolean.parseBoolean(qm.get("dairy").value());
             boolean nuts = Boolean.parseBoolean(qm.get("nuts").value());
-            List<JsonObject> results = command.runForGui(ingredients, dairy,
-                    meats, nuts);
+            RecipeSuggest suggest = new RecipeSuggest(meats, dairy, nuts);
+            List<JsonObject> results = suggest.runForGui(ingredients);
             String result = GSON.toJson(results);
             return result;
         }
@@ -226,7 +223,7 @@ public class GuiHandlers {
             JsonObject responseJSON = new JsonObject();
 
             try {
-                AlgMain.getUserDb().addToPantry(term, uid);
+                AlgUtils.getUserDb().addToPantry(term, uid);
                 responseJSON.addProperty("success", true);
             } catch (SQLException e) {
                 responseJSON.addProperty("success", false);
@@ -248,7 +245,7 @@ public class GuiHandlers {
             JsonObject responseJSON = new JsonObject();
 
             try {
-                AlgMain.getUserDb().removePantryitem(term, uid);
+                AlgUtils.getUserDb().removePantryitem(term, uid);
                 responseJSON.addProperty("success", true);
 
             } catch (SQLException e) {
@@ -268,7 +265,7 @@ public class GuiHandlers {
             String uid = qm.value("uid");
             String responseJSON = "";
             try {
-                 responseJSON = GSON.toJson(AlgMain.getUserDb().getPantry(uid));
+                 responseJSON = GSON.toJson(AlgUtils.getUserDb().getPantry(uid));
                  return responseJSON;
             } catch (SQLException e) {
                 return responseJSON;

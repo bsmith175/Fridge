@@ -177,6 +177,7 @@ $(document).ready(() => {
         let newButton = $("#new-suggest");
         newButton.css("visibility", "visible");
         if (!suggestions.length) {
+
             $('.enjoy-explanation').text("Add more Favorites so that we can recommend you some recipes!");
             enjoy.empty();
         } else {
@@ -407,12 +408,6 @@ $(document).ready(() => {
 function getFavs() {
     console.log("Getting favorites and setting storage");
     favorites.length = 0;
-    const params = {
-        userID: userProfile.getId(),
-        name: userProfile.getName(),
-        email: userProfile.getEmail(),
-        profilePic: userProfile.getImageUrl()
-    };
     $.post("/favorites", {"uid": userProfile.getId()}, response => {
         const r = JSON.parse(response);
         sessionStorage.setItem("favorites", response);
@@ -519,7 +514,7 @@ function onSignIn(googleUser) {
                 console.log("Already signed in");
                 favorites = JSON.parse(sessionStorage.getItem("favorites"));
                 suggestions = JSON.parse(sessionStorage.getItem("suggestions"));
-                if (suggestions === null) {
+                if (suggestions.length == 0) {
                     getSuggestions();
                 }
                 console.log(suggestions);
