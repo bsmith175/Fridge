@@ -136,7 +136,8 @@ public class AlgUtils {
    * @return dairy list string
    */
   public static String getDairy() {
-    return "(milk|whey|cheese|yogurt|paneer|(\\s+)cream)";
+    return "(milk|whey|cheese|yogurt|paneer|butter|cheddar|mascarpone|gouda"
+            + "|mozzarella|(\\s+)cream)";
   }
 
 

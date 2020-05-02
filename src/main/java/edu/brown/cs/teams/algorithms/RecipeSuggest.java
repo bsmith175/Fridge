@@ -27,7 +27,8 @@ public class RecipeSuggest implements Command {
   private boolean dairy;
   private boolean meats;
   private boolean nuts;
-  public static final int NUM_RESULTS = 100;
+  public static final int NUM_RESULTS_PRE = 400;
+  public static final int NUM_RESULTS_FINAL = 100;
 
   public RecipeSuggest(boolean meats, boolean dairy, boolean nuts){
     this.meats = meats;
@@ -134,7 +135,7 @@ public class RecipeSuggest implements Command {
     try {
       PriorityQueue<Recipe> recpq = preCommand(command);
       List<JsonObject> guiResults = new ArrayList<>();
-      for (int i = 0; i < NUM_RESULTS; i++) {
+      for (int i = 0; i < NUM_RESULTS_PRE; i++) {
         Recipe rec = recpq.poll();
         JsonObject jsonRecipe = rec.getRecipeJson();
         Gson gson = new Gson();
@@ -145,6 +146,7 @@ public class RecipeSuggest implements Command {
           guiResults.add(jsonRecipe);
         }
       }
+      guiResults = guiResults.subList(0, NUM_RESULTS_FINAL);
       return guiResults;
     } catch (IOException | ParseException | SQLException e) {
       throw new CommandException(e.getMessage());
