@@ -57,7 +57,7 @@
                                 aria-pressed="false" autocomplete="off">No Nuts
                         </button>
                     </div>
-                    <button type="submit" class="btn btn-outline-success find-recipe ">Find Recipes</button>
+                    <button type="submit" class="btn btn-outline-success find-recipe btn-lg" data-toggle="tooltip" data-placement="left" title="Looks for recipes containing the ingredients above">Start Cooking!</button>
 
                 </div>
             </form>

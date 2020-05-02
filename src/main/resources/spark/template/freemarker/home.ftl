@@ -41,10 +41,10 @@
                 <div class="row" id="display-favs"></div>
             </div>
             <div class="tab-pane fade" id="enjoy" role="tabpanel" aria-labelledby="enjoy-tab">
-                <div class="row d-flex justify-content-center">
+                <div class="row d-flex justify-content-center" style="margin-bottom: 4px">
                     <p class="enjoy-explanation " id="enjoy-explanation">"Based on your past favorites,
                         we've put together a couple recipes we thought you might like"</p>
-                    <button class="btn btn-primary pull-left" id="new-suggest" type="button" style="justify-content: center">
+                    <button class="btn btn-primary pull-left btn-sm" id="new-suggest" type="button" style="justify-content: center">
                         <span id="loadSpinner" class="spinner-border spinner-border-sm"  role="status" aria-hidden="true"></span>
                         <div id="loaderText" display="inline-block">Suggest new recipes!</div>
                     </button>

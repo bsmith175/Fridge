@@ -27,6 +27,9 @@ $(document).ready(() => {
     pantry = $("#pantry-item");
 
     let next = 1;
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
     /**
      * Click function for add-more selector.
      * When + button clicked in recipe form, dynamically adds
@@ -256,7 +259,7 @@ $(document).ready(() => {
      * @param results array with recipes
      */
     function make_cards(selector, results, favBool) {
-        console.log(results)
+        console.log(results);
 
         let cards = 0; //html id for each recipe card
         for (let i = 0; i < results.length; i++) {
@@ -375,8 +378,6 @@ $(document).ready(() => {
                     favorites.push(recipe);
                 }
                 sessionStorage.setItem("favorites", JSON.stringify(favorites));
-                //getFavs();
-                //console.log(favorites);
 
 
                 $(this).toggleClass("fa-heart fa-heart-o");
@@ -409,13 +410,13 @@ $(document).ready(() => {
         let spinner = $("#loadSpinner");
         $("#loaderText").text("Loading...");
         spinner.css("display", "inline-block");
-        newButton.css("margin-left", "47rem");
+        newButton.css("margin-left");
         suggestions = [];
         let load = function() {
             console.log(suggestions);
             profilePage(enjoy, suggestions, false)
             spinner.css("display", "none");
-            newButton.css("margin-left", "43.6rem");
+            newButton.css("margin-left",);
             $("#loaderText").html("Suggest new recipes!");
 
         }
