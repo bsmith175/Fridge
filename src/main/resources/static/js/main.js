@@ -28,9 +28,7 @@ $(document).ready(() => {
     pantry = $("#pantry-item");
 
     let next = 1;
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
+
 
     $("#numresults").change(function () {
         console.log(current_response.length)
