@@ -209,23 +209,6 @@ public class RecipeDatabase {
 
   //------------------------- Recipe table queries----------------
 
-  public String getRecipe(int id) throws CommandException {
-    String query = "SELECT * FROM recipe WHERE recipe.id = ?";
-    try (PreparedStatement prep = conn.prepareStatement(query)) {
-      prep.setInt(1, id);
-      try (ResultSet rs = prep.executeQuery()) {
-        String result = "";
-        while (rs.next()) {
-          result += rs.getString(1) + " " + rs.getString(2) +
-              " " + rs.getString(6) + "\n";
-        }
-        return result;
-      }
-    } catch (SQLException e) {
-      throw new CommandException("Recipe " + id + " does not exist.");
-    }
-  }
-
 
   public List<Recipe> getFullRecipes(String vectorFileName)
       throws CommandException {
@@ -247,8 +230,9 @@ public class RecipeDatabase {
             for (int i = 0; i < tokens.length; i++) {
               double[] embedding = gson.fromJson(object.get(tokens[i]).toString(),
                   double[].class);
+              AlgUtils.getVectorMap().put(tokens[i], embedding);
               if (tokens[i] != "") {
-                newTokens.add(new Ingredient(tokens[i], embedding));
+                newTokens.add(new Ingredient(tokens[i]));
               }
             }
             double[] totalEmbedding = AlgUtils.ingredAdd(newTokens);

@@ -76,18 +76,11 @@ public class RecipeSuggest implements Command {
    */
   private PriorityQueue<Recipe> preCommand(String[] command) throws IOException,
           ParseException {
-    Gson gson = new Gson();
-    FileReader reader = new FileReader("data/ingredient_vectors.json");
-    JSONParser parser = new JSONParser();
-    JSONObject object = (JSONObject) parser.parse(reader);
     List<Ingredient> ingredients = new ArrayList<>();
     for (String word : Arrays.copyOfRange(command, 0, command.length)) {
       word = word.replaceAll("\"", "");
       try {
-        double[] embedding = gson.fromJson(object.get(word).toString(),
-                double[].class);
-
-        Ingredient ingredient = new Ingredient(word, embedding);
+        Ingredient ingredient = new Ingredient(word);
         ingredients.add(ingredient);
       } catch (NullPointerException e) {
         System.out.println(word + " is not a valid ingredient in our "
