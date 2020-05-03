@@ -1,17 +1,86 @@
 <#assign content>
 
     <div class="col">
+        <div class="row food-icons">
+            <div class="item">
+                <img src="https://i.ibb.co/Czn7Rn9/cake.png" alt="cake" height="60" width="80">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/YPL5cJ8/banana.png" alt="banana" height="60" width="80">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/bsFSdGy/carrot.png" alt="carrot" height="30" width="30">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/LrJJywc/icecream.png" alt="icecream" height="40" width="40">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/3RZftJy/jam.png" alt="jam" height="50" width="50">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/qFqPvHb/grapeJam.png" alt="jam" height="60" width="70">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/Czn7Rn9/cake.png" alt="cake" height="60" width="80">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/YPL5cJ8/banana.png" alt="banana" height="60" width="80">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/bsFSdGy/carrot.png" alt="carrot" height="60" width="60">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/LrJJywc/icecream.png" alt="icecream" height="40" width="40">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/3RZftJy/jam.png" alt="jam" height="50" width="50">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/qFqPvHb/grapeJam.png" alt="jam" height="60" width="70">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/Czn7Rn9/cake.png" alt="cake" height="60" width="80">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/YPL5cJ8/banana.png" alt="banana" height="60" width="80">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/bsFSdGy/carrot.png" alt="carrot" height="60" width="60">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/LrJJywc/icecream.png" alt="icecream" height="40" width="40">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/3RZftJy/jam.png" alt="jam" height="50" width="50">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/qFqPvHb/grapeJam.png" alt="jam" height="60" width="70">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/Czn7Rn9/cake.png" alt="cake" height="60" width="80">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/YPL5cJ8/banana.png" alt="banana" height="60" width="80">
+            </div>
+            <div class="item">
+                <img src="https://i.ibb.co/bsFSdGy/carrot.png" alt="carrot" height="60" width="60">
+            </div>
+        </div>
 
-        <div class=" rounded profile d-flex flex-row justify-content-center">
-            <div class="flex-col justify-content-center align-items-center replace-image">
-                <img class="profile-pic rounded-circle"
-                     src="https://png.pngtree.com/png-vector/20190711/ourlarge/pngtree-cook-icon-for-your-project-png-image_1541448.jpg"
-                     alt="Card image cap" height="160" width="160">
+        <div class=" profile d-flex flex-row justify-content-center">
+            <div class="flex-col">
+                <div class="flex-col justify-content-center align-items-center replace-image">
+                    <img class="profile-pic rounded-circle"
+                         src="https://png.pngtree.com/png-vector/20190711/ourlarge/pngtree-cook-icon-for-your-project-png-image_1541448.jpg"
+                         alt="Card image cap" height="160" width="160">
+                </div>
             </div>
         </div>
         <div class="d-flex justify-content-center align-items-center;">
             <h3 class="welcome rounded" id="user-name">Please sign in to view profile! </h3>
+
         </div>
+
 
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
@@ -41,8 +110,10 @@
                 <div class="row d-flex justify-content-center" style="margin-bottom: 4px">
                     <p class="enjoy-explanation " id="enjoy-explanation">"Based on your past favorites,
                         we've put together a couple recipes we thought you might like"</p>
-                    <button class="btn btn-primary pull-left btn-sm" id="new-suggest" type="button" style="justify-content: center">
-                        <span id="loadSpinner" class="spinner-border spinner-border-sm"  role="status" aria-hidden="true"></span>
+                    <button class="btn btn-primary pull-left btn-sm" id="new-suggest" type="button"
+                            style="justify-content: center">
+                        <span id="loadSpinner" class="spinner-border spinner-border-sm" role="status"
+                              aria-hidden="true"></span>
                         <div id="loaderText" display="inline-block">Suggest new recipes!</div>
                     </button>
 

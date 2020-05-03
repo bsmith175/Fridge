@@ -55,15 +55,17 @@ input[type="text"], textarea {
 }
 
 .profile{
-  background-color: #c9f2da;
+  background-color: #b7f2c1;
   margin: .5em;
-  /*background-image: url("https://image.shutterstock.com/image-vector/vector-seamless-pattern-cute-orange-260nw-1048386433.jpg");*/
+  border: 4px solid #aaffc9;
+  border-radius: 25px; !important;
+  /*!*background-image: url("https://image.shutterstock.com/image-vector/vector-seamless-pattern-cute-orange-260nw-1048386433.jpg");*!*/
 
 }
 
 .profile-pic{
   margin: .5em;
-
+  border: 7px solid #aaffc9;
 }
 
 .welcome {
@@ -124,6 +126,11 @@ input[type="text"], textarea {
   border-collapse: collapse;
   width: 100%;
 
+}
+.food-icons{
+  display: table;
+  border-collapse: collapse;
+  width: 100%;
 }
 .pantry-buttons {
   background: rgba(255, 254, 240, 0.16);
