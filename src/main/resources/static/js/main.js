@@ -14,6 +14,7 @@ let pantryItems = [];
 let pantry = $("#pantry-item");
 let suggestions = [];
 let user_name = $("#user-name");
+let current_response = [];
 
 /**
  * Exevuted upon page load.
@@ -29,6 +30,12 @@ $(document).ready(() => {
     let next = 1;
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
+    })
+
+    $("#numresults").change(function () {
+        console.log(current_response.length)
+        make_cards(result_cards, current_response, false);
+
     })
     /**
      * Click function for add-more selector.
@@ -174,6 +181,7 @@ $(document).ready(() => {
             //parse response
             const r = JSON.parse(response);
             make_cards(result_cards, r, false);
+            current_response = r;
 
         });
 
@@ -260,9 +268,14 @@ $(document).ready(() => {
      */
     function make_cards(selector, results, favBool) {
         console.log(results);
+        let length = results.length
+        if (!favBool) {
+            selector.empty()
+            length = document.getElementById("numresults").value
+        }
 
         let cards = 0; //html id for each recipe card
-        for (let i = 0; i < results.length; i++) {
+        for (let i = 0; i < length; i++) {
             const res = results[i];
             let heart_shape = "fa-heart-o";
             let length = favorites.length;
