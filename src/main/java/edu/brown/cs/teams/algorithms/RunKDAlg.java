@@ -42,8 +42,7 @@ public class RunKDAlg {
     JSONObject object = (JSONObject) parser.parse(reader);
     for (int i = 0; i < ingredients.length; i++) {
       String ingredient = ingredients[i];
-      double[] embedding = gson.fromJson(object.get(ingredient).toString(), double[].class);
-      Ingredient ing = new Ingredient(ingredients[i], embedding);
+      Ingredient ing = new Ingredient(ingredients[i]);
       ingredientSet.add(ing);
     }
     double[] queryEmbedding = AlgUtils.ingredAdd(ingredientSet);

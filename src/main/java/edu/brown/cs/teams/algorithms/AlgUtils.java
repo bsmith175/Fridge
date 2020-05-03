@@ -7,9 +7,7 @@ import edu.brown.cs.teams.kdtree.KDTree;
 import edu.brown.cs.teams.recipe.MinimalRecipe;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import edu.brown.cs.teams.recipe.Ingredient;
 import edu.brown.cs.teams.recipe.Recipe;
@@ -26,6 +24,7 @@ public class AlgUtils {
   public static final int EMBED_SIZE = 300;
   public static final double SIMILARITY_FACTOR = 0.03;
   private static KDTree<MinimalRecipe> tree = new KDTree<>(EMBED_SIZE);
+  private static Map<String, double[]> vectorMap = new HashMap<>();
 
   /**
    * Constructor for AlgUtils.
@@ -42,7 +41,9 @@ public class AlgUtils {
     return tree;
   }
 
-
+  public static Map<String, double[]> getVectorMap() {
+    return vectorMap;
+  }
   /**
    * Getter method for the db proxy.
    *
