@@ -15,6 +15,7 @@ let pantry = $("#pantry-item");
 let suggestions = [];
 let user_name = $("#user-name");
 let current_response = [];
+let next = 3;
 
 /**
  * Exevuted upon page load.
@@ -27,46 +28,12 @@ $(document).ready(() => {
     const enjoy = $("#display-enjoy");
     pantry = $("#pantry-item");
 
-    let next = 1;
     $("#numresults").change(function () {
         console.log(current_response.length)
         make_cards(result_cards, current_response, false, true);
 
     })
-    /**
-     * Click function for add-more selector.
-     * When + button clicked in recipe form, dynamically adds
-     * input boxes and -/+ buttons.
-     */
-    $(".add-more").click(function (e) {
 
-        console.log("add")
-        e.preventDefault();
-        next = next + 1;
-        let newInput = $('<input  placeholder="Ingredient" class="typeahead ' +
-            'form-control type\"  name="field' + next +
-            '" type="text" autocomplete="off"/>');
-        createTypeahead(newInput);
-
-        let removeBtn = $('<button id="' + (next) +
-            '" class="btn remove-me" >-</button>');
-
-
-        let str = $("<div class=\"input-group\"  id=\"field" + next +
-            "\" name=\"field" + next + "\"></div>");
-        str.append(newInput);
-        str.append(removeBtn);
-        $(".ingredients").append(str);
-
-        $('.remove-me').click(function (e) {
-            console.log("remove")
-            e.preventDefault();
-            let fieldID = "#field" + this.id;
-            //need to Keep both(last one needs to be clicked twice??)
-            $(fieldID).remove();
-            $(fieldID).remove();
-        });
-    });
 
     $(".no-meats").click(function (e) {
         console.log("meats_clicked")
@@ -197,21 +164,6 @@ $(document).ready(() => {
 
     });
 
-    /**
-     * Attaches typeahead function to selector to allow autofill.
-     * Gets autofill data from /suggest
-     * @param $els jquery selector for an input
-     */
-    function createTypeahead($els) {
-        $els.typeahead({
-            source: function (query, process) {
-                return $.post('/suggest', {input: query}, function (data) {
-                    data = JSON.parse(data);
-                    return process(data);
-                });
-            }
-        });
-    }
 
     /**
      * Attach createTypeahead to first fridge-form input element.
@@ -475,7 +427,54 @@ function getFavs() {
 
     });
 }
+/**
+ * Click function for add-more selector.
+ * When + button clicked in recipe form, dynamically adds
+ * input boxes and -/+ buttons.
+ */
+function add_more(id){
+    console.log(id);
+    console.log("add")
+    next = next + 1;
+    let newInput = $('<input  placeholder="Ingredient" class="typeahead ' +
+        'form-control type\"  name="field' + next +
+        '" type="text" autocomplete="off"/>');
+    createTypeahead(newInput);
 
+    let removeBtn = $('<button id="' + (id) +
+        '" class="btn remove-me" >_</button>');
+
+    let add = $("<button id=\""+next+"\" class=\"btn add-more\" onclick=\"add_more(this.id)\" type=\"button\">+</button>\n");
+
+    let str = $("<div class=\"input-group\"  id=\"field" + next +
+        "\" name=\"field" + next + "\"></div>");
+    str.append(newInput);
+    str.append(add);
+    let divs = $(".ingredients").children();
+    console.log(next);
+    console.log(divs[divs.length-1].id);
+    let pre_last = $("#" +divs[divs.length-1].id);
+    pre_last.find("button").remove();
+    pre_last.append(removeBtn);
+    $(".ingredients").append(str);
+
+    /**
+     * Click function for remove-me selector.
+     * When - button clicked in recipe form, dynamically removes
+     * input boxes and - button.
+     */
+    $('.remove-me').click(function (e) {
+        console.log("remove")
+        e.preventDefault();
+        let fieldID = "#field" + this.id;
+        //need to Keep both(last one needs to be clicked twice??)
+        console.log(fieldID);
+        $(fieldID).remove();
+        $(fieldID).remove();
+        return false;
+    });
+
+}
 
 /**
  * Removes a pantry item.
@@ -533,6 +532,21 @@ function getPantry() {
 
 }
 
+/**
+ * Attaches typeahead function to selector to allow autofill.
+ * Gets autofill data from /suggest
+ * @param $els jquery selector for an input
+ */
+function createTypeahead($els){
+    $els.typeahead({
+        source: function (query, process) {
+            return $.post('/suggest', {input: query}, function (data) {
+                data = JSON.parse(data);
+                return process(data);
+            });
+        }
+    });
+}
 
 function getSuggestions(callback) {
     console.log("getting suggested recipes and setting in storage");
@@ -616,7 +630,7 @@ function onSignIn(googleUser) {
             $(".g-signin2").hide();
             //Sign out option appears on nav bar
             $('.navbar-nav').find("#sign-out").remove();
-            $('.navbar-nav').append("<a class=\"nav-item nav-link\" id=\"sign-out\" onclick=\"signOut();\">Sign out</a>");
+            $('.navbar-nav').append("<a class=\"nav-item nav-link nav-main\" id=\"sign-out\" onclick=\"signOut();\">Sign out</a>");
 
         } else {
             console.log("Error authenticating user");

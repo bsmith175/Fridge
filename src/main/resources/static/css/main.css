@@ -11,10 +11,6 @@ input[type="number"] {
 }
 
 
-.card{
-  max-height: fit-content;
-}
-
 .button:focus {
   background-color: #afffc3;
 
@@ -79,14 +75,15 @@ input[type="text"], textarea {
 .remove-me{
   background: rgba(242, 175, 152, 0.79);
 
+
 }
 .add-more{
   background: rgba(214, 242, 177, 0.79);
 
 }
 .find-recipe {
-  background: rgba(157, 242, 151, 0.79);
-  color: #158043;
+  background: rgba(22, 179, 63, 0.79);
+  color: white;
   margin-top: 10px;
 }
 
@@ -223,5 +220,8 @@ input[type="text"], textarea {
   margin-left: 0px;
   padding: 0px;
 }
-
+.nav-main{
+  color: white !important;
+  font-size: xx-large; !important;
+}
 
