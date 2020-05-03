@@ -157,7 +157,7 @@ public final class Main {
 
 
   private void runSparkServer(int port) throws Exception {
-    Spark.port(port);
+    Spark.port(getHerokuAssignedPort());
     Spark.externalStaticFileLocation("src/main/resources/static");
     Spark.exception(Exception.class, new ExceptionPrinter());
     FreeMarkerEngine freeMarker = createEngine();
