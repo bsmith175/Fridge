@@ -12,6 +12,7 @@ input[type="number"] {
 
 
 .card{
+  max-height: fit-content;
 }
 
 .button:focus {
