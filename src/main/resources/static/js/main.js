@@ -14,6 +14,7 @@ let pantryItems = [];
 let pantry = $("#pantry-item");
 let suggestions = [];
 let user_name = $("#user-name");
+let current_response = [];
 
 /**
  * Exevuted upon page load.
@@ -29,6 +30,12 @@ $(document).ready(() => {
     let next = 1;
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
+    })
+
+    $("#numresults").change(function () {
+        console.log(current_response.length)
+        make_cards(result_cards, current_response, false, true);
+
     })
     /**
      * Click function for add-more selector.
@@ -181,7 +188,8 @@ $(document).ready(() => {
             }, true), response => {
                 //parse response
                 const r = JSON.parse(response);
-                make_cards(result_cards, r, false);
+                make_cards(result_cards, r, false, true);
+                current_response = r;
                 $("#cookSpinner").css("display", "none");
 
             });
@@ -279,11 +287,16 @@ $(document).ready(() => {
      * @param selector jquery selector to append cards too
      * @param results array with recipes
      */
-    function make_cards(selector, results, favBool) {
+    function make_cards(selector, results, favBool, limitBool) {
         console.log(results);
+        let limit = results.length
+        if (limitBool) {
+            selector.empty()
+            limit = document.getElementById("numresults").value
+        }
 
         let cards = 0; //html id for each recipe card
-        for (let i = 0; i < results.length; i++) {
+        for (let i = 0; i < limit; i++) {
             const res = results[i];
             let heart_shape = "fa-heart-o";
             let length = favorites.length;
@@ -423,7 +436,7 @@ $(document).ready(() => {
     function profilePage(e, results, favBool) {
         console.log("profile");
         e.empty();
-        make_cards(e, results, favBool);
+        make_cards(e, results, favBool, false);
     }
 
     $("#new-suggest").on("click", function () {

@@ -35,33 +35,59 @@
         </div>
         <div class="container">
 
+
             <form name="fridge-form">
                 <div class="typeahead form-group">
                     <div class="row ingredients">
                         <div class="input-group" id="field1" name="field1">
-                            <input type="text" class="form-control typeahead" name="field1"
+                            <input type="text" class="form-control typeahead"
+                                   name="field1"
                                    placeholder="Ingredient" autocomplete="off"/>
-                            <button id="b1" class="btn add-more" type="button">+</button>
+                            <button id="b1" class="btn add-more" type="button">
+                                +
+                            </button>
                         </div>
                     </div>
                 </div>
                 <div class="col fridge-buttons">
                     <div>
-                        <button type="button" class="btn btn-outline-danger no-meats" data-toggle="button"
+                        <button type="button"
+                                class="btn btn-outline-danger no-meats"
+                                data-toggle="button"
                                 aria-pressed="false" autocomplete="off">No Meat
                         </button>
-                        <button type="button" class="btn btn-outline-primary no-dairy" data-toggle="button"
+                        <button type="button"
+                                class="btn btn-outline-primary no-dairy"
+                                data-toggle="button"
                                 aria-pressed="false" autocomplete="off">No Dairy
                         </button>
-                        <button type="button" class="btn btn-outline-secondary no-nuts" data-toggle="button"
+                        <button type="button"
+                                class="btn btn-outline-secondary no-nuts"
+                                data-toggle="button"
                                 aria-pressed="false" autocomplete="off">No Nuts
                         </button>
 
                     </div>
-                    <button type="submit" class="btn btn-outline-success find-recipe btn-lg" data-toggle="tooltip" data-placement="left" title="Looks for recipes containing the ingredients above">Start Cooking!</button>
-                        <span id="cookSpinner" class="spinner-border spinner-border-sm"  role="status" aria-hidden="true"></span>
+                    <button type="submit"
+                            class="btn btn-outline-success find-recipe btn-lg"
+                            data-toggle="tooltip" data-placement="left"
+                            title="Looks for recipes containing the ingredients above">
+                        Start Cooking!
+                    </button>
+                    <span id="cookSpinner" class="spinner-border spinner-border-sm"  role="status" aria-hidden="true"></span>
+
                 </div>
+
             </form>
+            <div style="position: relative; left: 80%; bottom: 100px">
+                <label for="numresults">Number of recipes:</label>
+                <select id="numresults">
+                    <option>20</option>
+                    <option>40</option>
+                    <option>60</option>
+                    <option>100</option>
+                </select>
+            </div>
         </div>
 
 
