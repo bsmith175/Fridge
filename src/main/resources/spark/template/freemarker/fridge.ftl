@@ -74,6 +74,7 @@
                             title="Looks for recipes containing the ingredients above">
                         Start Cooking!
                     </button>
+                    <span id="cookSpinner" class="spinner-border spinner-border-sm"  role="status" aria-hidden="true"></span>
 
                 </div>
 
