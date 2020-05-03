@@ -15,6 +15,7 @@ let pantry = $("#pantry-item");
 let suggestions = [];
 let user_name = $("#user-name");
 let current_response = [];
+let next = 3;
 
 /**
  * Exevuted upon page load.
@@ -27,48 +28,12 @@ $(document).ready(() => {
     const enjoy = $("#display-enjoy");
     pantry = $("#pantry-item");
 
-    let next = 1;
-
-
     $("#numresults").change(function () {
         console.log(current_response.length)
         make_cards(result_cards, current_response, false, true);
 
     })
-    /**
-     * Click function for add-more selector.
-     * When + button clicked in recipe form, dynamically adds
-     * input boxes and -/+ buttons.
-     */
-    $(".add-more").click(function (e) {
 
-        console.log("add")
-        e.preventDefault();
-        next = next + 1;
-        let newInput = $('<input  placeholder="Ingredient" class="typeahead ' +
-            'form-control type\"  name="field' + next +
-            '" type="text" autocomplete="off"/>');
-        createTypeahead(newInput);
-
-        let removeBtn = $('<button id="' + (next) +
-            '" class="btn remove-me" >-</button>');
-
-
-        let str = $("<div class=\"input-group\"  id=\"field" + next +
-            "\" name=\"field" + next + "\"></div>");
-        str.append(newInput);
-        str.append(removeBtn);
-        $(".ingredients").append(str);
-
-        $('.remove-me').click(function (e) {
-            console.log("remove")
-            e.preventDefault();
-            let fieldID = "#field" + this.id;
-            //need to Keep both(last one needs to be clicked twice??)
-            $(fieldID).remove();
-            $(fieldID).remove();
-        });
-    });
 
     $(".no-meats").click(function (e) {
         console.log("meats_clicked")
@@ -103,14 +68,14 @@ $(document).ready(() => {
                 postParameters = elements[i].value;
             }
         }
-        if (postParameters!= ""){
+        if (postParameters != "") {
             $.post('/add-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
                 data = JSON.parse(data);
                 console.log(data)
                 //getPantry();
                 //displayPantry();
 
-                const s = "<button type=\"button\" id=\"" + pantry_counter + "\" name=\"" + postParameters+
+                const s = "<button type=\"button\" id=\"" + pantry_counter + "\" name=\"" + postParameters +
                     "\" class=\"btn btn-lg btn-outline-info remove-pantry\" " +
                     "onclick='remove_pantry(this.id)'>\n"
                     + postParameters
@@ -125,11 +90,12 @@ $(document).ready(() => {
             pantry_counter = pantry_counter + 1;
         }
         document.forms["pantry-form"].reset();
-       // sessionStorage.setItem("pantry", pantryItems);
+        // sessionStorage.setItem("pantry", pantryItems);
 
         return false;
 
     })
+
     /**
      * Adds all the items in pantryItems to pantry selector.
      * Uses timeout function to make sure that if getPantry is called before,
@@ -154,6 +120,7 @@ $(document).ready(() => {
             }
         }, 400);
     }
+
     /**
      * Click function for find-recipe selector.
      * When fridge-from submitted, gets all the inputs from form and sends them to backend
@@ -169,15 +136,15 @@ $(document).ready(() => {
         let postParameters = [];
         let elements = document.forms["fridge-form"].elements;
 
-            console.log(elements);
-            for (let i = 0; i < elements.length; i++) {
-                if (elements[i].value != "") {
-                    postParameters.push(elements[i].value);
-                }
+        console.log(elements);
+        for (let i = 0; i < elements.length; i++) {
+            if (elements[i].value != "") {
+                postParameters.push(elements[i].value);
             }
-            postParameters = postParameters.concat(pantryItems);
-            console.log(postParameters)
-             if (postParameters.length !== 0) {
+        }
+        postParameters = postParameters.concat(pantryItems);
+        console.log(postParameters)
+        if (postParameters.length !== 0) {
             $.post("/recipe-recommend", $.param({
                 text: postParameters,
                 meats: meats,
@@ -197,21 +164,6 @@ $(document).ready(() => {
 
     });
 
-    /**
-     * Attaches typeahead function to selector to allow autofill.
-     * Gets autofill data from /suggest
-     * @param $els jquery selector for an input
-     */
-    function createTypeahead($els) {
-        $els.typeahead({
-            source: function (query, process) {
-                return $.post('/suggest', {input: query}, function (data) {
-                    data = JSON.parse(data);
-                    return process(data);
-                });
-            }
-        });
-    }
 
     /**
      * Attach createTypeahead to first fridge-form input element.
@@ -233,7 +185,7 @@ $(document).ready(() => {
         }
 
         e.preventDefault()
-        profilePage(fav,  [...favorites], true);
+        profilePage(fav, [...favorites], true);
         //$(this).tab('show')
     })
     /**
@@ -278,8 +230,6 @@ $(document).ready(() => {
     });
 
 
-
-
     /**
      * Makes Bootstrap cards out of recipe data and appends them to selector
      * @param selector jquery selector to append cards too
@@ -306,8 +256,8 @@ $(document).ready(() => {
             }
 
             //html/bootstrap card for each recipe
-            const card = "<div id=" + cards + " class=\"col-sm d-flex\">\n" +
-                "<dv class=\"card card-body flex-fill\" style=\"width: 18rem;\">\n" +
+            const card = "<div id=" + cards + " class=\"col-md-4 col-sm-6 mb-4 d-flex\">\n" +
+                "<div class=\"card card-body flex-fill\" style=\"width: 20rem;\">\n" +
                 "  <div class=\"d-flex flex-row-reverse\">\n" +
                 "<div>\n" +
                 "  <i id=" + cards + " class=\"heart fa " + heart_shape + "\"></i>\n" +
@@ -373,7 +323,12 @@ $(document).ready(() => {
 
 
         });
-        //like button
+        /**
+         * click handler for heart button.
+         * Adds/removes the recipe from favorites, POSTS change to backend
+         * and toggle's the heart from/to empty/full.
+         *
+         */
         $(".heart.fa").click(function (event) {
             if (sessionStorage.getItem("signedin") !== "true") {
 
@@ -383,21 +338,17 @@ $(document).ready(() => {
             } else {
                 //get recipe that was liked
                 const field_id = (event.target.id);
-
-
                 const recipe = results[field_id];
-
                 const id = recipe.id;
                 //craft post parameters
                 const postParameters = {
                     recipe_id: id,
                     user_id: userProfile.getId()
                 };
-
                 if (favorites.includes(recipe)) {
                     console.log("Already in favorites");
                     console.log(recipe.id);
-                    for (var i = 0; i < favorites.length; i++) {
+                    for (let i = 0; i < favorites.length; i++) {
                         if (favorites[i].id === recipe.id) {
                             favorites.splice(i, 1);
                         }
@@ -410,7 +361,6 @@ $(document).ready(() => {
                     favorites.push(recipe);
                 }
                 sessionStorage.setItem("favorites", JSON.stringify(favorites));
-
 
                 $(this).toggleClass("fa-heart fa-heart-o");
                 $.post("/heart", postParameters, response => {
@@ -444,7 +394,7 @@ $(document).ready(() => {
         spinner.css("display", "inline-block");
         newButton.css("margin-left", "48rem");
         suggestions = [];
-        let load = function() {
+        let load = function () {
             console.log(suggestions);
             profilePage(enjoy, suggestions, false)
             spinner.css("display", "none");
@@ -477,7 +427,54 @@ function getFavs() {
 
     });
 }
+/**
+ * Click function for add-more selector.
+ * When + button clicked in recipe form, dynamically adds
+ * input boxes and -/+ buttons.
+ */
+function add_more(id){
+    console.log(id);
+    console.log("add")
+    next = next + 1;
+    let newInput = $('<input  placeholder="Ingredient" class="typeahead ' +
+        'form-control type\"  name="field' + next +
+        '" type="text" autocomplete="off"/>');
+    createTypeahead(newInput);
 
+    let removeBtn = $('<button id="' + (id) +
+        '" class="btn remove-me" >_</button>');
+
+    let add = $("<button id=\""+next+"\" class=\"btn add-more\" onclick=\"add_more(this.id)\" type=\"button\">+</button>\n");
+
+    let str = $("<div class=\"input-group\"  id=\"field" + next +
+        "\" name=\"field" + next + "\"></div>");
+    str.append(newInput);
+    str.append(add);
+    let divs = $(".ingredients").children();
+    console.log(next);
+    console.log(divs[divs.length-1].id);
+    let pre_last = $("#" +divs[divs.length-1].id);
+    pre_last.find("button").remove();
+    pre_last.append(removeBtn);
+    $(".ingredients").append(str);
+
+    /**
+     * Click function for remove-me selector.
+     * When - button clicked in recipe form, dynamically removes
+     * input boxes and - button.
+     */
+    $('.remove-me').click(function (e) {
+        console.log("remove")
+        e.preventDefault();
+        let fieldID = "#field" + this.id;
+        //need to Keep both(last one needs to be clicked twice??)
+        console.log(fieldID);
+        $(fieldID).remove();
+        $(fieldID).remove();
+        return false;
+    });
+
+}
 
 /**
  * Removes a pantry item.
@@ -488,7 +485,7 @@ function remove_pantry(clicked_id, callback) {
     console.log("removing item from pantry");
     console.log(clicked_id);
     console.log(pantryItems);
-    let postParameters =  $('#'+clicked_id).attr('name');
+    let postParameters = $('#' + clicked_id).attr('name');
     console.log(postParameters);
     $.post('/remove-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
         data = JSON.parse(data);
@@ -508,8 +505,8 @@ function remove_pantry(clicked_id, callback) {
 
 }
 
-function setSessionPantry(){
-   // sessionStorage.setItem("pantry", pantryItems);
+function setSessionPantry() {
+    // sessionStorage.setItem("pantry", pantryItems);
 }
 
 
@@ -533,6 +530,22 @@ function getPantry() {
 
     });
 
+}
+
+/**
+ * Attaches typeahead function to selector to allow autofill.
+ * Gets autofill data from /suggest
+ * @param $els jquery selector for an input
+ */
+function createTypeahead($els){
+    $els.typeahead({
+        source: function (query, process) {
+            return $.post('/suggest', {input: query}, function (data) {
+                data = JSON.parse(data);
+                return process(data);
+            });
+        }
+    });
 }
 
 function getSuggestions(callback) {
@@ -617,7 +630,7 @@ function onSignIn(googleUser) {
             $(".g-signin2").hide();
             //Sign out option appears on nav bar
             $('.navbar-nav').find("#sign-out").remove();
-            $('.navbar-nav').append("<a class=\"nav-item nav-link\" id=\"sign-out\" onclick=\"signOut();\">Sign out</a>");
+            $('.navbar-nav').append("<a class=\"nav-item nav-link nav-main\" id=\"sign-out\" onclick=\"signOut();\">Sign out</a>");
 
         } else {
             console.log("Error authenticating user");
@@ -650,9 +663,9 @@ function signOut() {
         favorites = [];
         pantryItems = [];
         suggestions = [];
-        meats=false;
-        nuts=false;
-        dairy=false;
+        meats = false;
+        nuts = false;
+        dairy = false;
         $('.navbar-nav').find("#sign-out").remove();
         $(".replace-image").empty();
         $(".replace-image").append("<img class=\"profile-pic rounded-circle\"\n" +
