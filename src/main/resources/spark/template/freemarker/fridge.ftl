@@ -25,7 +25,8 @@
                  alt="Smiley face" height="200" width="200">
         </div>
     </div>
-    <div class="bbc"> "Delicious Recipes from BBC Good Food!"</div>
+    <div class="bbc"> "What's In My Fridge is a personalized web-application that recommends delicious recipes based on what you have in your fridge. Our goal is to maximize yumminess and convenience for the user with minimal pain when deciding what to eat.
+        Plus we use delicious recipes from BBC Good Food!"</div>
     <div class="food-form rounded">
         <div class="container">
             <div class="d-flex justify-content-center ">
@@ -43,14 +44,14 @@
                             <input type="text" class="form-control typeahead"
                                    name="field1" id="field1"
                                    placeholder="Ingredient" autocomplete="off"/>
-                            <button id="1" class="btn remove-me" >_</button>
+                            <button id="1" class="btn remove-me" onclick="remove_me(this.id)">_</button>
 
                         </div>
                         <div class="input-group" id="field2" name="field2">
                             <input type="text" class="form-control typeahead"
                                    name="field2" id="field2"
                                    placeholder="Ingredient" autocomplete="off"/>
-                            <button id="2" class="btn remove-me" >_</button>
+                            <button id="2" class="btn remove-me" onclick="remove_me(this.id)" >_</button>
 
                         </div>
                         <div class="input-group" id="field3" name="field3">

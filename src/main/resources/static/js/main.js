@@ -442,7 +442,7 @@ function add_more(id){
     createTypeahead(newInput);
 
     let removeBtn = $('<button id="' + (id) +
-        '" class="btn remove-me" >_</button>');
+        '" class="btn remove-me" onclick=\"remove_me(this.id)\">_</button>');
 
     let add = $("<button id=\""+next+"\" class=\"btn add-more\" onclick=\"add_more(this.id)\" type=\"button\">+</button>\n");
 
@@ -458,23 +458,23 @@ function add_more(id){
     pre_last.append(removeBtn);
     $(".ingredients").append(str);
 
-    /**
-     * Click function for remove-me selector.
-     * When - button clicked in recipe form, dynamically removes
-     * input boxes and - button.
-     */
-    $('.remove-me').click(function (e) {
-        console.log("remove")
-        e.preventDefault();
-        let fieldID = "#field" + this.id;
-        //need to Keep both(last one needs to be clicked twice??)
-        console.log(fieldID);
-        $(fieldID).remove();
-        $(fieldID).remove();
-        return false;
-    });
 
 }
+
+/**
+ * Click function for remove-me selector.
+ * When - button clicked in recipe form, dynamically removes
+ * input boxes and - button.
+ */
+function remove_me(id) {
+    console.log("remove")
+    let fieldID = "#field" + id;
+    //need to Keep both(last one needs to be clicked twice??)
+    console.log(fieldID);
+    $(fieldID).remove();
+    $(fieldID).remove();
+    return false;
+};
 
 /**
  * Removes a pantry item.
