@@ -108,6 +108,8 @@ public final class Main {
       List<MinimalRecipe> recipes = AlgUtils.getMinimalRecipesList();
       AlgUtils.setTree(AlgUtils.getTree().buildKDTree(recipes));
       System.out.println("ready to query");
+      runSparkServer((int) options.valueOf("port"));
+
     } catch (CommandException e) {
       System.out.println(e.getMessage());
     } catch (SQLException e) {
@@ -116,10 +118,12 @@ public final class Main {
       e.printStackTrace();
     } catch (URISyntaxException e) {
         e.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
     }
 
 
-      if (options.has("repl")) {
+    if (options.has("repl")) {
       // Allow the repl to run both commands
       HashMap<String, Command> commands = new HashMap<>();
       commands.put("recommend", new RecipeSuggest(false, false, false));
