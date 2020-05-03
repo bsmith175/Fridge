@@ -56,9 +56,10 @@
                         <button type="button" class="btn btn-outline-secondary no-nuts" data-toggle="button"
                                 aria-pressed="false" autocomplete="off">No Nuts
                         </button>
+
                     </div>
                     <button type="submit" class="btn btn-outline-success find-recipe btn-lg" data-toggle="tooltip" data-placement="left" title="Looks for recipes containing the ingredients above">Start Cooking!</button>
-
+                        <span id="cookSpinner" class="spinner-border spinner-border-sm"  role="status" aria-hidden="true"></span>
                 </div>
             </form>
         </div>

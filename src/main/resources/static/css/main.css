@@ -188,13 +188,18 @@ input[type="text"], textarea {
   height: 2.6rem;
   visibility: hidden;
   float: right;
-  /*margin-left: 43.6rem;*/
+  margin-left: 45.4rem;
 }
 #loadSpinner{
   display: none;
   margin-right: 5px;
   margin-top: 3px;
   float: left;
+}
+#cookSpinner{
+  display: none;
+  margin-left: 7px;
+  margin-top: 12px;
 }
 
 #loaderText{

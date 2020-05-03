@@ -156,26 +156,38 @@ $(document).ready(() => {
      */
     $(".find-recipe").click(function (e) {
         console.log("find recipe")
+        $("#cookSpinner").css("display", "inline-block");
 
         result_cards.empty();
         e.preventDefault();
         //add inputs to postParameters
         let postParameters = [];
         let elements = document.forms["fridge-form"].elements;
-        console.log(elements);
-        for (let i = 0; i < elements.length; i++) {
-            if (elements[i].value != "") {
-                postParameters.push(elements[i].value);
-            }
-        }
-        postParameters = postParameters.concat(pantryItems);
-        console.log(postParameters)
-        $.post("/recipe-recommend", $.param({text: postParameters, meats: meats, nuts: nuts, dairy: dairy}, true), response => {
-            //parse response
-            const r = JSON.parse(response);
-            make_cards(result_cards, r, false);
 
-        });
+            console.log(elements);
+            for (let i = 0; i < elements.length; i++) {
+                if (elements[i].value != "") {
+                    postParameters.push(elements[i].value);
+                }
+            }
+            postParameters = postParameters.concat(pantryItems);
+            console.log(postParameters)
+             if (postParameters.length !== 0) {
+            $.post("/recipe-recommend", $.param({
+                text: postParameters,
+                meats: meats,
+                nuts: nuts,
+                dairy: dairy
+            }, true), response => {
+                //parse response
+                const r = JSON.parse(response);
+                make_cards(result_cards, r, false);
+                $("#cookSpinner").css("display", "none");
+
+            });
+        } else {
+            $("#cookSpinner").css("display", "none");
+        }
 
     });
 
@@ -229,8 +241,17 @@ $(document).ready(() => {
 
             $('.enjoy-explanation').text("Add more Favorites so that we can recommend you some recipes!");
             enjoy.empty();
+            let callback = function () {
+                e.preventDefault();
+                console.log("should have removed");
+                $("#enjoySpinner").css("display", "none");
+                profilePage(enjoy, suggestions, false)
+            }
+            getSuggestions(callback);
         } else {
             e.preventDefault();
+            console.log("should have removed");
+            $("#enjoySpinner").css("display", "none");
             profilePage(enjoy, suggestions, false)
         }
 
@@ -410,13 +431,14 @@ $(document).ready(() => {
         let spinner = $("#loadSpinner");
         $("#loaderText").text("Loading...");
         spinner.css("display", "inline-block");
-        newButton.css("margin-left");
+        newButton.css("margin-left", "48rem");
         suggestions = [];
         let load = function() {
             console.log(suggestions);
             profilePage(enjoy, suggestions, false)
             spinner.css("display", "none");
             newButton.css("margin-left",);
+            newButton.css("margin-left", "45.4rem");
             $("#loaderText").html("Suggest new recipes!");
 
         }
@@ -491,7 +513,7 @@ function getPantry() {
         uid: userProfile.getId(),
     };
     $.post("/pantry", params, response => {
-        const r = JSON.parse(response)
+        const r = JSON.parse(response);
         sessionStorage.setItem("pantry", response);
 
         for (let res of r) {
@@ -559,18 +581,22 @@ function onSignIn(googleUser) {
 
                 favorites = JSON.parse(sessionStorage.getItem("favorites"));
                 if (favorites === null || favorites.length === 0) {
+                    favorites = [];
                     getFavs();
                 }
                 console.log(favorites);
 
                 suggestions = JSON.parse(sessionStorage.getItem("suggestions"));
 
-                if (suggestions === null || suggestions.length == 0) {
+                if (suggestions === null || suggestions.length === 0) {
+                    console.log("getting new suggestions");
+                    suggestions = [];
                     getSuggestions();
                 }
 
                 //pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
                 if (pantryItems === null || pantryItems.length == 0) {
+                    pantryItems = [];
                     getPantry();
                 }
                 console.log(pantryItems);
