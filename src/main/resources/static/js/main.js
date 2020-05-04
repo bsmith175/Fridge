@@ -574,7 +574,6 @@ function onSignIn(googleUser) {
                 "                     src=\"" + userProfile.getImageUrl() + "\"\n" +
                 "                     alt=\"Card image cap\" height=\"160\" width=\"160\">");
             console.log(sessionStorage.getItem("signedin"));
-            console.log(sessionStorage.getItem("suggestions"));
 
             if (sessionStorage.getItem("signedin") !== "true") {
 

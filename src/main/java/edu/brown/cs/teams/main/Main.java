@@ -161,7 +161,6 @@ public final class Main {
     Spark.externalStaticFileLocation("src/main/resources/static");
     Spark.exception(Exception.class, new ExceptionPrinter());
     FreeMarkerEngine freeMarker = createEngine();
-
     // Setup Spark Routes
     //TODO: create a call to Spark.post to make a post request to a url which
     // will handle getting autocorrect results for the input
@@ -184,10 +183,8 @@ public final class Main {
         pw.println("</pre>");
       }
       res.body(stacktrace.toString());
-
     }
   }
-
 
   static int getHerokuAssignedPort() {
     ProcessBuilder processBuilder = new ProcessBuilder();

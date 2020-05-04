@@ -4,6 +4,9 @@ package edu.brown.cs.teams.database;
 import java.util.ArrayList;
         import java.util.List;
 
+/**
+ * Class for parsing ingredients into ingredient tokens.
+ */
 public class Tokenizer {
 
   /**
