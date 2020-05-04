@@ -152,11 +152,14 @@ $(document).ready(() => {
                 dairy: dairy
             }, true), response => {
                 //parse response
-                const r = JSON.parse(response);
-                make_cards(result_cards, r, false, true);
-                current_response = r;
-                $("#cookSpinner").css("display", "none");
-
+                if (response === "none") {
+                    $("#cookSpinner").css("display", "none");
+                } else {
+                    const r = JSON.parse(response);
+                    make_cards(result_cards, r, false, true);
+                    current_response = r;
+                    $("#cookSpinner").css("display", "none");
+                }
             });
         } else {
             $("#cookSpinner").css("display", "none");
@@ -195,7 +198,15 @@ $(document).ready(() => {
     $('#myTab a[href="#enjoy"]').on('click', function (e) {
         let newButton = $("#new-suggest");
         newButton.css("visibility", "visible");
-        if (suggestions === null || !suggestions.length) {
+        $("#enjoySpinner").css("display", "inline-block");
+
+        if (typeof userProfile === 'undefined') {
+            $("#enjoySpinner").css("display", "none");
+
+            $('.enjoy-explanation').text("Login to see recommended recipes!");
+            profilePage(enjoy, suggestions, false)
+
+        } else if (suggestions === null || !suggestions.length) {
 
             $('.enjoy-explanation').text("Add more Favorites so that we can recommend you some recipes!");
             enjoy.empty();
@@ -268,7 +279,7 @@ $(document).ready(() => {
                 "    <h5 class=\"card-title\">" + res.name + "</h5>\n" +
                 "    <p class=\"card-text\">" + res.description + "</p>\n" +
                 "    <button id=" + cards + " type=\"button\" class=\"btn btn-outline-success openBtn\" " +
-                "data-toggle=\"modal\" data-target=\".bd-example-modal-lg\">View Recipe</button>\n" +
+                "data-toggle=\"modal\" data-target=\"#myModal\">View Recipe</button>\n" +
                 "  </div>\n" +
                 "  </div>\n" +
                 "</div>";
@@ -313,8 +324,8 @@ $(document).ready(() => {
             console.log(hrs);
 
             //add recipe to modal by appending html to modal classes
-            $('.modal-title').html("<h1>" + result.name + "</h1>");
-            $('.description').html("<p>\"" + result.description + "\"</p>");
+            $('#recipe-title').html("<h1>" + result.name + "</h1>");
+            $('#recipe-description').html("<p>\"" + result.description + "\"</p>");
             $('.ingredients-list').html(ingredients);
             $('.instructions').html(instructions);
             if (hrs !== "" || min !== "") {
@@ -393,22 +404,28 @@ $(document).ready(() => {
     }
 
     $("#new-suggest").on("click", function () {
-        let newButton = $("#new-suggest");
-        let spinner = $("#loadSpinner");
-        $("#loaderText").text("Loading...");
-        spinner.css("display", "inline-block");
-        newButton.css("margin-left", "48rem");
-        suggestions = [];
-        let load = function () {
-            console.log(suggestions);
-            profilePage(enjoy, suggestions, false)
-            spinner.css("display", "none");
-            newButton.css("margin-left",);
-            newButton.css("margin-left", "45.4rem");
-            $("#loaderText").html("Suggest new recipes!");
+        if (typeof userProfile !== 'undefined') {
+            let newButton = $("#new-suggest");
+            let spinner = $("#loadSpinner");
+            $("#loaderText").text("Loading...");
+            spinner.css("display", "inline-block");
+            newButton.css("margin-left", "48rem");
+            suggestions = [];
+            let load = function () {
+                console.log(suggestions);
+                profilePage(enjoy, suggestions, false)
+                spinner.css("display", "none");
+                newButton.css("margin-left",);
+                newButton.css("margin-left", "45.4rem");
+                $("#loaderText").html("Suggest new recipes!");
 
+            }
+            getSuggestions(load);
+        } else {
+            $('.enjoy-explanation').text("Login to see recommended recipes!");
+
+            profilePage(enjoy, suggestions, false);
         }
-        getSuggestions(load);
     });
 
 
@@ -437,8 +454,7 @@ function getFavs() {
  * When + button clicked in recipe form, dynamically adds
  * input boxes and -/+ buttons.
  */
-function add_more(id){
-    console.log(id);
+function add_more(){
     console.log("add")
     next = next + 1;
     let newInput = $('<input  placeholder="Type Ingredient..." class="typeahead ' +
@@ -446,22 +462,24 @@ function add_more(id){
         '" type="text" autocomplete="off"/>');
     createTypeahead(newInput);
 
-    let removeBtn = $('<button id="' + (id) +
+    let removeBtn = $('<button id="' + (next) +
         '" class="btn remove-me" onclick=\"remove_me(this.id)\">Remove</button>');
 
-    let add = $("<button id=\""+next+"\" class=\"btn add-more\" onclick=\"add_more(this.id)\" type=\"button\">Add</button>\n");
+    //let add = $("<button id=\""+next+"\" class=\"btn add-more\" onclick=\"add_more(this.id)\" type=\"button\">+ Add Ingredient</button>\n");
 
     let str = $("<div class=\"input-group\"  id=\"field" + next +
         "\" name=\"field" + next + "\"></div>");
     str.append(newInput);
-    str.append(add);
+    str.append(removeBtn);
     let divs = $(".ingredients").children();
     console.log(next);
     console.log(divs[divs.length-1].id);
     let pre_last = $("#" +divs[divs.length-1].id);
-    pre_last.find("button").remove();
-    pre_last.append(removeBtn);
-    $(".ingredients").append(str);
+    //pre_last.find("button").remove();
+    //pre_last.append(removeBtn);
+    //pre_last.insertAfter(str);
+    $("#modify-buttons").before(str);
+    //$(".ingredients").append(str);
 
 
 }
@@ -472,13 +490,12 @@ function add_more(id){
  * input boxes and - button.
  */
 function remove_me(id) {
-    console.log("remove")
-    let fieldID = "#field" + id;
-    //need to Keep both(last one needs to be clicked twice??)
-    console.log(fieldID);
-    $(fieldID).remove();
-    $(fieldID).remove();
-    return false;
+        console.log("remove")
+        let fieldID = "#field" + id;
+        //need to Keep both(last one needs to be clicked twice??)
+        console.log(fieldID);
+        $(fieldID).remove();
+        return false;
 };
 
 /**
@@ -590,7 +607,6 @@ function onSignIn(googleUser) {
                 "                     src=\"" + userProfile.getImageUrl() + "\"\n" +
                 "                     alt=\"Card image cap\" height=\"160\" width=\"160\">");
             console.log(sessionStorage.getItem("signedin"));
-            console.log(sessionStorage.getItem("suggestions"));
 
             if (sessionStorage.getItem("signedin") !== "true") {
 

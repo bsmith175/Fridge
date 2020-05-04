@@ -1,5 +1,8 @@
 package edu.brown.cs.teams.constants;
 
+/**
+ * Contains global strings that are used throughout
+ */
 public class Constants {
     public static final String TRIE_DATA_PATH = "data/trie-data.txt";
     public static final String INGREDIENT_TERMS_PATH = "data/ingredient-terms.txt";

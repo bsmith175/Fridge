@@ -7,6 +7,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Contains functionality for the PostgreSQL user database.
+ */
 public class UserDatabase {
   private Connection conn;
 
@@ -17,8 +20,6 @@ public class UserDatabase {
           SQLException, CommandException {
     Class.forName("org.postgresql.Driver");
     conn = DriverManager.getConnection(url, user, pwd);
-
-
     if (!init) {
       try {
         verifyTables();
@@ -31,6 +32,10 @@ public class UserDatabase {
 
   //-------------------------- User tables setup --------------------------------
 
+  /**
+   * Initialized the user database. Creates all necessary tables.
+   * @throws SQLException - if error occurs while creating tables
+   */
   public void initUserDB() throws SQLException {
     makeUserTable();
     makeExcludeTable();
@@ -40,11 +45,11 @@ public class UserDatabase {
   }
 
 
-  /**
-   * Dummy method to verify all the columns in the recipe table are there.
-   *
-   * @throws SQLException
-   */
+//
+//    Dummy method to verify all the columns in the recipe table are there.
+//
+//    @throws SQLException
+//
   private void verifyTables() throws SQLException {
     String query =
             "SELECT guser.uid, guser.name, guser.profile, favorite.recipeid, favorite.uid," +
@@ -56,14 +61,12 @@ public class UserDatabase {
     prep.executeQuery();
   }
 
-  /**
-   * creates the user table. This table has three columns:
-   * uid (TEXT): the unique string identifying the user (primary key)
-   * name (TEXT): The user's first name. Is not unique
-   * profile (TEXT): The path to the user's profile image.
-   *
-   * @throws SQLException - if exception occurs while making table.
-   */
+
+//    creates the user table. This table has three columns:
+//    uid (TEXT): the unique string identifying the user (primary key)
+//    name (TEXT): The user's first name. Is not unique
+//    profile (TEXT): The path to the user's profile image.
+
   private void makeUserTable() throws SQLException {
     PreparedStatement prep = conn.prepareStatement("CREATE TABLE guser("
             + "uid TEXT PRIMARY KEY, "
@@ -72,12 +75,8 @@ public class UserDatabase {
     prep.executeUpdate();
   }
 
-  /**
-   * The favorite table is a junction table between recipes and users. It links every recipe
-   * that is a favorite to each of the users that have it as a favorite.
-   *
-   * @throws SQLException
-   */
+//    The favorite table is a junction table between recipes and users. It links every recipe
+//    that is a favorite to each of the users that have it as a favorite.
   private void makeFavTable() throws SQLException {
     PreparedStatement prep = conn.prepareStatement("CREATE TABLE favorite("
             + "recipeId INTEGER, "
@@ -85,11 +84,9 @@ public class UserDatabase {
     prep.executeUpdate();
   }
 
-  /**
-   * The exclude table links every user to each food category that they chose to exclude.
-   *
-   * @throws SQLException
-   */
+
+  //The exclude table links every user to each food category that they chose to exclude.
+
   private void makeExcludeTable() throws SQLException {
     PreparedStatement prep = conn.prepareStatement("CREATE TABLE exclude("
             + "category TEXT, "
@@ -97,12 +94,10 @@ public class UserDatabase {
     prep.executeUpdate();
   }
 
-  /**
-   * The favorite table is a junction table between recipes and users. It links every recipe
-   * that is a favorite to each of the users that have it as a favorite.
-   *
-   * @throws SQLException
-   */
+
+//    The favorite table is a junction table between recipes and users. It links every recipe
+//    that is a favorite to each of the users that have it as a favorite.
+
   private void makePantryTable() throws SQLException {
     PreparedStatement prep = conn.prepareStatement("CREATE TABLE pantry("
             + "ingredient TEXT, "

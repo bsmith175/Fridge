@@ -43,16 +43,58 @@
             <a class="nav-item nav-link nav-main" id="profile" href="/home">Profile</a>
         </div>
     </div>
+        <div id="info-button" class="icon-img" data-toggle="modal" data-target="#button-modal">
+            <div id="overlay"></div>
+        </div>
+       </div>
+
     <#--  Google Sign In  -->
     <a class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onFailure" data-longtitle="true"></a>
 </nav>
+<div class="modal fade" id="button-modal" tabindex="-1" role="dialog"
+     aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <b>About What's in My Fridge</b>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                What's In My Fridge is a personalized web-application that recommends
+                delicious recipes based on what you have in your fridge. Our goal is to
+                maximize yumminess and convenience for the user with minimal pain when
+                deciding what to eat. Enter some ingredients and start cooking!
+                <h3><b>Recipes</b></h3>
+                <div>We get all our delicious recipes from <a href = "https://www.bbcgoodfood.com/" target="_blank">BBC Good Food</a>. We pulled recipes using
+                <b>this person's</b> script, which can be found <a href = "asdf" target="_blank">here</a> </div>
+                <h3><b>Privacy</b></h3>
+                <h4>Cookies</h4>
+                <div>To optimize your experience, we store limited information about
+                your session using cookies and local storage. You may disable use of
+                cookies in your browser settings.</div>
+                <h4>Personal Information</h4>
+                <div>If you choose to create an account, we store information provided to us
+                by Google Sign-In. This includes your full name and Google profile picture.</div>
+                <h3><b>Who We Are</b></h3>
+                <div> we can do stuff here if we want</div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
 
 <div class="modal fade bd-example-modal-lg" id="myModal" tabindex="-1" role="dialog"
      aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title">
+                <div class="modal-title" id="recipe-title">
 
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -60,7 +102,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="description">
+                <div class="description" id="recipe-description">
 
                 </div>
                 <h4><img src="https://i.ibb.co/ykfXN3r/carrot.png" alt="carrot" height="60" width="55">

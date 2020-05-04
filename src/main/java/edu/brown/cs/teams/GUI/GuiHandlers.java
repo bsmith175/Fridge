@@ -25,7 +25,9 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import java.util.Map;
 
-//can have more objects for different types of handlers
+/**
+ * Contains endpoints for communication with frontend.
+ */
 public class GuiHandlers {
 
     private static final Gson GSON = new Gson();
@@ -36,12 +38,21 @@ public class GuiHandlers {
             .build();
     private static RunKDAlg favoritesSuggest;
 
-
+    /**
+     * Constructs a GuiHandler. Initialized the IngredientSuggest used for ingredient auto-suggest,
+     * and the algorithm used to search KDTree.
+     * @throws Exception - If exception occurs during initialization
+     */
     public GuiHandlers() throws Exception {
         suggest = new IngredientSuggest();
         favoritesSuggest = new RunKDAlg();
 
     }
+
+    /**
+     * Sets endpoints for client-server communication.
+     * @param freeMarker - Freemarker engine
+     */
     public void setHandlers(FreeMarkerEngine freeMarker) {
         // Specify the algorithm to run here!!
 
@@ -62,35 +73,45 @@ public class GuiHandlers {
         Spark.post("/add-pantry", new pantryAddHandler());
         Spark.post("/remove-pantry", new removePantryHandler());
     }
-    //Handles a user login. Takes user data from the Google User and adds to the database if possible.
+
+    //Handles a user login. Takes user data from the Google User and adds to the database
+    // if possible.
     private static class userLoginHandler implements Route {
 
         @Override
         public Object handle(Request request, Response response) throws Exception {
+            //parameters from post request
             QueryParamsMap qm = request.queryMap();
             String tokenString = qm.value("idToken");
 
             JsonObject responseJSON = new JsonObject();
 
+            //Verify google user validity with GoogleTokenVerifier
             GoogleIdToken idToken = verifier.verify(tokenString);
             if (idToken != null) {
+                //if user is valid, get user information
                 Payload payload = idToken.getPayload();
                 String uid = payload.getSubject();
                 String name = (String) payload.get("name");
                 String pfp = (String) payload.get("picture");
                 AccountUser user = new AccountUser(uid, name, pfp);
+
+                //Add post parameters
                 responseJSON.addProperty("uid", uid);
                 responseJSON.addProperty("name", name);
                 responseJSON.addProperty("profilePicture", pfp);
+
                 try {
                     AlgUtils.getUserDb().addNewUser(user);
                     responseJSON.addProperty("newUser", true);
                 } catch (SQLException e) {
                     responseJSON.addProperty("newUser", false);
                 }
+
                 responseJSON.addProperty("success", true);
 
             } else {
+                //if user is not valid, set success parameter false
                 responseJSON.addProperty("success", false);
 
             }
@@ -98,7 +119,8 @@ public class GuiHandlers {
         }
     }
 
-    //handles a request to the favorites page. Queries db for the user's favorited recipes.
+    //handles a request to the favorites page. Queries user database for the user's
+    // favorited recipes.
     private static class favoritesPageHandler implements Route {
 
         @Override
@@ -106,14 +128,17 @@ public class GuiHandlers {
             QueryParamsMap qm = request.queryMap();
             String uid = qm.value("uid");
 
+            //get recipe IDs of user's favorite recipes
             List<Integer> recipeIDs = AlgUtils.getUserDb().getFavorites(uid);
+
             JsonArray responseJSON = new JsonArray();
             for (Integer curID : recipeIDs) {
 
-                //this is where the json array is created
+                //Gets JsonObject of recipe
                 JsonObject obj = AlgUtils.getRecipeDb().getRecipeContentFromID(curID);
                 if (obj == null) {
-                    throw new IllegalArgumentException("ERROR in favoritesHandler:  recipe doesn't exist");
+                    throw new IllegalArgumentException
+                            ("ERROR in favoritesHandler:  recipe doesn't exist");
                 }
                 responseJSON.add(obj);
             }
@@ -134,14 +159,19 @@ public class GuiHandlers {
             int rid = Integer.parseInt(qm.value("recipe_id"));
             String uid = qm.value("user_id");
             JsonObject responseJSON = new JsonObject();
+
+            //attempt to add favorite to database
             try {
                 if (AlgUtils.getUserDb().addToFavorites(rid, uid)) {
+                    //new favorite was successfuly added
                     responseJSON.addProperty("added", true);
                 } else {
+                    //if recipe was a favorite, remove from user's favorites
                     AlgUtils.getUserDb().removeFavorite(rid, uid);
                     responseJSON.addProperty("added", false);
                 }
             } catch (SQLException throwable) {
+                //error occured while interacting with database
                 responseJSON.addProperty("error", true);
                 return responseJSON.toString();
             }
@@ -177,15 +207,21 @@ public class GuiHandlers {
 
         // Returns the suggested recipes
         @Override
-        public Object handle(Request request, Response response) throws CommandException {
+        public Object handle(Request request, Response response)  {
             QueryParamsMap qm = request.queryMap();
             String[] ingredients = qm.get("text").values();
             boolean meats = Boolean.parseBoolean(qm.get("meats").value());
             boolean dairy = Boolean.parseBoolean(qm.get("dairy").value());
             boolean nuts = Boolean.parseBoolean(qm.get("nuts").value());
             RecipeSuggest suggest = new RecipeSuggest(meats, dairy, nuts);
-            List<JsonObject> results = suggest.runForGui(ingredients);
-            String result = GSON.toJson(results);
+            String result = null;
+            List<JsonObject> results = null;
+            try {
+                results = suggest.runForGui(ingredients);
+                 result = GSON.toJson(results);
+            } catch (Exception e) {
+                result = "none";
+            }
             return result;
         }
     }

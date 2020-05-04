@@ -25,6 +25,9 @@ import java.util.*;
 
 import edu.brown.cs.teams.io.CommandException;
 
+/**
+ * Contains database functionality for the sqlite3 recipe database.
+ */
 public class RecipeDatabase {
 
   private Connection conn;
@@ -106,6 +109,10 @@ public class RecipeDatabase {
     }
   }
 
+  /**
+   * Creates the recipe table
+   * @throws SQLException - if error occurs while creating relation
+   */
   public void makeTable() throws SQLException {
     System.out.println("makeTable");
     prep = conn.prepareStatement("CREATE TABLE recipe("
@@ -121,6 +128,7 @@ public class RecipeDatabase {
             + "imageURL TEXT);");
     prep.executeUpdate();
   }
+
 
   public void parseJson() throws JSONException {
     try (FileReader reader = new FileReader("data/recipe.json")) {

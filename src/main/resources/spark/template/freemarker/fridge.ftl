@@ -61,40 +61,43 @@
                             <button id="2" class="btn remove-me" onclick="remove_me(this.id)">Remove</button>
 
                         </div>
-                        <div class="input-group" id="field3" name="field3">
+                        <div class="input-group" id="field3" name="field2">
                             <input type="text" class="form-control typeahead"
                                    name="field3" id="field3"
                                    placeholder="Type Ingredient..." autocomplete="off"/>
-                            <button id="3" class="btn add-more" onclick="add_more(this.id)" type="button">Add</button>
+                            <button id="3" class="btn remove-me" onclick="remove_me(this.id)">Remove</button>
+
                         </div>
+                        <p id="modify-buttons">
+                        <button  class="btn add-more" onclick="add_more()" type="button">+ Add Ingredient</button>
+                            <button type="button"
+                                    class="btn btn-outline-danger no-meats"
+                                    data-toggle="button"
+                                    aria-pressed="false" autocomplete="off">No Meat
+                                <img src="https://i.ibb.co/NWqs0NM/meat.png" alt="meat" height="30" width="25">
 
-                    </div>
+                            </button>
+                            <button type="button"
+                                    class="btn btn-outline-primary no-dairy"
+                                    data-toggle="button"
+                                    aria-pressed="false" autocomplete="off">No Dairy
+                                <img src="https://i.ibb.co/9ZzTBBT/milk.png" alt="milk" height="30" width="25">
+
+                            </button>
+                            <button type="button"
+                                    class="btn btn-outline-secondary no-nuts"
+                                    data-toggle="button"
+                                    aria-pressed="false" autocomplete="off">No Nuts
+                                <img src="https://i.ibb.co/12pZXpx/peanut.png" alt="peanut" height="30" width="25">
+
+                            </button>
+
+                        </div>
+                    </p>
                 </div>
+
                 <div class="col fridge-buttons">
-                    <div>
-                        <button type="button"
-                                class="btn btn-outline-danger no-meats"
-                                data-toggle="button"
-                                aria-pressed="false" autocomplete="off">No Meat
-                            <img src="https://i.ibb.co/NWqs0NM/meat.png" alt="meat" height="30" width="25">
 
-                        </button>
-                        <button type="button"
-                                class="btn btn-outline-primary no-dairy"
-                                data-toggle="button"
-                                aria-pressed="false" autocomplete="off">No Dairy
-                            <img src="https://i.ibb.co/9ZzTBBT/milk.png" alt="milk" height="30" width="25">
-
-                        </button>
-                        <button type="button"
-                                class="btn btn-outline-secondary no-nuts"
-                                data-toggle="button"
-                                aria-pressed="false" autocomplete="off">No Nuts
-                            <img src="https://i.ibb.co/12pZXpx/peanut.png" alt="peanut" height="30" width="25">
-
-                        </button>
-
-                    </div>
                     <button type="submit"
                             class="btn btn-outline-success find-recipe btn-lg"
                             data-toggle="tooltip" data-placement="left"
@@ -109,7 +112,7 @@
                 </div>
 
             </form>
-            <div style="position: relative; left: 80%; bottom: 100px">
+            <div style="position: relative; left: 84%; bottom: 110px">
                 <label for="numresults">Number of recipes:</label>
                 <select id="numresults">
                     <option>20</option>
