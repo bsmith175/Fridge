@@ -152,11 +152,14 @@ $(document).ready(() => {
                 dairy: dairy
             }, true), response => {
                 //parse response
-                const r = JSON.parse(response);
-                make_cards(result_cards, r, false, true);
-                current_response = r;
-                $("#cookSpinner").css("display", "none");
-
+                if (response === "none") {
+                    $("#cookSpinner").css("display", "none");
+                } else {
+                    const r = JSON.parse(response);
+                    make_cards(result_cards, r, false, true);
+                    current_response = r;
+                    $("#cookSpinner").css("display", "none");
+                }
             });
         } else {
             $("#cookSpinner").css("display", "none");
@@ -195,7 +198,15 @@ $(document).ready(() => {
     $('#myTab a[href="#enjoy"]').on('click', function (e) {
         let newButton = $("#new-suggest");
         newButton.css("visibility", "visible");
-        if (suggestions === null || !suggestions.length) {
+        $("#enjoySpinner").css("display", "inline-block");
+
+        if (typeof userProfile === 'undefined') {
+            $("#enjoySpinner").css("display", "none");
+
+            $('.enjoy-explanation').text("Login to see recommended recipes!");
+            profilePage(enjoy, suggestions, false)
+
+        } else if (suggestions === null || !suggestions.length) {
 
             $('.enjoy-explanation').text("Add more Favorites so that we can recommend you some recipes!");
             enjoy.empty();
@@ -268,7 +279,7 @@ $(document).ready(() => {
                 "    <h5 class=\"card-title\">" + res.name + "</h5>\n" +
                 "    <p class=\"card-text\">" + res.description + "</p>\n" +
                 "    <button id=" + cards + " type=\"button\" class=\"btn btn-outline-success openBtn\" " +
-                "data-toggle=\"modal\" data-target=\".bd-example-modal-lg\">View Recipe</button>\n" +
+                "data-toggle=\"modal\" data-target=\"#myModal\">View Recipe</button>\n" +
                 "  </div>\n" +
                 "  </div>\n" +
                 "</div>";
@@ -313,8 +324,8 @@ $(document).ready(() => {
             console.log(hrs);
 
             //add recipe to modal by appending html to modal classes
-            $('.modal-title').html("<h1>" + result.name + "</h1>");
-            $('.description').html("<p>\"" + result.description + "\"</p>");
+            $('#recipe-title').html("<h1>" + result.name + "</h1>");
+            $('#recipe-description').html("<p>\"" + result.description + "\"</p>");
             $('.ingredients-list').html(ingredients);
             $('.instructions').html(instructions);
             if (hrs !== "" || min !== "") {
@@ -393,22 +404,28 @@ $(document).ready(() => {
     }
 
     $("#new-suggest").on("click", function () {
-        let newButton = $("#new-suggest");
-        let spinner = $("#loadSpinner");
-        $("#loaderText").text("Loading...");
-        spinner.css("display", "inline-block");
-        newButton.css("margin-left", "48rem");
-        suggestions = [];
-        let load = function () {
-            console.log(suggestions);
-            profilePage(enjoy, suggestions, false)
-            spinner.css("display", "none");
-            newButton.css("margin-left",);
-            newButton.css("margin-left", "45.4rem");
-            $("#loaderText").html("Suggest new recipes!");
+        if (typeof userProfile !== 'undefined') {
+            let newButton = $("#new-suggest");
+            let spinner = $("#loadSpinner");
+            $("#loaderText").text("Loading...");
+            spinner.css("display", "inline-block");
+            newButton.css("margin-left", "48rem");
+            suggestions = [];
+            let load = function () {
+                console.log(suggestions);
+                profilePage(enjoy, suggestions, false)
+                spinner.css("display", "none");
+                newButton.css("margin-left",);
+                newButton.css("margin-left", "45.4rem");
+                $("#loaderText").html("Suggest new recipes!");
 
+            }
+            getSuggestions(load);
+        } else {
+            $('.enjoy-explanation').text("Login to see recommended recipes!");
+
+            profilePage(enjoy, suggestions, false);
         }
-        getSuggestions(load);
     });
 
 

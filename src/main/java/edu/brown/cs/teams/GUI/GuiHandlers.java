@@ -207,15 +207,21 @@ public class GuiHandlers {
 
         // Returns the suggested recipes
         @Override
-        public Object handle(Request request, Response response) throws CommandException {
+        public Object handle(Request request, Response response)  {
             QueryParamsMap qm = request.queryMap();
             String[] ingredients = qm.get("text").values();
             boolean meats = Boolean.parseBoolean(qm.get("meats").value());
             boolean dairy = Boolean.parseBoolean(qm.get("dairy").value());
             boolean nuts = Boolean.parseBoolean(qm.get("nuts").value());
             RecipeSuggest suggest = new RecipeSuggest(meats, dairy, nuts);
-            List<JsonObject> results = suggest.runForGui(ingredients);
-            String result = GSON.toJson(results);
+            String result = null;
+            List<JsonObject> results = null;
+            try {
+                results = suggest.runForGui(ingredients);
+                 result = GSON.toJson(results);
+            } catch (Exception e) {
+                result = "none";
+            }
             return result;
         }
     }

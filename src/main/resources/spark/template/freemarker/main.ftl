@@ -94,7 +94,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title">
+                <div class="modal-title" id="recipe-title">
 
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -102,7 +102,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="description">
+                <div class="description" id="recipe-description">
 
                 </div>
                 <h4><img src="https://i.ibb.co/ykfXN3r/carrot.png" alt="carrot" height="60" width="55">

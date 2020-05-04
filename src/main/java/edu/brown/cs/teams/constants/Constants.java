@@ -10,9 +10,9 @@ public class Constants {
 
     public static final String EMBEDDINGS_FILE = "data/ingredient_vectors.json";
 
-    //public static final String GOOGLE_CLIENT_ID = System.getenv("GOOGLE_ID");
+    public static final String GOOGLE_CLIENT_ID = System.getenv("GOOGLE_ID");
     //for debugging:
-    public static final String GOOGLE_CLIENT_ID = "727828985870-25d5atf1g5r853t5n6o90u0dansh9ao2.apps.googleusercontent.com";
+    //public static final String GOOGLE_CLIENT_ID = "727828985870-25d5atf1g5r853t5n6o90u0dansh9ao2.apps.googleusercontent.com";
 
 
 
