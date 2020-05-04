@@ -277,7 +277,9 @@ $(document).ready(() => {
             cards = cards + 1;
         }
 
-        //View a recipe button to show recipt details in modal
+        /**
+         * Click handler to view a recipe in modal.
+         */
         $(".openBtn").click(function (e) {
             modal_title.empty();
             e.preventDefault();
@@ -315,11 +317,14 @@ $(document).ready(() => {
             $('.description').html("<p>\"" + result.description + "\"</p>");
             $('.ingredients-list').html(ingredients);
             $('.instructions').html(instructions);
-            if (hrs !== "" && min !== "") {
-                $('.cook-time').html("<h4>CookTime</h4>\n " +
-                    "<p class='cook-time'>" + hrs + " " + min + "  </p>");
+            if (hrs !== "" || min !== "") {
+                console.log("add time");
+                $('.cook-time').empty();
+                $('.cook-time').html("<img src=\"https://i.ibb.co/SxT1Qpw/recipe-clock.png\" " +
+                    "alt=\"clock\" height=\"40\" width=\"40\">\n"+
+                    "<h4>CookTime " + hrs + " " + min + "</h4>\n ");
             }
-            $('.servings').html("<p>" + result.servings + "  </p>");
+            $('.servings').html("<h4>" +"<img src=\"https://i.ibb.co/NmJwjjv/servings.png\" alt=\"servings\" height=\"40\" width=\"55\">"+ result.servings + "  </h4>");
 
 
         });

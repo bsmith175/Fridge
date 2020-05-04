@@ -63,15 +63,17 @@
                 <div class="description">
 
                 </div>
-                <h4>Ingredients</h4>
+                <h4><img src="https://i.ibb.co/ykfXN3r/carrot.png" alt="carrot" height="60" width="55">
+                    Ingredients</h4>
                 <ul class="ingredients-list">
 
                 </ul>
-                <h4>Instructions</h4>
+                <h4><img src="https://i.ibb.co/ZHG2WsB/instructions.png" alt="instructions" height="60" width="43">
+                    Instructions</h4>
                 <ol class="instructions">
 
                 </ol>
-                <div class="cook-time">
+                <div class="cook-time d-flex row">
 
                 </div>
                 <div class="servings">

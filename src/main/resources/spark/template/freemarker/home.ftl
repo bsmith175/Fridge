@@ -80,6 +80,11 @@
             <h3 class="welcome rounded" id="user-name">Please sign in to view profile! </h3>
 
         </div>
+        <div class="d-flex row justify-content-center align-items-center;">
+            <p>You may view your favorite recipes, ingredients stored in your pantry and recipes we have
+                recommended for you!</p>
+        </div>
+
 
 
         <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -133,7 +138,7 @@
 
                     <form name="pantry-form">
                         <div class="typeahead form-group">
-                            <input type="text" class="form-control typeahead" id="field1" name="field1"
+                            <input type="text" class="form-control typeahead pantry-type" id="field1" name="field1"
                                    placeholder="Ingredient" autocomplete="off"/>
                         </div>
                         <button type="submit" class="btn btn-outline-info add-to-pantry ">Add To Pantry</button>
