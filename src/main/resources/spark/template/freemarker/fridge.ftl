@@ -26,7 +26,7 @@
         </div>
     </div>
     <div class="bbc"> "What's In My Fridge is a personalized web-application that recommends delicious recipes based on what you have in your fridge. Our goal is to maximize yumminess and convenience for the user with minimal pain when deciding what to eat.
-        Plus we use delicious recipes from BBC Good Food!"</div>
+        Plus we use delicious recipes from BBC Good Food!"-The Creators</div>
     <div class="food-form rounded">
         <div class="container">
             <div class="d-flex justify-content-center ">
