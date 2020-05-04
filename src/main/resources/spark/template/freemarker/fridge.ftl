@@ -60,15 +60,15 @@
                             <button id="2" class="btn remove-me" onclick="remove_me(this.id)">Remove</button>
 
                         </div>
-                        <div class="input-group" id="field2" name="field2">
+                        <div class="input-group" id="field3" name="field2">
                             <input type="text" class="form-control typeahead"
-                                   name="field2" id="field2"
+                                   name="field3" id="field3"
                                    placeholder="Type Ingredient..." autocomplete="off"/>
-                            <button id="2" class="btn remove-me" onclick="remove_me(this.id)">Remove</button>
+                            <button id="3" class="btn remove-me" onclick="remove_me(this.id)">Remove</button>
 
                         </div>
                         <p id="modify-buttons">
-                        <button id="3" class="btn add-more" onclick="add_more(this.id)" type="button">+ Add Ingredient</button>
+                        <button  class="btn add-more" onclick="add_more()" type="button">+ Add Ingredient</button>
                             <button type="button"
                                     class="btn btn-outline-danger no-meats"
                                     data-toggle="button"

@@ -454,8 +454,7 @@ function getFavs() {
  * When + button clicked in recipe form, dynamically adds
  * input boxes and -/+ buttons.
  */
-function add_more(id){
-    console.log(id);
+function add_more(){
     console.log("add")
     next = next + 1;
     let newInput = $('<input  placeholder="Type Ingredient..." class="typeahead ' +
@@ -463,7 +462,7 @@ function add_more(id){
         '" type="text" autocomplete="off"/>');
     createTypeahead(newInput);
 
-    let removeBtn = $('<button id="' + (id) +
+    let removeBtn = $('<button id="' + (next) +
         '" class="btn remove-me" onclick=\"remove_me(this.id)\">Remove</button>');
 
     //let add = $("<button id=\""+next+"\" class=\"btn add-more\" onclick=\"add_more(this.id)\" type=\"button\">+ Add Ingredient</button>\n");
@@ -491,13 +490,12 @@ function add_more(id){
  * input boxes and - button.
  */
 function remove_me(id) {
-    console.log("remove")
-    let fieldID = "#field" + id;
-    //need to Keep both(last one needs to be clicked twice??)
-    console.log(fieldID);
-    $(fieldID).remove();
-    $(fieldID).remove();
-    return false;
+        console.log("remove")
+        let fieldID = "#field" + id;
+        //need to Keep both(last one needs to be clicked twice??)
+        console.log(fieldID);
+        $(fieldID).remove();
+        return false;
 };
 
 /**
