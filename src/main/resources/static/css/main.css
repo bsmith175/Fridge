@@ -1,3 +1,31 @@
+Skip to content
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+
+@shalanlan
+cs032-2020
+/
+term-project-bsmith28-elevin3-ngoodma3-sbillaul-1
+Private
+3
+00
+Code
+Issues 0
+Pull requests 0 Actions
+Projects 0
+Wiki
+Security 0
+Insights
+term-project-bsmith28-elevin3-ngoodma3-sbillaul-1/src/main/resources/static/css/main.css
+@shalanlan shalanlan fridge form
+1bb5eea 5 minutes ago
+@shalanlan@bsmith175@nategoodman376@babajaj
+235 lines (178 sloc)  3.13 KB
+
 input[type="number"] {
   width: 3em;
 }
@@ -74,11 +102,18 @@ input[type="text"], textarea {
 
 .remove-me{
   background: rgba(242, 175, 152, 0.79);
+  border-color: #e57f6b;
+  min-width:80px;
+  margin-bottom: .2em;
 
 
 }
 .add-more{
-  background: rgba(214, 242, 177, 0.79);
+  background: rgba(105, 242, 96, 0.79);
+  border-color: #67cc68;
+  min-width:80px;
+  margin-bottom: .2em;
+
 
 }
 .find-recipe {
@@ -95,6 +130,7 @@ input[type="text"], textarea {
 .nav-tabs .nav-item .nav-link {
   background-color: rgb(255, 173, 123);
   color: #fffdfe;
+  border-color: rgb(212, 139, 106);
 }
 
 .nav-tabs .nav-item .nav-link.active {
@@ -224,4 +260,3 @@ input[type="text"], textarea {
   color: white !important;
   font-size: xx-large; !important;
 }
-
