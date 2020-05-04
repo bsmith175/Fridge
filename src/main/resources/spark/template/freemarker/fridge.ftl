@@ -43,22 +43,22 @@
                         <div class="input-group" id="field1" name="field1">
                             <input type="text" class="form-control typeahead"
                                    name="field1" id="field1"
-                                   placeholder="Ingredient" autocomplete="off"/>
-                            <button id="1" class="btn remove-me" onclick="remove_me(this.id)">_</button>
+                                   placeholder="Type Ingredient..." autocomplete="off"/>
+                            <button id="1" class="btn remove-me" onclick="remove_me(this.id)">Remove</button>
 
                         </div>
                         <div class="input-group" id="field2" name="field2">
                             <input type="text" class="form-control typeahead"
                                    name="field2" id="field2"
-                                   placeholder="Ingredient" autocomplete="off"/>
-                            <button id="2" class="btn remove-me" onclick="remove_me(this.id)" >_</button>
+                                   placeholder="Type Ingredient..." autocomplete="off"/>
+                            <button id="2" class="btn remove-me" onclick="remove_me(this.id)" >Remove</button>
 
                         </div>
                         <div class="input-group" id="field3" name="field3">
                             <input type="text" class="form-control typeahead"
                                    name="field3" id="field3"
-                                   placeholder="Ingredient" autocomplete="off"/>
-                            <button id="3" class="btn add-more"  onclick="add_more(this.id)" type="button">+</button>
+                                   placeholder="Type Ingredient..." autocomplete="off"/>
+                            <button id="3" class="btn add-more"  onclick="add_more(this.id)" type="button">Add</button>
                         </div>
 
                     </div>

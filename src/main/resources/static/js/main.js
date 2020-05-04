@@ -436,15 +436,15 @@ function add_more(id){
     console.log(id);
     console.log("add")
     next = next + 1;
-    let newInput = $('<input  placeholder="Ingredient" class="typeahead ' +
+    let newInput = $('<input  placeholder="Type Ingredient..." class="typeahead ' +
         'form-control type\"  name="field' + next +
         '" type="text" autocomplete="off"/>');
     createTypeahead(newInput);
 
     let removeBtn = $('<button id="' + (id) +
-        '" class="btn remove-me" onclick=\"remove_me(this.id)\">_</button>');
+        '" class="btn remove-me" onclick=\"remove_me(this.id)\">Remove</button>');
 
-    let add = $("<button id=\""+next+"\" class=\"btn add-more\" onclick=\"add_more(this.id)\" type=\"button\">+</button>\n");
+    let add = $("<button id=\""+next+"\" class=\"btn add-more\" onclick=\"add_more(this.id)\" type=\"button\">Add</button>\n");
 
     let str = $("<div class=\"input-group\"  id=\"field" + next +
         "\" name=\"field" + next + "\"></div>");
