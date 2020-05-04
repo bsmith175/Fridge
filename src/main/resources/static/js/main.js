@@ -277,7 +277,9 @@ $(document).ready(() => {
             cards = cards + 1;
         }
 
-        //View a recipe button to show recipt details in modal
+        /**
+         * Click handler to view a recipe in modal.
+         */
         $(".openBtn").click(function (e) {
             modal_title.empty();
             e.preventDefault();
@@ -315,11 +317,14 @@ $(document).ready(() => {
             $('.description').html("<p>\"" + result.description + "\"</p>");
             $('.ingredients-list').html(ingredients);
             $('.instructions').html(instructions);
-            if (hrs !== "" && min !== "") {
-                $('.cook-time').html("<h4>CookTime</h4>\n " +
-                    "<p class='cook-time'>" + hrs + " " + min + "  </p>");
+            if (hrs !== "" || min !== "") {
+                console.log("add time");
+                $('.cook-time').empty();
+                $('.cook-time').html("<img src=\"https://i.ibb.co/SxT1Qpw/recipe-clock.png\" " +
+                    "alt=\"clock\" height=\"40\" width=\"40\">\n"+
+                    "<h4>CookTime " + hrs + " " + min + "</h4>\n ");
             }
-            $('.servings').html("<p>" + result.servings + "  </p>");
+            $('.servings').html("<h4>" +"<img src=\"https://i.ibb.co/NmJwjjv/servings.png\" alt=\"servings\" height=\"40\" width=\"55\">"+ result.servings + "  </h4>");
 
 
         });
@@ -436,15 +441,15 @@ function add_more(id){
     console.log(id);
     console.log("add")
     next = next + 1;
-    let newInput = $('<input  placeholder="Ingredient" class="typeahead ' +
+    let newInput = $('<input  placeholder="Type Ingredient..." class="typeahead ' +
         'form-control type\"  name="field' + next +
         '" type="text" autocomplete="off"/>');
     createTypeahead(newInput);
 
     let removeBtn = $('<button id="' + (id) +
-        '" class="btn remove-me" >_</button>');
+        '" class="btn remove-me" onclick=\"remove_me(this.id)\">Remove</button>');
 
-    let add = $("<button id=\""+next+"\" class=\"btn add-more\" onclick=\"add_more(this.id)\" type=\"button\">+</button>\n");
+    let add = $("<button id=\""+next+"\" class=\"btn add-more\" onclick=\"add_more(this.id)\" type=\"button\">Add</button>\n");
 
     let str = $("<div class=\"input-group\"  id=\"field" + next +
         "\" name=\"field" + next + "\"></div>");
@@ -458,23 +463,23 @@ function add_more(id){
     pre_last.append(removeBtn);
     $(".ingredients").append(str);
 
-    /**
-     * Click function for remove-me selector.
-     * When - button clicked in recipe form, dynamically removes
-     * input boxes and - button.
-     */
-    $('.remove-me').click(function (e) {
-        console.log("remove")
-        e.preventDefault();
-        let fieldID = "#field" + this.id;
-        //need to Keep both(last one needs to be clicked twice??)
-        console.log(fieldID);
-        $(fieldID).remove();
-        $(fieldID).remove();
-        return false;
-    });
 
 }
+
+/**
+ * Click function for remove-me selector.
+ * When - button clicked in recipe form, dynamically removes
+ * input boxes and - button.
+ */
+function remove_me(id) {
+    console.log("remove")
+    let fieldID = "#field" + id;
+    //need to Keep both(last one needs to be clicked twice??)
+    console.log(fieldID);
+    $(fieldID).remove();
+    $(fieldID).remove();
+    return false;
+};
 
 /**
  * Removes a pantry item.
