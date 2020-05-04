@@ -128,7 +128,8 @@ public class AlgUtils {
             + "|mutton|opossum|pork|bacon|rabbit|snake|squirrrel|tripe|"
             + "turtle|veal|venison|prosciutto|cornish|duck"
             + "|goose|grouse|ostrich|partridge|pheasant|quail|squab"
-            + "|turkey|sausage|chicken|rib)(?!((\\s*)(chees|milk|egg)))";
+            + "|turkey|sausage|chicken|rib|goat's|goats)(?!(('s)?(\\s*)"
+            + "(chees|milk|egg)))";
   }
 
   /**
@@ -164,7 +165,7 @@ public class AlgUtils {
     double[] result = new double[EMBED_SIZE];
     for (int i = 0; i < result.length; i++) {
       for (Ingredient ingr : ingreds) {
-        double[] embedding = ingr.getVec();
+        double[] embedding = ingr.getPosition();
         result[i] += embedding[i];
       }
       result[i] /= ingreds.size();

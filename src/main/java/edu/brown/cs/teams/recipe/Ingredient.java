@@ -3,24 +3,40 @@ package edu.brown.cs.teams.recipe;
 import edu.brown.cs.teams.algorithms.AlgUtils;
 import edu.brown.cs.teams.kdtree.CartesianPoint;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class Ingredient extends CartesianPoint{
+/**
+ * class for an ingredient.
+ */
+public class Ingredient extends CartesianPoint {
   private String id;
   private double distance;
 
-
+  /**
+   * constructor for an ingredient.
+   *
+   * @param id the ingredient id
+   */
   public Ingredient(String id) {
     super(new double[]{});
     this.id = id;
   }
 
-  public double[] getVec() {
+  /**
+   * gets the vector from the word embedding map.
+   *
+   * @return the word embedding (double[])
+   */
+  @Override
+  public double[] getPosition() {
     return AlgUtils.getVectorMap().get(id);
   }
 
+  /**
+   * gets the id of the ingredient.
+   *
+   * @return id of this ingredient
+   */
   public String getId() {
     return this.id;
   }
@@ -35,11 +51,12 @@ public class Ingredient extends CartesianPoint{
     return this.distance;
   }
 
+
   /**
    * Sets the distance of this ingredient to a nearest ingredient. Useful for
    * the recipe class to not have to repeat calculations.
    *
-   * @param distance
+   * @param distance set the distance of this ingredient
    */
   public void setDistance(double distance) {
     this.distance = distance;
@@ -59,7 +76,7 @@ public class Ingredient extends CartesianPoint{
     Ingredient best = null;
     double closest = 0.0;
     for (Ingredient i : ingredients) {
-      double similarity = this.getDistance(i.getVec());
+      double similarity = this.getDistance(i.getPosition());
       if (similarity > closest) {
         best = i;
         closest = similarity;
@@ -70,20 +87,6 @@ public class Ingredient extends CartesianPoint{
     } else {
       return null;
     }
-  }
-
-  @Override
-  public double getDistance(double[] target) {
-    double dotProduct = 0.0;
-    double normA = 0.0;
-    double normB = 0.0;
-    double[] vec = getVec();
-    for (int i = 0; i < target.length; i++) {
-      dotProduct += vec[i] * target[i];
-      normA += Math.pow(vec[i], 2);
-      normB += Math.pow(target[i], 2);
-    }
-    return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
   }
 
 

@@ -22,9 +22,9 @@ public abstract class CartesianPoint implements DistanceMetric {
     double dotProduct = 0.0;
     double normA = 0.0;
     double normB = 0.0;
-    for (int i = 0; i < this.position.length; i++) {
-      dotProduct += this.position[i] * target[i];
-      normA += Math.pow(this.position[i], 2);
+    for (int i = 0; i < getPosition().length; i++) {
+      dotProduct += getPosition()[i] * target[i];
+      normA += Math.pow(getPosition()[i], 2);
       normB += Math.pow(target[i], 2);
     }
     return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
