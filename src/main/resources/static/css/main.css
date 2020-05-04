@@ -217,8 +217,8 @@ input[type="text"], textarea {
 #new-suggest{
   height: 2.6rem;
   visibility: hidden;
-  float: right;
-  margin-left: 45.4rem;
+  position: absolute;
+  right: 17px;
 }
 #loadSpinner{
   display: none;
