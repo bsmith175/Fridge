@@ -57,7 +57,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title">
-                    About What's in My Fridge
+                    <b>About What's in My Fridge</b>
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>

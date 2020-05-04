@@ -466,19 +466,21 @@ function add_more(id){
     let removeBtn = $('<button id="' + (id) +
         '" class="btn remove-me" onclick=\"remove_me(this.id)\">Remove</button>');
 
-    let add = $("<button id=\""+next+"\" class=\"btn add-more\" onclick=\"add_more(this.id)\" type=\"button\">Add</button>\n");
+    //let add = $("<button id=\""+next+"\" class=\"btn add-more\" onclick=\"add_more(this.id)\" type=\"button\">+ Add Ingredient</button>\n");
 
     let str = $("<div class=\"input-group\"  id=\"field" + next +
         "\" name=\"field" + next + "\"></div>");
     str.append(newInput);
-    str.append(add);
+    str.append(removeBtn);
     let divs = $(".ingredients").children();
     console.log(next);
     console.log(divs[divs.length-1].id);
     let pre_last = $("#" +divs[divs.length-1].id);
-    pre_last.find("button").remove();
-    pre_last.append(removeBtn);
-    $(".ingredients").append(str);
+    //pre_last.find("button").remove();
+    //pre_last.append(removeBtn);
+    //pre_last.insertAfter(str);
+    $("#modify-buttons").before(str);
+    //$(".ingredients").append(str);
 
 
 }
