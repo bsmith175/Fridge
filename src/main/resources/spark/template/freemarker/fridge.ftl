@@ -41,12 +41,25 @@
                     <div class="row ingredients">
                         <div class="input-group" id="field1" name="field1">
                             <input type="text" class="form-control typeahead"
-                                   name="field1"
+                                   name="field1" id="field1"
                                    placeholder="Ingredient" autocomplete="off"/>
-                            <button id="b1" class="btn add-more" type="button">
-                                +
-                            </button>
+                            <button id="1" class="btn remove-me" >_</button>
+
                         </div>
+                        <div class="input-group" id="field2" name="field2">
+                            <input type="text" class="form-control typeahead"
+                                   name="field2" id="field2"
+                                   placeholder="Ingredient" autocomplete="off"/>
+                            <button id="2" class="btn remove-me" >_</button>
+
+                        </div>
+                        <div class="input-group" id="field3" name="field3">
+                            <input type="text" class="form-control typeahead"
+                                   name="field3" id="field3"
+                                   placeholder="Ingredient" autocomplete="off"/>
+                            <button id="3" class="btn add-more"  onclick="add_more(this.id)" type="button">+</button>
+                        </div>
+
                     </div>
                 </div>
                 <div class="col fridge-buttons">
@@ -55,16 +68,22 @@
                                 class="btn btn-outline-danger no-meats"
                                 data-toggle="button"
                                 aria-pressed="false" autocomplete="off">No Meat
+                            <img src="https://i.ibb.co/NWqs0NM/meat.png" alt="meat" height="30" width="25">
+
                         </button>
                         <button type="button"
                                 class="btn btn-outline-primary no-dairy"
                                 data-toggle="button"
                                 aria-pressed="false" autocomplete="off">No Dairy
+                            <img src="https://i.ibb.co/9ZzTBBT/milk.png" alt="milk" height="30" width="25">
+
                         </button>
                         <button type="button"
                                 class="btn btn-outline-secondary no-nuts"
                                 data-toggle="button"
                                 aria-pressed="false" autocomplete="off">No Nuts
+                            <img src="https://i.ibb.co/12pZXpx/peanut.png" alt="peanut" height="30" width="25">
+
                         </button>
 
                     </div>
@@ -73,8 +92,11 @@
                             data-toggle="tooltip" data-placement="left"
                             title="Looks for recipes containing the ingredients above">
                         Start Cooking!
+                        <img src="https://i.ibb.co/bsFSdGy/carrot.png" alt="carrot" height="30" width="30">
+
                     </button>
-                    <span id="cookSpinner" class="spinner-border spinner-border-sm"  role="status" aria-hidden="true"></span>
+                    <span id="cookSpinner" class="spinner-border spinner-border-sm" role="status"
+                          aria-hidden="true"></span>
 
                 </div>
 
