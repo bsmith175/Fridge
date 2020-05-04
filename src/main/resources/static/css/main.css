@@ -1,30 +1,4 @@
-Skip to content
-Search or jump to…
 
-Pull requests
-Issues
-Marketplace
-Explore
-
-@shalanlan
-cs032-2020
-/
-term-project-bsmith28-elevin3-ngoodma3-sbillaul-1
-Private
-3
-00
-Code
-Issues 0
-Pull requests 0 Actions
-Projects 0
-Wiki
-Security 0
-Insights
-term-project-bsmith28-elevin3-ngoodma3-sbillaul-1/src/main/resources/static/css/main.css
-@shalanlan shalanlan fridge form
-1bb5eea 5 minutes ago
-@shalanlan@bsmith175@nategoodman376@babajaj
-235 lines (178 sloc)  3.13 KB
 
 input[type="number"] {
   width: 3em;
@@ -64,11 +38,17 @@ input[type="number"] {
 .modal,
 .navbar,
 .btn,
+p,
 .container{
   font-family: 'Abel', sans-serif;
 }
+.modal-header{
+  background-image: linear-gradient(#fffceb, #fff8f8);
+}
 
-
+p{
+  font-size: large;
+}
 .dropdown-divider{
   color : grey;
   background-color: grey;
@@ -79,18 +59,24 @@ input[type="text"], textarea {
 
 }
 
-.profile{
-  background-color: #b7f2c1;
-  margin: .5em;
-  border: 4px solid #aaffc9;
-  border-radius: 25px; !important;
-  /*!*background-image: url("https://image.shutterstock.com/image-vector/vector-seamless-pattern-cute-orange-260nw-1048386433.jpg");*!*/
+.pantry-type{
+  max-width: 220px;
+}
 
+.profile{
+  background-color: #ace8b5;
+  margin: .5em;
+  border: 4px solid #93e0af;
+  border-radius: 25px; !important;
+
+}
+.add-to-pantry{
+  margin-bottom: 50px;
 }
 
 .profile-pic{
   margin: .5em;
-  border: 7px solid #aaffc9;
+  border: 7px solid #93e0af;
 }
 
 .welcome {
@@ -220,7 +206,7 @@ input[type="text"], textarea {
 }
 
 .cook-time{
-  margin-left: 10px;
+  margin-left: 2px;
 
 }
 
@@ -259,4 +245,7 @@ input[type="text"], textarea {
 .nav-main{
   color: white !important;
   font-size: xx-large; !important;
+}
+.h1{
+  margin-bottom: 0px; !important;
 }

@@ -25,13 +25,19 @@
                  alt="Smiley face" height="200" width="200">
         </div>
     </div>
-    <div class="bbc"> "What's In My Fridge is a personalized web-application that recommends delicious recipes based on what you have in your fridge. Our goal is to maximize yumminess and convenience for the user with minimal pain when deciding what to eat.
-        Plus we use delicious recipes from BBC Good Food!"-The Creators</div>
+    <div class="bbc"> "What's In My Fridge is a personalized web-application that recommends delicious recipes based on
+        what you have in your fridge. Our goal is to maximize yumminess and convenience for the user with minimal pain
+        when deciding what to eat.
+        Plus we use delicious recipes from BBC Good Food!"-The Creators
+    </div>
     <div class="food-form rounded">
         <div class="container">
-            <div class="d-flex justify-content-center ">
+            <div class="d-flex flex-row justify-content-center ">
                 <h1>Time to Cook!</h1>
+            </div>
+            <div class="d-flex justify-content-center ">
 
+                <p>Enter the ingredients you have in your fridge below</p>
             </div>
         </div>
         <div class="container">
@@ -51,14 +57,14 @@
                             <input type="text" class="form-control typeahead"
                                    name="field2" id="field2"
                                    placeholder="Type Ingredient..." autocomplete="off"/>
-                            <button id="2" class="btn remove-me" onclick="remove_me(this.id)" >Remove</button>
+                            <button id="2" class="btn remove-me" onclick="remove_me(this.id)">Remove</button>
 
                         </div>
                         <div class="input-group" id="field3" name="field3">
                             <input type="text" class="form-control typeahead"
                                    name="field3" id="field3"
                                    placeholder="Type Ingredient..." autocomplete="off"/>
-                            <button id="3" class="btn add-more"  onclick="add_more(this.id)" type="button">Add</button>
+                            <button id="3" class="btn add-more" onclick="add_more(this.id)" type="button">Add</button>
                         </div>
 
                     </div>
