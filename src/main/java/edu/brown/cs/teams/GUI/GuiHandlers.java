@@ -124,25 +124,30 @@ public class GuiHandlers {
     private static class favoritesPageHandler implements Route {
 
         @Override
-        public Object handle(Request request, Response response) throws Exception {
+        public Object handle(Request request, Response response) {
             QueryParamsMap qm = request.queryMap();
             String uid = qm.value("uid");
 
-            //get recipe IDs of user's favorite recipes
-            List<Integer> recipeIDs = AlgUtils.getUserDb().getFavorites(uid);
+            try {
+                //get recipe IDs of user's favorite recipes
+                List<Integer> recipeIDs = AlgUtils.getUserDb().getFavorites(uid);
 
-            JsonArray responseJSON = new JsonArray();
-            for (Integer curID : recipeIDs) {
+                JsonArray responseJSON = new JsonArray();
+                for (Integer curID : recipeIDs) {
 
-                //Gets JsonObject of recipe
-                JsonObject obj = AlgUtils.getRecipeDb().getRecipeContentFromID(curID);
-                if (obj == null) {
-                    throw new IllegalArgumentException
-                            ("ERROR in favoritesHandler:  recipe doesn't exist");
+                    //Gets JsonObject of recipe
+                    JsonObject obj = null;
+                    obj = AlgUtils.getRecipeDb().getRecipeContentFromID(curID);
+                    if (obj == null) {
+                        throw new IllegalArgumentException
+                                ("ERROR in favoritesHandler:  recipe doesn't exist");
+                    }
+                    responseJSON.add(obj);
                 }
-                responseJSON.add(obj);
+                return responseJSON.toString();
+            } catch (Exception e) {
+                return "error";
             }
-            return responseJSON.toString();
         }
     }
 
@@ -195,10 +200,15 @@ public class GuiHandlers {
 
     private static class SuggestedHandler implements Route {
         @Override
-        public Object handle(Request request, Response response) throws Exception {
+        public Object handle(Request request, Response response)  {
             QueryParamsMap qm = request.queryMap();
             String uid = qm.get("uid").values()[0];
-            String result = GSON.toJson(favoritesSuggest.getRecommendations(uid));
+            String result = null;
+            try {
+                result = GSON.toJson(favoritesSuggest.getRecommendations(uid));
+            } catch (Exception e) {
+                return "error";
+            }
             return result;
         }
     }
@@ -252,7 +262,7 @@ public class GuiHandlers {
         //Takes in array of ingredients entered by user, just like for a recipe search.
         //additionally has another parameter, "uid", which is the user's ID.
         @Override
-        public Object handle(Request request, Response response) throws Exception {
+        public Object handle(Request request, Response response) {
             QueryParamsMap qm = request.queryMap();
             String uid = qm.value("uid");
             String term = qm.value("text");
@@ -261,7 +271,7 @@ public class GuiHandlers {
             try {
                 AlgUtils.getUserDb().addToPantry(term, uid);
                 responseJSON.addProperty("success", true);
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 responseJSON.addProperty("success", false);
             }
 

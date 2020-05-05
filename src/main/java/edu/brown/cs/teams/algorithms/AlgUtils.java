@@ -6,8 +6,11 @@ import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.kdtree.KDTree;
 import edu.brown.cs.teams.recipe.MinimalRecipe;
 
-import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Collection;
 
 import edu.brown.cs.teams.recipe.Ingredient;
 import edu.brown.cs.teams.recipe.Recipe;
@@ -16,7 +19,7 @@ import edu.brown.cs.teams.recipe.Recipe;
  * Class to store the information relevant to the algorithms being run. Also
  * has convenient util static methods.
  */
-public class AlgUtils {
+public final class AlgUtils {
   private static RecipeDatabase rdb;
   private static UserDatabase udb;
   private static List<Recipe> fullRecipes =
@@ -44,6 +47,7 @@ public class AlgUtils {
   public static Map<String, double[]> getVectorMap() {
     return vectorMap;
   }
+
   /**
    * Getter method for the db proxy.
    *
@@ -99,8 +103,6 @@ public class AlgUtils {
   /**
    * builds the full recipe list from the database and stores it in Config
    * class.
-   *
-   * @throws SQLException for invalid queries.
    */
   public static void buildRecList() throws CommandException {
     String filename = "data/ingredient_vectors.json";
@@ -128,7 +130,8 @@ public class AlgUtils {
             + "|mutton|opossum|pork|bacon|rabbit|snake|squirrrel|tripe|"
             + "turtle|veal|venison|prosciutto|cornish|duck"
             + "|goose|grouse|ostrich|partridge|pheasant|quail|squab"
-            + "|turkey|sausage|chicken|rib)(?!((\\s*)(chees|milk|egg)))";
+            + "|turkey|sausage|chicken|rib|goat's|goats)(?!(('s)?(\\s*)"
+            + "(chees|milk|egg)))";
   }
 
   /**
@@ -152,7 +155,6 @@ public class AlgUtils {
   }
 
 
-
   /**
    * Method to concatenate and add ingredient vectors in a collection of
    * ingredients.
@@ -164,12 +166,22 @@ public class AlgUtils {
     double[] result = new double[EMBED_SIZE];
     for (int i = 0; i < result.length; i++) {
       for (Ingredient ingr : ingreds) {
-        double[] embedding = ingr.getVec();
+        double[] embedding = ingr.getPosition();
         result[i] += embedding[i];
       }
       result[i] /= ingreds.size();
     }
     return result;
+  }
+
+  /**
+   * method do ONLY set the recipe database. Useful for testing without
+   * needing to access all the user information.
+   *
+   * @param r the recipe database
+   */
+  public static void setDb(RecipeDatabase r) {
+    rdb = r;
   }
 
 }

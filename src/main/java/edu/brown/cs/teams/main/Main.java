@@ -90,7 +90,6 @@ public final class Main {
     }
 
     try {
-      new AlgUtils();
       r = new RecipeDatabase(Constants.DATABASE_FILE, false);
         URI dbURI = new URI(System.getenv("DB_URL"));
         //for debuggin:

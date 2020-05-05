@@ -3,6 +3,7 @@ package edu.brown.cs.teams.io;
 
 import com.google.gson.JsonObject;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -23,5 +24,6 @@ public interface Command {
    * @return an ordered list of json objects representing recipes.
    * @throws CommandException if command is invalid
    */
-  List<JsonObject> runForGui(String[] command) throws CommandException;
+  List<JsonObject> runForGui(String[] command)
+          throws CommandException, SQLException;
 }
