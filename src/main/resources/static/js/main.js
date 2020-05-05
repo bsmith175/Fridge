@@ -60,39 +60,39 @@ $(document).ready(() => {
         console.log("add to pantry")
         let postParameters = "";
         let elements = document.forms["pantry-form"].elements;
-            for (let i = 0; i < elements.length; i++) {
+        for (let i = 0; i < elements.length; i++) {
 
-                if (elements[i].value != "" && elements[i].value != " ") {
-                    console.log((elements[i]).value);
+            if (elements[i].value != "" && elements[i].value != " ") {
+                console.log((elements[i]).value);
 
-                    postParameters = elements[i].value;
-                }
+                postParameters = elements[i].value;
             }
-            if (postParameters != "") {
-                $.post('/add-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
-                    data = JSON.parse(data);
-                    console.log(data)
-                    //getPantry();
-                    //displayPantry();
+        }
+        if (postParameters != "") {
+            $.post('/add-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
+                data = JSON.parse(data);
+                console.log(data)
+                //getPantry();
+                //displayPantry();
 
-                    const s = "<button type=\"button\" id=\"" + pantry_counter + "\" name=\"" + postParameters +
-                        "\" class=\"btn btn-lg btn-outline-info remove-pantry\" " +
-                        "onclick='remove_pantry(this.id)'>\n"
-                        + postParameters
-                        + " <span class=\"badge badge-light\">x</span>\n"
-                        + "                        </button>";
-                    pantry.append(s);
-                    pantryItems.push(postParameters);
-                    console.log(pantryItems);
+                const s = "<button type=\"button\" id=\"" + pantry_counter + "\" name=\"" + postParameters +
+                    "\" class=\"btn btn-lg btn-outline-info remove-pantry\" " +
+                    "onclick='remove_pantry(this.id)'>\n"
+                    + postParameters
+                    + " <span class=\"badge badge-light\">x</span>\n"
+                    + "                        </button>";
+                pantry.append(s);
+                pantryItems.push(postParameters);
+                console.log(pantryItems);
 
 
-                });
-                pantry_counter = pantry_counter + 1;
-            }
-            document.forms["pantry-form"].reset();
-            // sessionStorage.setItem("pantry", pantryItems);
+            });
+            pantry_counter = pantry_counter + 1;
+        }
+        document.forms["pantry-form"].reset();
+        // sessionStorage.setItem("pantry", pantryItems);
 
-            return false;
+        return false;
 
     })
 
@@ -332,10 +332,10 @@ $(document).ready(() => {
                 console.log("add time");
                 $('.cook-time').empty();
                 $('.cook-time').html("<img src=\"https://i.ibb.co/SxT1Qpw/recipe-clock.png\" " +
-                    "alt=\"clock\" height=\"40\" width=\"40\">\n"+
+                    "alt=\"clock\" height=\"40\" width=\"40\">\n" +
                     "<h4>CookTime " + hrs + " " + min + "</h4>\n ");
             }
-            $('.servings').html("<h4>" +"<img src=\"https://i.ibb.co/NmJwjjv/servings.png\" alt=\"servings\" height=\"40\" width=\"55\">"+ result.servings + "  </h4>");
+            $('.servings').html("<h4>" + "<img src=\"https://i.ibb.co/NmJwjjv/servings.png\" alt=\"servings\" height=\"40\" width=\"55\">" + result.servings + "  </h4>");
 
 
         });
@@ -449,12 +449,13 @@ function getFavs() {
         }
     });
 }
+
 /**
  * Click function for add-more selector.
  * When + button clicked in recipe form, dynamically adds
  * input boxes and -/+ buttons.
  */
-function add_more(){
+function add_more() {
     console.log("add")
     next = next + 1;
     let newInput = $('<input  placeholder="Type Ingredient..." class="typeahead ' +
@@ -473,8 +474,8 @@ function add_more(){
     str.append(removeBtn);
     let divs = $(".ingredients").children();
     console.log(next);
-    console.log(divs[divs.length-1].id);
-    let pre_last = $("#" +divs[divs.length-1].id);
+    console.log(divs[divs.length - 1].id);
+    let pre_last = $("#" + divs[divs.length - 1].id);
     //pre_last.find("button").remove();
     //pre_last.append(removeBtn);
     //pre_last.insertAfter(str);
@@ -490,12 +491,12 @@ function add_more(){
  * input boxes and - button.
  */
 function remove_me(id) {
-        console.log("remove")
-        let fieldID = "#field" + id;
-        //need to Keep both(last one needs to be clicked twice??)
-        console.log(fieldID);
-        $(fieldID).remove();
-        return false;
+    console.log("remove")
+    let fieldID = "#field" + id;
+    //need to Keep both(last one needs to be clicked twice??)
+    console.log(fieldID);
+    $(fieldID).remove();
+    return false;
 };
 
 /**
@@ -545,16 +546,15 @@ function getPantry() {
     };
     $.post("/pantry", params, response => {
 
-            const r = JSON.parse(response);
-            if (r.success === "true") {
-                console.log(r);
+        const r = JSON.parse(response);
 
-                sessionStorage.setItem("pantry", response);
 
-                for (let res of r) {
-                    pantryItems.push(res);
-                }
-            }
+        sessionStorage.setItem("pantry", response);
+
+        for (let res of r) {
+            pantryItems.push(res);
+        }
+
     });
 
 }
@@ -564,7 +564,7 @@ function getPantry() {
  * Gets autofill data from /suggest
  * @param $els jquery selector for an input
  */
-function createTypeahead($els){
+function createTypeahead($els) {
     $els.typeahead({
         source: function (query, process) {
             return $.post('/suggest', {input: query}, function (data) {
@@ -641,11 +641,8 @@ function onSignIn(googleUser) {
 
 
                 //pantryItems = JSON.parse(sessionStorage.getItem("pantry"));
-                if (pantryItems === null || pantryItems.length == 0) {
-                    pantryItems = [];
-                    getPantry();
-                }
-                console.log(pantryItems);
+                getPantry();
+
 
             }
 
