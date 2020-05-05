@@ -91,9 +91,9 @@ public final class Main {
 
     try {
       r = new RecipeDatabase(Constants.DATABASE_FILE, false);
-        URI dbURI = new URI(System.getenv("DB_URL"));
+        //URI dbURI = new URI(System.getenv("DB_URL"));
         //for debuggin:
-        //URI dbURI = new URI("postgresql://bsmith28_ben:wiyf1!@johnny.heliohost.org:5432/bsmith28_wiyf_db");
+        URI dbURI = new URI("postgresql://bsmith28_ben:wiyf1!@johnny.heliohost.org:5432/bsmith28_wiyf_db");
         String username = dbURI.getUserInfo().split(":")[0];
         String pwd = dbURI.getUserInfo().split(":")[1];
 

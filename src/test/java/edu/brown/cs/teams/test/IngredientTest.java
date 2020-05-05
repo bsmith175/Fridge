@@ -1,19 +1,19 @@
 package edu.brown.cs.teams.test;
 
-        import edu.brown.cs.teams.algorithms.AlgUtils;
-        import edu.brown.cs.teams.constants.Constants;
-        import edu.brown.cs.teams.database.RecipeDatabase;
-        import edu.brown.cs.teams.io.CommandException;
-        import edu.brown.cs.teams.recipe.Ingredient;
-        import edu.brown.cs.teams.recipe.Recipe;
-        import org.junit.Test;
+import edu.brown.cs.teams.algorithms.AlgUtils;
+import edu.brown.cs.teams.constants.Constants;
+import edu.brown.cs.teams.database.RecipeDatabase;
+import edu.brown.cs.teams.io.CommandException;
+import edu.brown.cs.teams.recipe.Ingredient;
+import edu.brown.cs.teams.recipe.Recipe;
+import org.junit.Test;
 
-        import java.sql.SQLException;
-        import java.util.ArrayList;
-        import java.util.List;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-        import static org.junit.Assert.assertEquals;
-        import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class IngredientTest {
 
