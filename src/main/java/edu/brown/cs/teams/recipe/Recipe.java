@@ -1,6 +1,7 @@
 package edu.brown.cs.teams.recipe;
 
 import com.google.gson.JsonObject;
+import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.kdtree.CartesianPoint;
 import edu.brown.cs.teams.algorithms.AlgUtils;
 
@@ -49,7 +50,7 @@ public class Recipe extends CartesianPoint {
    * @return an approximation of the recipe within the user ingredients
    */
   public List<Ingredient> compareToIngredients(
-          List<Ingredient> ingredients) {
+          List<Ingredient> ingredients) throws CommandException {
     try {
       List<Ingredient> candidateList = new ArrayList<>();
       //generate user candidate for every recipe ingredient
@@ -73,8 +74,7 @@ public class Recipe extends CartesianPoint {
                               1);
       return candidateList;
     } catch (Exception e) {
-      e.printStackTrace();
-      return null;
+      throw new CommandException(e.getMessage());
     }
   }
 

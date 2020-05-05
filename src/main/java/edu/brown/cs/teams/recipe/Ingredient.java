@@ -41,16 +41,6 @@ public class Ingredient extends CartesianPoint {
     return this.id;
   }
 
-  /**
-   * Gets the distance of this ingredient to a nearest ingredient. Useful for
-   * the recipe class to not have to repeat calculations.
-   *
-   * @return the distance double
-   */
-  public double getDistance() {
-    return this.distance;
-  }
-
 
   /**
    * Sets the distance of this ingredient to a nearest ingredient. Useful for
@@ -82,11 +72,20 @@ public class Ingredient extends CartesianPoint {
         closest = similarity;
       }
     }
-    if (closest > 1 - num * AlgUtils.SIMILARITY_FACTOR) {
+    if (closest > 0.75 - num * AlgUtils.SIMILARITY_FACTOR) {
       return best;
     } else {
       return null;
     }
+  }
+
+  /**
+   * equals method, used for testing.
+   * @param ingredient the ingredient compared to
+   * @return true if the ids are the same
+   */
+  public boolean equals(Ingredient ingredient) {
+    return id.equals(ingredient.getId());
   }
 
 

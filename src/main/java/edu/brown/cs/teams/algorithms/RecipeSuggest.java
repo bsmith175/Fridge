@@ -64,7 +64,8 @@ public class RecipeSuggest implements Command {
    * @param command the user input parsed on whitespace
    * @return the sorted recipes
    */
-  private PriorityQueue<Recipe> preCommand(String[] command) {
+  private PriorityQueue<Recipe> preCommand(String[] command)
+          throws CommandException {
     List<Ingredient> ingredients = new ArrayList<>();
     for (String word : Arrays.copyOfRange(command, 0, command.length)) {
       word = word.replaceAll("\"", "");
