@@ -316,6 +316,37 @@ public class RecipeDatabase {
     }
   }
 
+  /**
+   * Gets Recipe from an id
+   * @param id an int
+   */
+  public Recipe getRecipe(int id) throws SQLException, CommandException {
+    String query = "SELECT * FROM recipe WHERE recipe.id= ?";
+    PreparedStatement prep = conn.prepareStatement(query);
+    prep.setInt(1, id);
+    ResultSet rs = prep.executeQuery();
+    while (rs.next()) {
+      String[] tokens = rs.getString(6)
+          .substring(1, rs.getString(6).length() - 1)
+          .replaceAll("\"", "")
+          .split(",");
+      Set<Ingredient> newTokens = new HashSet<>();
+
+      for (int i = 0; i < tokens.length; i++) {
+        if (tokens[i] != "") {
+          newTokens.add(new Ingredient(tokens[i]));
+        }
+      }
+      double[] totalEmbedding = AlgUtils.ingredAdd(newTokens);
+      Recipe recipe = new Recipe(totalEmbedding, id, newTokens);
+      return recipe;
+    }
+    throw new CommandException("No such recipe by id " + id);
+  }
+
+
+
+
 
 
 

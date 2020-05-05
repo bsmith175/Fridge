@@ -3,6 +3,7 @@ package edu.brown.cs.teams.kdtree;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -16,6 +17,7 @@ import java.util.PriorityQueue;
 public class KDTree<T extends CartesianPoint> {
   private KDTreeNode<T> root;
   private int k;
+  private List<T> nodes;
 
   /**
    * Constructor for KDTree class.
@@ -41,6 +43,7 @@ public class KDTree<T extends CartesianPoint> {
    */
   public KDTree<T> buildKDTree(List<T> nodes) {
     this.root = buildTree(new KDTreeNode<>(0), nodes);
+    this.nodes = nodes;
     return this;
   }
 
@@ -277,6 +280,28 @@ public class KDTree<T extends CartesianPoint> {
             && isValidKDTreeRecursive(left)
             && isValidKDTreeRecursive(right);
       }
+    }
+  }
+
+  public List<T> naiveKnn(T target) {
+    List<T> sorted = new ArrayList<>(this.nodes);
+    Collections.sort(sorted, new CompareDist(target));
+    return sorted;
+  }
+
+  /**
+   * Comparator used for the Naive implementation of KNN
+   */
+  public class CompareDist implements Comparator<T> {
+    public T target;
+    public CompareDist(T target){
+      this.target = target;
+    }
+
+    @Override
+    public int compare(T t1, T t2) {
+      return Double.compare(t1.getDistance(target.getPosition()),
+          t2.getDistance(target.getPosition()));
     }
   }
 

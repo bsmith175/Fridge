@@ -51,7 +51,7 @@ public class KDTreeTest {
 //  }
 
   @Test
-  public void testKNNSmall() throws CommandException {
+  public void testKNNSmall() throws CommandException, SQLException {
     Recipe target = r.getRecipe(2);
     MinimalRecipe minTarget = new MinimalRecipe(target.getPosition(), target.getId());
     List<MinimalRecipe> recipes = tree.naiveKnn(minTarget);
@@ -62,7 +62,7 @@ public class KDTreeTest {
   }
 
   @Test
-  public void testKNNLarge() throws CommandException {
+  public void testKNNLarge() throws CommandException, SQLException {
     Recipe target = r.getRecipe(2);
     MinimalRecipe minTarget = new MinimalRecipe(target.getPosition(), target.getId());
     List<MinimalRecipe> recipes = tree.naiveKnn(minTarget);
@@ -72,7 +72,7 @@ public class KDTreeTest {
     }
   }
   @Test
-  public void testNoNN() throws CommandException {
+  public void testNoNN() throws CommandException, SQLException {
     Recipe target = r.getRecipe(2);
     MinimalRecipe minTarget = new MinimalRecipe(target.getPosition(), target.getId());
     List<MinimalRecipe> results = tree.getNeighbors(0, minTarget.getPosition());
@@ -95,12 +95,6 @@ public class KDTreeTest {
     }
   }
 
-//  @Test
-//  public void testNonZeroRecommendations() throws CommandException {
-//    String uid = "111793872083460063342";
-//    List<JsonObject> results = alg.getRecommendations(uid);
-//    assert(!results.isEmpty());
-//  }
 
 
   @AfterClass

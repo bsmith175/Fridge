@@ -29,7 +29,7 @@ public class Ingredient extends CartesianPoint {
    */
   @Override
   public double[] getPosition() {
-    return AlgUtils.getVectorMap().get(id);
+    return AlgUtils.getVectorMap().getOrDefault(id, new double[300]);
   }
 
   /**

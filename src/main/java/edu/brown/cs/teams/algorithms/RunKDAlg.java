@@ -1,24 +1,16 @@
 package edu.brown.cs.teams.algorithms;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import edu.brown.cs.teams.constants.Constants;
 import edu.brown.cs.teams.database.RecipeDatabase;
 import edu.brown.cs.teams.recipe.Ingredient;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import edu.brown.cs.teams.io.Command;
 import edu.brown.cs.teams.io.CommandException;
-import edu.brown.cs.teams.io.REPL;
 import edu.brown.cs.teams.recipe.MinimalRecipe;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,14 +26,9 @@ public class RunKDAlg {
    * @throws IOException
    * @throws ParseException
    */
-  public double[] extractEmbedding(String[] ingredients) throws IOException, ParseException {
+  public double[] extractEmbedding(String[] ingredients) {
     List<Ingredient> ingredientSet = new ArrayList<>();
-    Gson gson = new Gson();
-    FileReader reader = new FileReader(Constants.EMBEDDINGS_FILE);
-    JSONParser parser = new JSONParser();
-    JSONObject object = (JSONObject) parser.parse(reader);
     for (int i = 0; i < ingredients.length; i++) {
-      String ingredient = ingredients[i];
       Ingredient ing = new Ingredient(ingredients[i]);
       ingredientSet.add(ing);
     }
@@ -71,7 +58,7 @@ public class RunKDAlg {
       }
       Collections.shuffle(recipes);
       return recipes;
-    } catch (SQLException | IOException | ParseException e) {
+    } catch (SQLException e) {
       throw new CommandException(e.getMessage());
     }
   }

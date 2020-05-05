@@ -19,7 +19,9 @@ public class userDbTest {
     static UserDatabase u;
     static Connection conn;
 
-    @BeforeClass
+
+
+  @BeforeClass
     public static void setUp() throws URISyntaxException, SQLException, CommandException, ClassNotFoundException {
         URI dbURI = new URI("postgresql://bsmith28_ben:wiyf1!@johnny.heliohost.org:5432/bsmith28_wiyf_db");
         String username = dbURI.getUserInfo().split(":")[0];
