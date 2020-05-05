@@ -86,14 +86,6 @@ public class KDTreeTest {
     assert(embedding.length == 300);
   }
 
-  @Test
-  public void testNonExistentIngredient() {
-    String[] ingredient = new String[]{"nonexistent ingredient"};
-    double[] embedding = alg.extractEmbedding(ingredient);
-    for (int i = 0; i < embedding.length; i ++){
-      assert(embedding[i] == 0.0);
-    }
-  }
 
 
 
