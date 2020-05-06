@@ -151,17 +151,21 @@ $(document).ready(() => {
                 nuts: nuts,
                 dairy: dairy
             }, true), response => {
+                console.log("got response");
                 //parse response
                 if (response === "none") {
+                    console.log("no results");
                     $("#cookSpinner").css("display", "none");
                 } else {
                     const r = JSON.parse(response);
+                    console.log(r);
                     make_cards(result_cards, r, false, true);
                     current_response = r;
                     $("#cookSpinner").css("display", "none");
                 }
             });
         } else {
+            console.log("no post parameters");
             $("#cookSpinner").css("display", "none");
         }
 

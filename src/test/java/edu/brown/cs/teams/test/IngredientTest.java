@@ -1,7 +1,7 @@
 package edu.brown.cs.teams.test;
 
-        import edu.brown.cs.teams.algorithms.AlgUtils;
-        import edu.brown.cs.teams.constants.Constants;
+import edu.brown.cs.teams.algorithms.AlgUtils;
+import edu.brown.cs.teams.constants.Constants;
         import edu.brown.cs.teams.database.RecipeDatabase;
         import edu.brown.cs.teams.io.CommandException;
         import edu.brown.cs.teams.recipe.Ingredient;

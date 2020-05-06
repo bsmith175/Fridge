@@ -51,11 +51,7 @@ public final class Main {
     parser.accepts("gui");
     parser.accepts("port").withRequiredArg().ofType(Integer.class)
             .defaultsTo(DEFAULT_PORT);
-    parser.accepts("database");
-    parser.accepts("ben");
-    parser.accepts("repl");
-    parser.accepts("sqlite_init");
-    parser.accepts("postgres_init");
+    parser.accepts("init");
     OptionSet options = parser.parse(args);
 
     RecipeDatabase r;
@@ -68,13 +64,13 @@ public final class Main {
         r = new RecipeDatabase(Constants.DATABASE_FILE, true);
         r.makeTable();
         r.parseJson();
-          URI dbURI = new URI(System.getenv("DB_URL"));
+          URI dbURI = new URI(System.getenv("DATABASE_URL"));
           String username = dbURI.getUserInfo().split(":")[0];
           String pwd = dbURI.getUserInfo().split(":")[1];
 
           String dbURL = "jdbc:postgresql://" + dbURI.getHost() + ':' + dbURI
                   .getPort() + dbURI.getPath();
-          u = new UserDatabase(dbURL, username, pwd, false);
+          u = new UserDatabase(dbURL, username, pwd, true);
         u.initUserDB();
       } catch (ClassNotFoundException e) {
         e.printStackTrace();
@@ -91,9 +87,9 @@ public final class Main {
 
     try {
       r = new RecipeDatabase(Constants.DATABASE_FILE, false);
-        URI dbURI = new URI(System.getenv("DB_URL"));
+        URI dbURI = new URI(System.getenv("DATABASE_URL"));
         //for debuggin:
-        //URI dbURI = new URI("postgresql://bsmith28_ben:wiyf1!@johnny.heliohost.org:5432/bsmith28_wiyf_db");
+        //URI dbURI = new URI("postgres://dzocvwcilygobn:a9403fa911846decf8edddd920cb6e3c1b6bed669f690dab6b69d0c818b98983@ec2-18-215-99-63.compute-1.amazonaws.com:5432/dbhl22glfabs41");
         String username = dbURI.getUserInfo().split(":")[0];
         String pwd = dbURI.getUserInfo().split(":")[1];
 
