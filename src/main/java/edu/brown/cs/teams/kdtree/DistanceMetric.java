@@ -1,7 +1,5 @@
 package edu.brown.cs.teams.kdtree;
 
-import edu.brown.cs.teams.GUI.GUIException;
-
 /**
  * Interface for distance metric.
  */
