@@ -124,7 +124,7 @@ public class IngredientSuggest {
   private PriorityQueue<String> findAll(PriorityQueue<String> tokens,
                                         String input) {
     String cur = tokens.poll();
-    ledComparator lc = new ledComparator();
+    LedComparator lc = new LedComparator();
     lc.setDest(input);
     PriorityQueue<String> ret = new PriorityQueue<>(lc);
     while (cur != null) {
