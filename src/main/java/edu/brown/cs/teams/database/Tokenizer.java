@@ -2,7 +2,7 @@ package edu.brown.cs.teams.database;
 
 
 import java.util.ArrayList;
-        import java.util.List;
+import java.util.List;
 
 /**
  * Class for parsing ingredients into ingredient tokens.
@@ -11,6 +11,7 @@ public class Tokenizer {
 
   /**
    * Parses ingredients into ingredient keywords.
+   *
    * @param raw - List of ingredient text from recipe
    * @return - The inputted list with all non-keywords removed
    */
@@ -40,15 +41,15 @@ public class Tokenizer {
       parsed = parsed.replaceAll("of ", "").trim();
       parsed = parsed.replaceAll("tbsp", "").trim();
       String[] arrOfStr = parsed.split(" ");
-      if (arrOfStr.length> 2){
-        if (arrOfStr[arrOfStr.length-2].length() == 1){
-          parsed = String.join(arrOfStr[arrOfStr.length-1]);
-        }else{
-          parsed = String.join(" ", arrOfStr[arrOfStr.length-2], arrOfStr[arrOfStr.length-1]);
+      if (arrOfStr.length > 2) {
+        if (arrOfStr[arrOfStr.length - 2].length() == 1) {
+          parsed = String.join(arrOfStr[arrOfStr.length - 1]);
+        } else {
+          parsed = String.join(" ", arrOfStr[arrOfStr.length - 2], arrOfStr[arrOfStr.length - 1]);
         }
 
       }
-      if(!(arrOfStr.length == 0) || arrOfStr!=null){
+      if (!(arrOfStr.length == 0) || arrOfStr != null) {
         ret.add(parsed);
       }
       System.out.println(parsed);

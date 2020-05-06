@@ -2,7 +2,6 @@ package edu.brown.cs.teams.main;
 
 
 import edu.brown.cs.teams.GUI.GuiHandlers;
-import edu.brown.cs.teams.algorithms.RunKDAlg;
 import edu.brown.cs.teams.algorithms.RecipeSuggest;
 import edu.brown.cs.teams.algorithms.AlgUtils;
 import edu.brown.cs.teams.constants.Constants;
@@ -17,14 +16,20 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.json.JSONException;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
-import spark.*;
+import spark.ExceptionHandler;
+import spark.Request;
+import spark.Response;
+import spark.Spark;
 import spark.template.freemarker.FreeMarkerEngine;
 
 
@@ -33,7 +38,7 @@ import spark.template.freemarker.FreeMarkerEngine;
  */
 public final class Main {
   private static final int DEFAULT_PORT = 4567;
-  private static REPL REPL = null;
+  private static REPL repl = null;
 
   public static void main(String[] args) {
     new Main(args).run();
@@ -50,7 +55,7 @@ public final class Main {
     OptionParser parser = new OptionParser();
     parser.accepts("gui");
     parser.accepts("port").withRequiredArg().ofType(Integer.class)
-            .defaultsTo(DEFAULT_PORT);
+        .defaultsTo(DEFAULT_PORT);
     parser.accepts("init");
     OptionSet options = parser.parse(args);
 
@@ -64,13 +69,13 @@ public final class Main {
         r = new RecipeDatabase(Constants.DATABASE_FILE, true);
         r.makeTable();
         r.parseJson();
-          URI dbURI = new URI(System.getenv("DATABASE_URL"));
-          String username = dbURI.getUserInfo().split(":")[0];
-          String pwd = dbURI.getUserInfo().split(":")[1];
+        URI dbURI = new URI(System.getenv("DATABASE_URL"));
+        String username = dbURI.getUserInfo().split(":")[0];
+        String pwd = dbURI.getUserInfo().split(":")[1];
 
-          String dbURL = "jdbc:postgresql://" + dbURI.getHost() + ':' + dbURI
-                  .getPort() + dbURI.getPath();
-          u = new UserDatabase(dbURL, username, pwd, true);
+        String dbURL = "jdbc:postgresql://" + dbURI.getHost() + ':' + dbURI
+            .getPort() + dbURI.getPath();
+        u = new UserDatabase(dbURL, username, pwd, true);
         u.initUserDB();
       } catch (ClassNotFoundException e) {
         e.printStackTrace();
@@ -88,16 +93,16 @@ public final class Main {
     try {
       r = new RecipeDatabase(Constants.DATABASE_FILE, false);
 //        URI dbURI = new URI(System.getenv("DATABASE_URL"));
-        //for debuggin:
-        URI dbURI = new URI("postgres://dzocvwcilygobn:a9403fa911846decf8edddd920cb6e3c1b6bed669f690dab6b69d0c818b98983@ec2-18-215-99-63.compute-1.amazonaws.com:5432/dbhl22glfabs41");
+      //for debuggin:
+      URI dbURI = new URI("postgres://dzocvwcilygobn:a9403fa911846decf8edddd920cb6e3c1b6bed669f690dab6b69d0c818b98983@ec2-18-215-99-63.compute-1.amazonaws.com:5432/dbhl22glfabs41");
 
-        String username = dbURI.getUserInfo().split(":")[0];
-        String pwd = dbURI.getUserInfo().split(":")[1];
+      String username = dbURI.getUserInfo().split(":")[0];
+      String pwd = dbURI.getUserInfo().split(":")[1];
 
-        String dbURL = "jdbc:postgresql://" + dbURI.getHost() + ':' + dbURI
-                .getPort() + dbURI.getPath();
+      String dbURL = "jdbc:postgresql://" + dbURI.getHost() + ':' + dbURI
+          .getPort() + dbURI.getPath();
 
-        u = new UserDatabase(dbURL, username, pwd, false);
+      u = new UserDatabase(dbURL, username, pwd, false);
       System.out.println("Getting recipes");
       AlgUtils.setDb(r, u);
       AlgUtils.buildRecList();
@@ -113,7 +118,7 @@ public final class Main {
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     } catch (URISyntaxException e) {
-        e.printStackTrace();
+      e.printStackTrace();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -123,8 +128,8 @@ public final class Main {
       // Allow the repl to run both commands
       HashMap<String, Command> commands = new HashMap<>();
       commands.put("recommend", new RecipeSuggest(false, false, false));
-      REPL = new REPL(commands);
-      REPL.runREPL();
+      repl = new REPL(commands);
+      repl.runREPL();
     }
 
     if (options.has("gui")) {
@@ -135,7 +140,7 @@ public final class Main {
         System.exit(1);
       }
     }
-  }//run
+  } //run
 
 
   private static FreeMarkerEngine createEngine() {
@@ -145,7 +150,7 @@ public final class Main {
       config.setDirectoryForTemplateLoading(templates);
     } catch (IOException ioe) {
       System.out.printf("ERROR: Unable use %s for template loading.%n",
-              templates);
+          templates);
       System.exit(1);
     }
     return new FreeMarkerEngine(config);
@@ -158,8 +163,6 @@ public final class Main {
     Spark.exception(Exception.class, new ExceptionPrinter());
     FreeMarkerEngine freeMarker = createEngine();
     // Setup Spark Routes
-    //TODO: create a call to Spark.post to make a post request to a url which
-    // will handle getting autocorrect results for the input
     GuiHandlers handler = new GuiHandlers();
     handler.setHandlers(freeMarker);
 
