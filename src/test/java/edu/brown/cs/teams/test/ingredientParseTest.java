@@ -1,10 +1,13 @@
 package edu.brown.cs.teams.test;
 
 
+import edu.brown.cs.teams.database.Tokenizer;
 import edu.brown.cs.teams.ingredientParse.IngredientSuggest;
 import edu.brown.cs.teams.ingredientParse.ledComparator;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class ingredientParseTest {
@@ -39,12 +42,18 @@ public class ingredientParseTest {
     assert (output.contains("rice noodles"));
     assert (output.contains("egg noodles"));
 
+    //autocomplete prefix
+    assert (output.contains("noodle"));
+
+    //ranking of results
+    assert (output.indexOf("noodle") < output.indexOf("noodles"));
+
     // suggestions are ranked by led closeness
     output = ig.suggest("chick");
     assert (output.get(0).equals("chicken"));
-//    assert (output.get(1).equals("chickens"));
-//    assert (output.get(2).equals("chickpea"));
-//    assert (output.get(3).equals("chickpeas"));
+    assert (output.get(1).equals("chickens") || output.get(1).equals("chickpea"));
+    assert (output.get(2).equals("chickens") || output.get(1).equals("chickpea"));
+    assert (output.get(3).equals("chickpeas"));
 
     //no results
     output = ig.suggest("fridge");
@@ -71,6 +80,58 @@ public class ingredientParseTest {
       assert (comp.compare("", "") == 0);
       assert (comp.compare("xtesting", "testingx") == 0);
 
+  }
+
+  @Test
+  public void tokenizerTest() {
+
+    Tokenizer tokenizer = new Tokenizer();
+    List<String> ingreds = new ArrayList<String>();
+    ingreds.add("32g 15 horseradish");
+    ingreds.add("15 pounds pound oz g kg lb tbsp tsp c cups teaspoon   crab meat");
+    ingreds.add("kale or collard greens");
+    ingreds.add("lettuce (fresh preferred)");
+    ingreds.add("beef \\u09");
+    ingreds.add("a x big fish");
+    ingreds.add("noodles tbsp");
+    ingreds.add("medium-rare steak");
+    ingreds.add("a a a salmon kg and ");
+    List<String> results = tokenizer.parseIngredients(ingreds);
+
+    //removes word with numbers
+    assert (results.contains("horseradish"));
+    assert (!results.contains("32g 15 horseradish"));
+
+    //removes measurement words, singular and plural, and extra spaces
+    assert (results.contains("crab meat"));
+    assert (!results.contains("15 pounds pound oz g kg lb tbsp tsp c cups teaspoon   crab meat"));
+
+    //removes anything after "or"
+    assert (results.contains("kale"));
+    assert (!results.contains("kale or collard greens"));
+
+    //removes anything inside parentheses
+    assert (results.contains("lettuce"));
+    assert (!results.contains("lettuce (fresh preferred)"));
+
+    //removes words starting with unicode escape
+    assert (results.contains("beef"));
+    assert (!results.contains("beef \\u09"));
+
+    //removes single characters and the word big
+    assert (results.contains("fish"));
+    assert (!results.contains("a x big fish"));
+
+    //removes regex at end of string (not space surrounded)
+    assert (results.contains("noodles"));
+    assert (!results.contains("noodles tbsp"));
+
+    assert (results.contains("steak"));
+    assert (!results.contains("medium-rare steak"));
+
+    //test matches sharing space get removed, and keyword in the middle stays
+    assert (results.contains("salmon"));
+    assert (!results.contains("a a a salmon kg and "));
   }
 }
 
