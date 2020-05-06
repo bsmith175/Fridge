@@ -19,7 +19,7 @@ public class RunKDAlg {
 
 
   /**
-   * Helper method to get the resulting query embedding for a list of ingredients/
+   * Helper method to get the resulting query embedding for a list of ingredients.
    * @param ingredients the resulting embedding
    * @return a double[] for the result
    * @throws CommandException

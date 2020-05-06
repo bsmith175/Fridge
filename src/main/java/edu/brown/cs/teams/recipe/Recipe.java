@@ -6,7 +6,9 @@ import edu.brown.cs.teams.kdtree.CartesianPoint;
 import edu.brown.cs.teams.algorithms.AlgUtils;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class Recipe extends CartesianPoint {
   private int id;
@@ -18,6 +20,7 @@ public class Recipe extends CartesianPoint {
    *
    * @param embedding double array storing position of point
    * @param id        a String
+   * @param ingredients a Set
    */
   public Recipe(double[] embedding, int id, Set<Ingredient> ingredients) {
     super(embedding);
@@ -27,7 +30,7 @@ public class Recipe extends CartesianPoint {
   }
 
   /**
-   * getter method for ingredients
+   * getter method for ingredients.
    * @return the set of ingredients in the recipe
    */
   public Set<Ingredient> getIngredients() {
@@ -35,7 +38,7 @@ public class Recipe extends CartesianPoint {
   }
 
   /**
-   * getter method for id
+   * getter method for id.
    * @return the set of ingredients in the recipe
    */
   public int getId() {
@@ -46,16 +49,17 @@ public class Recipe extends CartesianPoint {
    * Generates the closest list of ingredients to a recipe from an ingredient
    * list.
    *
-   * @param ingredients a user list of ingredients
+   * @param ingreds a user list of ingredients
+   * @throws CommandException
    * @return an approximation of the recipe within the user ingredients
    */
   public List<Ingredient> compareToIngredients(
-          List<Ingredient> ingredients) throws CommandException {
+          List<Ingredient> ingreds) throws CommandException {
     try {
       List<Ingredient> candidateList = new ArrayList<>();
       //generate user candidate for every recipe ingredient
       for (Ingredient ing : this.ingredients) {
-        Ingredient candidate = ing.generateCandidate(ingredients);
+        Ingredient candidate = ing.generateCandidate(ingreds);
         if (candidate != null) {
           candidateList.add(candidate);
         }
@@ -69,9 +73,8 @@ public class Recipe extends CartesianPoint {
       }
       //penalizing based on number of missing ingredients
       this.similarity =
-              distance *
-                      ((this.ingredients.size() - candidateList.size()) * -0.001 +
-                              1);
+              distance * ((this.ingredients.size() - candidateList.size()) * -0.001
+                  + 1);
       return candidateList;
     } catch (Exception e) {
       throw new CommandException(e.getMessage());
@@ -89,7 +92,7 @@ public class Recipe extends CartesianPoint {
 
 
   /**
-   * gets the similarity score of this recipe
+   * gets the similarity score of this recipe.
    *
    * @return the double score
    */

@@ -77,7 +77,7 @@ public class GuiHandlers {
     Spark.post("/heart", new FavoriteButtonHandler());
     Spark.post("/login", new UserLoginHandler());
 
-    Spark.post("/pantry", new pantryHandler());
+    Spark.post("/pantry", new PantryHandler());
     Spark.post("/add-pantry", new PantryAddHandler());
     Spark.post("/remove-pantry", new RemovePantryHandler());
   }
@@ -311,7 +311,7 @@ public class GuiHandlers {
 
   //returns a list of ingredient names in the user's pantry. Takes in one parameter
   //"uid" - the user ID
-  private static class pantryHandler implements Route {
+  private static class PantryHandler implements Route {
 
     @Override
     public Object handle(Request request, Response response) {

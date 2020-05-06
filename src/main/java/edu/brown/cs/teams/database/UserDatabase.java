@@ -3,7 +3,11 @@ package edu.brown.cs.teams.database;
 import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.login.AccountUser;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,9 +20,14 @@ public class UserDatabase {
 
   /**
    * Constructs a postgresql RecipeDatabase. Connects to database server.
+   * @param url a String
+   * @param user a String
+   * @param pwd a String
+   * @param init a Boolean
    */
-  public UserDatabase(String url, String user, String pwd, Boolean init) throws ClassNotFoundException,
-          SQLException, CommandException {
+  public UserDatabase(String url, String user, String pwd, Boolean init)
+      throws ClassNotFoundException,
+      SQLException, CommandException {
     Class.forName("org.postgresql.Driver");
     conn = DriverManager.getConnection(url, user, pwd);
     if (!init) {
@@ -53,8 +62,8 @@ public class UserDatabase {
 //
   private void verifyTables() throws SQLException {
     String query =
-            "SELECT guser.uid, guser.name, guser.profile, favorite.recipeid, favorite.uid," +
-                    " exclude.category, exclude.uid"
+            "SELECT guser.uid, guser.name, guser.profile, favorite.recipeid, favorite.uid,"
+                + " exclude.category, exclude.uid"
                     + " FROM guser, favorite, exclude "
                     + "LIMIT 1;";
 
@@ -186,7 +195,8 @@ public class UserDatabase {
    * @throws SQLException - if exception occurs while updating database
    */
   public void removeFavorite(int rid, String uid) throws SQLException {
-    PreparedStatement prep = conn.prepareStatement("DELETE FROM favorite WHERE uid=? AND recipeid=?");
+    PreparedStatement prep =
+        conn.prepareStatement("DELETE FROM favorite WHERE uid=? AND recipeid=?");
     prep.setString(1, uid);
     prep.setInt(2, rid);
     prep.executeUpdate();
@@ -197,7 +207,6 @@ public class UserDatabase {
    *
    * @param ingredient - string of ingredients to add
    * @param uid         - ID of user
-   * @return True
    * -if recipe was successfully added to favorites list
    * False
    * - if recipe was already in user's favorites list
@@ -228,7 +237,8 @@ public class UserDatabase {
    * @throws SQLException - if exception occurs while updating database
    */
   public void removePantryitem(String ingredient, String uid) throws SQLException {
-    PreparedStatement prep = conn.prepareStatement("DELETE FROM pantry WHERE uid=? AND ingredient=?");
+    PreparedStatement prep =
+        conn.prepareStatement("DELETE FROM pantry WHERE uid=? AND ingredient=?");
     prep.setString(1, uid);
     prep.setString(2, ingredient.trim());
     prep.executeUpdate();
