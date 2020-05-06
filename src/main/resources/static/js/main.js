@@ -16,6 +16,7 @@ let suggestions = [];
 let user_name = $("#user-name");
 let current_response = [];
 let next = 3;
+const modal_title = $("#modal-title");
 
 /**
  * Exevuted upon page load.
@@ -23,7 +24,6 @@ let next = 3;
 $(document).ready(() => {
 
     const result_cards = $("#result-cards");
-    const modal_title = $("#modal-title");
 
     $("#numresults").change(function () {
         console.log(current_response.length)
@@ -81,7 +81,7 @@ $(document).ready(() => {
                 console.log("got response");
                 //parse response
                 if (response === "none") {
-                    console.log("no results");
+                    console.log("error from backend");
                     $("#cookSpinner").css("display", "none");
                 } else {
                     const r = JSON.parse(response);
@@ -90,6 +90,7 @@ $(document).ready(() => {
                         alert("No results found");
                         $("#cookSpinner").css("display", "none");
                     } else {
+                        sessionStorage.setItem("results", r);
                         make_cards(result_cards, r, false, true);
                         current_response = r;
                         $("#cookSpinner").css("display", "none");
@@ -100,7 +101,6 @@ $(document).ready(() => {
             console.log("no post parameters");
             $("#cookSpinner").css("display", "none");
         }
-
     });
 
 
