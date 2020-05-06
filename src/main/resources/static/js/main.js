@@ -57,41 +57,44 @@ $(document).ready(() => {
     let pantry_counter = 0;
 
     $(".add-to-pantry").click(function () {
-        console.log("add to pantry")
-        let postParameters = "";
-        let elements = document.forms["pantry-form"].elements;
-        for (let i = 0; i < elements.length; i++) {
+        if (typeof userProfile === 'undefined') {
+            alert("Sign in to add to your pantry!");
+        } else {
+            console.log("add to pantry")
+            let postParameters = "";
+            let elements = document.forms["pantry-form"].elements;
+            for (let i = 0; i < elements.length; i++) {
 
-            if (elements[i].value != "" && elements[i].value != " ") {
-                console.log((elements[i]).value);
+                if (elements[i].value != "" && elements[i].value != " ") {
+                    console.log((elements[i]).value);
 
-                postParameters = elements[i].value;
+                    postParameters = elements[i].value;
+                }
             }
+            if (postParameters != "") {
+                $.post('/add-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
+                    data = JSON.parse(data);
+                    console.log(data)
+                    //getPantry();
+                    //displayPantry();
+
+                    const s = "<button type=\"button\" id=\"" + pantry_counter + "\" name=\"" + postParameters +
+                        "\" class=\"btn btn-lg btn-outline-info remove-pantry\" " +
+                        "onclick='remove_pantry(this.id)'>\n"
+                        + postParameters
+                        + " <span class=\"badge badge-light\">x</span>\n"
+                        + "                        </button>";
+                    pantry.append(s);
+                    pantryItems.push(postParameters);
+                    console.log(pantryItems);
+
+
+                });
+                pantry_counter = pantry_counter + 1;
+            }
+            document.forms["pantry-form"].reset();
+            // sessionStorage.setItem("pantry", pantryItems);
         }
-        if (postParameters != "") {
-            $.post('/add-pantry', {text: postParameters, uid: userProfile.getId()}, function (data) {
-                data = JSON.parse(data);
-                console.log(data)
-                //getPantry();
-                //displayPantry();
-
-                const s = "<button type=\"button\" id=\"" + pantry_counter + "\" name=\"" + postParameters +
-                    "\" class=\"btn btn-lg btn-outline-info remove-pantry\" " +
-                    "onclick='remove_pantry(this.id)'>\n"
-                    + postParameters
-                    + " <span class=\"badge badge-light\">x</span>\n"
-                    + "                        </button>";
-                pantry.append(s);
-                pantryItems.push(postParameters);
-                console.log(pantryItems);
-
-
-            });
-            pantry_counter = pantry_counter + 1;
-        }
-        document.forms["pantry-form"].reset();
-        // sessionStorage.setItem("pantry", pantryItems);
-
         return false;
 
     })
@@ -158,10 +161,15 @@ $(document).ready(() => {
                     $("#cookSpinner").css("display", "none");
                 } else {
                     const r = JSON.parse(response);
-                    console.log(r);
-                    make_cards(result_cards, r, false, true);
-                    current_response = r;
-                    $("#cookSpinner").css("display", "none");
+                    console.log(r.length);
+                    if (r.length === 0) {
+                        alert("No results found");
+                        $("#cookSpinner").css("display", "none");
+                    } else {
+                        make_cards(result_cards, r, false, true);
+                        current_response = r;
+                        $("#cookSpinner").css("display", "none");
+                    }
                 }
             });
         } else {
@@ -255,7 +263,7 @@ $(document).ready(() => {
         let limit = results.length
         if (limitBool) {
             selector.empty()
-            limit = document.getElementById("numresults").value
+            limit = Math.min(document.getElementById("numresults").value, results.length);
         }
 
         let cards = 0; //html id for each recipe card
