@@ -30,7 +30,7 @@ Recipes in recipe table were scraped from BBC Good Foods with the help of this s
 In order to run our unit tests (without recompiling), run `mvn test`. To recompile and test, run `mvn package`. In order to run our system tests, run the cs32-test executable with any system test located in the ./tests directory. Many of the system tests will require 60 seconds, so use the `-t 60` flag.
 
 # System Tests
-Made sure our gui supported all our commands and functionality. We created a list of c0mmands that our gui should be able to perform and then filmed all of them to ensure that they worked and document it. 
+Made sure our gui supported all our commands and functionality. We created a list of commands that our gui should be able to perform and then filmed all of them to ensure that they worked and documented it. 
 Below are the two videos we took:
 https://drive.google.com/file/d/1wfpJoXDLN48OlmcRmGEZlP6FVdvGc-W5/view?usp=drivesdk
 https://drive.google.com/file/d/1zJc7uVdnF0xxCmb_DitFdSrEOvUUOSEL/view?usp=drivesdk
