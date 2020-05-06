@@ -136,6 +136,10 @@ ${content}
 <!-- Again, we're serving up the unminified source for clarity. -->
 <script src="/js/jquery-2.1.1.js"></script>
 <script src="/js/main.js"></script>
+<script src="/js/profile.js"></script>
+<script src="/js/signin.js"></script>
+
+
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
