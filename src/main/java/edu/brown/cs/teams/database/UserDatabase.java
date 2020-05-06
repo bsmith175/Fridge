@@ -13,6 +13,7 @@ import java.util.List;
 public class UserDatabase {
   private Connection conn;
 
+
   /**
    * Constructs a postgresql RecipeDatabase. Connects to database server.
    */

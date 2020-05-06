@@ -2,7 +2,6 @@ package edu.brown.cs.teams.recipe;
 
 import edu.brown.cs.teams.algorithms.AlgUtils;
 import edu.brown.cs.teams.kdtree.CartesianPoint;
-
 import java.util.List;
 
 /**
@@ -10,7 +9,6 @@ import java.util.List;
  */
 public class Ingredient extends CartesianPoint {
   private String id;
-  private double distance;
 
   /**
    * constructor for an ingredient.
@@ -43,17 +41,6 @@ public class Ingredient extends CartesianPoint {
 
 
   /**
-   * Sets the distance of this ingredient to a nearest ingredient. Useful for
-   * the recipe class to not have to repeat calculations.
-   *
-   * @param distance set the distance of this ingredient
-   */
-  public void setDistance(double distance) {
-    this.distance = distance;
-  }
-
-
-  /**
    * Gives the most likely candidate to represent a recipe ingredient in
    * the user ingredient list.
    *
@@ -72,7 +59,7 @@ public class Ingredient extends CartesianPoint {
         closest = similarity;
       }
     }
-    if (closest > 0.75 - num * AlgUtils.SIMILARITY_FACTOR) {
+    if (closest > AlgUtils.SIMILARITY_THRESHOLD - num * AlgUtils.SIMILARITY_FACTOR) {
       return best;
     } else {
       return null;

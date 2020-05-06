@@ -116,21 +116,22 @@ public class RecipeSuggest implements Command {
       notAllowed.deleteCharAt(notAllowed.length() - 1);
     }
     String restrictions = notAllowed.toString();
-
     PriorityQueue<Recipe> recpq = preCommand(command);
     List<JsonObject> guiResults = new ArrayList<>();
     for (int i = 0; i < NUM_RESULTS_PRE; i++) {
       Recipe rec = recpq.poll();
       JsonObject jsonRecipe = rec.getRecipeJson();
       Gson gson = new Gson();
+
       String tokenList =
-              gson.fromJson(jsonRecipe.get("tokens"), String.class);
+              gson.fromJson(jsonRecipe.get("ingredients"), String.class);
       if (tokenList.replaceFirst(restrictions, "").length()
               == tokenList.length()) {
         guiResults.add(jsonRecipe);
       }
     }
-    guiResults = guiResults.subList(0, NUM_RESULTS_FINAL);
+    guiResults = guiResults.subList(0, Math.min(NUM_RESULTS_FINAL,
+            guiResults.size()));
     return guiResults;
 
   }

@@ -90,6 +90,7 @@ public final class Main {
         URI dbURI = new URI(System.getenv("DATABASE_URL"));
         //for debuggin:
         //URI dbURI = new URI("postgres://dzocvwcilygobn:a9403fa911846decf8edddd920cb6e3c1b6bed669f690dab6b69d0c818b98983@ec2-18-215-99-63.compute-1.amazonaws.com:5432/dbhl22glfabs41");
+
         String username = dbURI.getUserInfo().split(":")[0];
         String pwd = dbURI.getUserInfo().split(":")[1];
 

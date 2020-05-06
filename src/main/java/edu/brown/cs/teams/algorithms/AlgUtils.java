@@ -28,6 +28,7 @@ public final class AlgUtils {
   public static final double SIMILARITY_FACTOR = 0.03;
   private static KDTree<MinimalRecipe> tree = new KDTree<>(EMBED_SIZE);
   private static Map<String, double[]> vectorMap = new HashMap<>();
+  public static final double SIMILARITY_THRESHOLD = 0.75;
 
   /**
    * Constructor for AlgUtils.
@@ -141,7 +142,12 @@ public final class AlgUtils {
    */
   public static String getDairy() {
     return "(milk|whey|cheese|yogurt|paneer|butter|cheddar|mascarpone|gouda"
-            + "|mozzarella|(\\s+)cream)";
+            + "|mozzarella|parmesan|(\\s+)cream)";
+  }
+
+  public static void destroy() {
+    rdb = null;
+    tree = null;
   }
 
 

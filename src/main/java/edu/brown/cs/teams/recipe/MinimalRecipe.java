@@ -28,7 +28,7 @@ public class MinimalRecipe extends CartesianPoint {
   }
 
   /**
-   * Getter method for the id
+   * Getter method for the id.
    * @return
    */
   public int getId() {
