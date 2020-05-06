@@ -19,11 +19,20 @@ let next = 3;
 const modal_title = $("#modal-title");
 
 /**
- * Exevuted upon page load.
+ * Executed upon page load.
  */
 $(document).ready(() => {
 
     const result_cards = $("#result-cards");
+    console.log(window.location.pathname);
+    if (sessionStorage.getItem("results") !== null && window.location.pathname === "/") {
+        let response = sessionStorage.getItem("results");
+        const r = JSON.parse(response);
+        $('#numresults')
+            .val(sessionStorage.getItem("numresults"))
+            .trigger('change');
+        make_cards(result_cards, r, false, true)
+    }
 
     $("#numresults").change(function () {
         console.log(current_response.length)
@@ -70,7 +79,7 @@ $(document).ready(() => {
         postParameters = postParameters.concat(pantryItems);
         console.log(postParameters)
         if (postParameters.length !== 0) {
-            console.log(dairy);
+            sessionStorage.removeItem("results");
 
             $.post("/recipe-recommend", $.param({
                 text: postParameters,
@@ -90,7 +99,9 @@ $(document).ready(() => {
                         alert("No results found");
                         $("#cookSpinner").css("display", "none");
                     } else {
-                        sessionStorage.setItem("results", r);
+                        //cache results and numresults
+                        sessionStorage.setItem("results", response);
+                        sessionStorage.setItem("numresults", document.getElementById("numresults").value);
                         make_cards(result_cards, r, false, true);
                         current_response = r;
                         $("#cookSpinner").css("display", "none");
