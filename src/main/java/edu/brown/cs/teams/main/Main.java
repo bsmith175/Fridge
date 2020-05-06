@@ -76,8 +76,6 @@ public final class Main {
         e.printStackTrace();
       } catch (SQLException e) {
         e.printStackTrace();
-      } catch (JSONException e) {
-        e.printStackTrace();
       } catch (CommandException e) {
         e.printStackTrace();
       } catch (URISyntaxException e) {
