@@ -1,7 +1,6 @@
 package edu.brown.cs.teams.ingredientParse;
 
 import edu.brown.cs.teams.constants.Constants;
-import edu.brown.cs.teams.utils.Pair;
 
 import java.io.File;
 import java.io.BufferedReader;

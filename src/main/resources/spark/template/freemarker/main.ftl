@@ -80,8 +80,13 @@
                 <h4>Personal Information</h4>
                 <div>If you choose to create an account, we store information provided to us
                 by Google including your full name and Google profile picture.</div>
+                <h3><b>About Us</b></h3>
+                <div> We are a group of college students from Brown University that all really
+                    love to cook. We decided to make this website to help people feel more inspired
+                    and empowered when it comes to cooking. We hope you enjoy our product and find use
+                    in it!
+                </div>
             </div>
-
 
 
         </div>

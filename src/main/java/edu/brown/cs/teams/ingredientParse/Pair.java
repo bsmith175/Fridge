@@ -1,4 +1,4 @@
-package edu.brown.cs.teams.utils;
+package edu.brown.cs.teams.ingredientParse;
 
 
 /**
@@ -40,26 +40,6 @@ public class Pair<T1, T2> {
    * @return this.two - The second object in the triple.
    */
   public T2 getSecond() {
-    return this.second;
-  }
-
-  /**
-   * Sets the first element of the pair.
-   * @param o
-   * @return - The first object in the pair that was just set.
-   */
-  public T1 setFirst(T1 o) {
-    this.first = o;
-    return this.first;
-  }
-
-  /**
-   * Returns the second element of the pair.
-   * @param o
-   * @return this.two - The second object in the pair that was just set.
-   */
-  public T2 setSecond(T2 o) {
-    this.second = o;
     return this.second;
   }
 
