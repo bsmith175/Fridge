@@ -37,8 +37,12 @@ https://drive.google.com/file/d/1zJc7uVdnF0xxCmb_DitFdSrEOvUUOSEL/view?usp=drive
 https://docs.google.com/document/d/14hCH3-k2Tm8l9KTy_AbMS0pbzlgn_PhZnhA7_VvH0KQ/edit?usp=sharing
 
 # Partner division of labor
-Nate - Nearest Neighbors KDTree Alg, Word Embeddings, recommended recipes
-Eyal - Ingredient-based algorithm, Word Embeddings, Restriction food groups
-Shalan - Initial recipe sqlite DB + tokenizing. Front end Gui design and functionality.
-Ben - Front end caching and functionality, databse management, word suggestion alg and tokenizing, Google Sign In. 
+#### Nate 
+Nearest Neighbors KDTree Alg, Word Embeddings, recommended recipes
+#### Eyal 
+Ingredient-based algorithm, Word Embeddings, Restriction food groups
+#### Shalan
+Initial recipe sqlite DB + tokenizing. Front end Gui design and functionality.
+#### Ben
+Front end caching and functionality, databse management, word suggestion alg and tokenizing, Google Sign In. 
 
