@@ -13,9 +13,6 @@ import java.util.List;
 public class UserDatabase {
   private Connection conn;
 
-  public Connection getConn() {
-    return conn;
-  }
 
   /**
    * Constructs a postgresql RecipeDatabase. Connects to database server.
@@ -90,7 +87,7 @@ public class UserDatabase {
 
 
   //The exclude table links every user to each food category that they chose to exclude.
-
+  //This feature is not currently implemented
   private void makeExcludeTable() throws SQLException {
     PreparedStatement prep = conn.prepareStatement("CREATE TABLE exclude("
             + "category TEXT, "
@@ -255,4 +252,7 @@ public class UserDatabase {
     return ret;
   }
 
+  public Connection getConn() {
+    return conn;
+  }
 }

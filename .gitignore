@@ -1,5 +1,5 @@
 target/
 .classpath
 .mvn-classpath
-
+*.sqlite3
 

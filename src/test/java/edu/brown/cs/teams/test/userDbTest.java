@@ -19,9 +19,7 @@
 //    static UserDatabase u;
 //    static Connection conn;
 //
-//
-//
-//  @BeforeClass
+//    @BeforeClass
 //    public static void setUp() throws URISyntaxException, SQLException, CommandException, ClassNotFoundException {
 //        URI dbURI = new URI("postgresql://bsmith28_ben:wiyf1!@johnny.heliohost.org:5432/bsmith28_wiyf_db");
 //        String username = dbURI.getUserInfo().split(":")[0];
@@ -63,6 +61,16 @@
 //        assert (favs.contains(3));
 //        assert (favs.size() == 3);
 //
+//        //removing favorite from user doesn't remove for other users
+//        u.addToFavorites(3, "-101");
+//        u.removeFavorite(3, "-101");
+//        favs = u.getFavorites("-100");
+//        assert (favs.contains(3));
+//        //assert remove worked
+//        favs = u.getFavorites("-101");
+//        assert (favs.size() == 0);
+//
+//        //test remove
 //        u.removeFavorite(2, "-100");
 //        favs = u.getFavorites("-100");
 //        assert (!favs.contains(2));
@@ -70,20 +78,25 @@
 //        u.removeFavorite(3, "-100");
 //        favs = u.getFavorites("-100");
 //        assert (favs.size() == 0);
+//
+//
 //    }
 //
 //    @Test
 //    public void pantryTest() throws SQLException {
+//        //get with empty pantry
 //        assert (u.getPantry("-100").size() == 0);
 //
+//        //test add to pantry
 //        u.addToPantry("sauce", "-100");
 //        u.addToPantry("chicken", "-100");
 //        u.addToPantry("chicken", "-101");
-//
 //        List<String> pantry = u.getPantry("-100");
 //        assert (pantry.size() == 2);
 //        assert (pantry.contains("sauce"));
 //        assert (pantry.contains("chicken"));
+//
+//        //remove pantry
 //        u.removePantryitem("sauce", "-100");
 //        u.removePantryitem("chicken", "-100");
 //        pantry = u.getPantry("-100");
@@ -91,6 +104,10 @@
 //
 //        //make sure other user's row didn't get deleted
 //        assert (u.getPantry("-101").contains("chicken"));
+//        u.removePantryitem("chicken", "-101");
+//        assert (u.getPantry("-101").size() == 0);
+//
+//        //remove pantry item that doesn't exist
 //        u.removePantryitem("chicken", "-101");
 //        assert (u.getPantry("-101").size() == 0);
 //

@@ -2,6 +2,7 @@
 //
 //
 //import edu.brown.cs.teams.ingredientParse.IngredientSuggest;
+//import edu.brown.cs.teams.ingredientParse.ledComparator;
 //import org.junit.BeforeClass;
 //import org.junit.Test;
 //import java.util.List;
@@ -41,8 +42,9 @@
 //    // suggestions are ranked by led closeness
 //    output = ig.suggest("chick");
 //    assert (output.get(0).equals("chicken"));
-//    assert (output.get(1).equals("chickpea"));
-//    assert (output.get(2).equals("chickpeas"));
+////    assert (output.get(1).equals("chickens"));
+////    assert (output.get(2).equals("chickpea"));
+////    assert (output.get(3).equals("chickpeas"));
 //
 //    //no results
 //    output = ig.suggest("fridge");
@@ -50,4 +52,25 @@
 //
 //
 //  }
+//
+//  @Test
+//    public void ledComparatorTest() {
+//      ledComparator comp= new ledComparator();
+//      comp.setDest("testing");
+//
+//      assert (comp.compare("testing", "testin") < 0);
+//      assert (comp.compare("texting", "tezzing") < 0);
+//      assert (comp.compare("test", "") < 0);
+//
+//      assert (comp.compare("testin", "testing") > 0);
+//      assert (comp.compare("texxing", "texting") > 0);
+//
+//      assert (comp.compare("aa", "f") == 0);
+//      assert (comp.compare("nim", "nim") == 0);
+//      comp.setDest("another");
+//      assert (comp.compare("", "") == 0);
+//      assert (comp.compare("xtesting", "testingx") == 0);
+//
+//  }
 //}
+//

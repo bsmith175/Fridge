@@ -33,7 +33,7 @@ public final class AlgUtils {
   /**
    * Constructor for AlgUtils.
    */
-  public AlgUtils() {
+  private AlgUtils() {
   }
 
   /**
