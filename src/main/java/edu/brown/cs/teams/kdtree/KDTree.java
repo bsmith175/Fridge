@@ -11,8 +11,9 @@ import java.util.PriorityQueue;
  * This class implements a k-d tree of arbitrary number of dimensions
  * and can operate
  * on any Cartesian Point.
+ *
  * @param <T> A class that extends Cartesian Point, which guarantees
- *           that it has some spatial position
+ *            that it has some spatial position
  */
 public class KDTree<T extends CartesianPoint> {
   private KDTreeNode<T> root;
@@ -21,6 +22,7 @@ public class KDTree<T extends CartesianPoint> {
 
   /**
    * Constructor for KDTree class.
+   *
    * @param k dimensionality of tree
    */
   public KDTree(int k) {
@@ -29,6 +31,7 @@ public class KDTree<T extends CartesianPoint> {
 
   /**
    * Getter for the root node of the tree.
+   *
    * @return root node.
    */
   public KDTreeNode<T> getRoot() {
@@ -38,12 +41,14 @@ public class KDTree<T extends CartesianPoint> {
   /**
    * Builds a k-d tree given a list of nodes. Stores the root node in the
    * root field.
-   * @param nodes A list of nodes that store a position to structure into a tree
+   *
+   * @param treeNodes A list of nodes that store a position to structure into a
+   *                  tree
    * @return a k-d tree
    */
-  public KDTree<T> buildKDTree(List<T> nodes) {
-    this.root = buildTree(new KDTreeNode<>(0), nodes);
-    this.nodes = nodes;
+  public KDTree<T> buildKDTree(List<T> treeNodes) {
+    this.root = buildTree(new KDTreeNode<>(0), treeNodes);
+    this.nodes = treeNodes;
     return this;
   }
 
@@ -52,26 +57,26 @@ public class KDTree<T extends CartesianPoint> {
    left and right subtrees
   from that node using the list of nodes passed in as input.
    */
-  private KDTreeNode<T> buildTree(KDTreeNode<T> curr, List<T> nodes) {
-    int size = nodes.size();
+  private KDTreeNode<T> buildTree(KDTreeNode<T> curr, List<T> treeNodes) {
+    int size = treeNodes.size();
 
     // only build tree if there are nodes to build
     if (size > 0) {
       // sort the node along the axis of interest to find the median
       int depth = curr.getDepth();
       int axis = depth % this.k;
-      nodes.sort(new KDNodeComparator(axis));
-      int medianPos = nodes.size() / 2;
-      T median = nodes.get(medianPos);
+      treeNodes.sort(new KDNodeComparator(axis));
+      int medianPos = treeNodes.size() / 2;
+      T median = treeNodes.get(medianPos);
 
       // the median will be the root node at this depth
       curr.setCartesianPoint(median);
 
       // recursively build the left and right subtrees;
-      curr.setLeft(buildTree(new KDTreeNode<T>(depth + 1),
-          nodes.subList(0, medianPos)));
-      curr.setRight(buildTree(new KDTreeNode<T>(depth + 1),
-          nodes.subList(medianPos + 1, size)));
+      curr.setLeft(buildTree(new KDTreeNode<>(depth + 1),
+              treeNodes.subList(0, medianPos)));
+      curr.setRight(buildTree(new KDTreeNode<>(depth + 1),
+              treeNodes.subList(medianPos + 1, size)));
 
       // return the root node
       return curr;
@@ -82,7 +87,8 @@ public class KDTree<T extends CartesianPoint> {
 
   /**
    * Converts a queue to a list because the neighbors and radius commands return
-   *   a queue of nodes, but the program needs a list of queues to print out the IDs.
+   * a queue of nodes, but the program needs a list of queues to print out the IDs.
+   *
    * @param pq priority queue of Cartesian Points
    * @return items in reverse order (furthest to closest)
    */
@@ -99,8 +105,9 @@ public class KDTree<T extends CartesianPoint> {
    * Searches for all points that are within a certain distance
    * from a target position.
    * Uses the k-d tree structure to limit the search area of the algorithm
+   *
    * @param radius radius to search within
-   * @param pos target position to search around
+   * @param pos    target position to search around
    * @return nodes within radius of target
    */
   public List<T> radiusSearch(double radius, double[] pos) {
@@ -154,8 +161,9 @@ public class KDTree<T extends CartesianPoint> {
    * Returns a list of k closest neighbors to a certain point ordered from furthest
    * nodes to closest nodes. Uses the structure of the k-d tree to limit the search
    * space.
+   *
    * @param kNeighbors number of neighbors to search for
-   * @param pos target position that is being searched around
+   * @param pos        target position that is being searched around
    * @return list of closest neighbors
    */
   public List<T> getNeighbors(int kNeighbors, double[] pos) {
@@ -200,7 +208,8 @@ public class KDTree<T extends CartesianPoint> {
           double targetAxisCoord = pos[axis];
           double axisDistance = Math.abs(currAxisCoord - farAxisCoord);
           // search both sides
-          if (farDistance > axisDistance || Double.compare(currAxisCoord, farAxisCoord) == 0) {
+          if (farDistance > axisDistance
+                  || Double.compare(currAxisCoord, farAxisCoord) == 0) {
             neighborsRecursive(ptr.getLeft(), pos, kNeighbors, pq);
             neighborsRecursive(ptr.getRight(), pos, kNeighbors, pq);
           } else {
@@ -219,6 +228,7 @@ public class KDTree<T extends CartesianPoint> {
 
   /**
    * Calculates the size of the tree by traversing through it. Only used for testing.
+   *
    * @return size of tree
    */
   public int getSize() {
@@ -227,6 +237,7 @@ public class KDTree<T extends CartesianPoint> {
 
   /**
    * Recursive method to calculate size of the tree.
+   *
    * @param curr current node.
    * @return size of tree.
    */
@@ -234,12 +245,14 @@ public class KDTree<T extends CartesianPoint> {
     if (curr == null) {
       return 0;
     }
-    return 1 + getSizeRecursive(curr.getLeft()) + getSizeRecursive(curr.getRight());
+    return 1 + getSizeRecursive(curr.getLeft())
+            + getSizeRecursive(curr.getRight());
   }
 
   /**
    * Determines if a tree is valid by checking if left node is less than equal to current node
    * which is less than equal to right node. Does not check if tree is balanced.
+   *
    * @return true if valid, false otherwise
    */
   public boolean isValidKDTree() {
@@ -248,6 +261,7 @@ public class KDTree<T extends CartesianPoint> {
 
   /**
    * Recursive method to see if tree satisfies BST invariant.
+   *
    * @param node current node
    * @return true if valid, false otherwise.
    */
@@ -264,21 +278,23 @@ public class KDTree<T extends CartesianPoint> {
         int axis = node.getDepth() % this.k;
         double currPos = node.getCartesianPoint().getPositionAlongAxis(axis);
         double leftPos = left.getCartesianPoint().getPositionAlongAxis(axis);
-        return Double.compare(currPos, leftPos) >= 0 && isValidKDTreeRecursive(left);
+        return Double.compare(currPos, leftPos) >= 0
+                && isValidKDTreeRecursive(left);
       } else if (left == null) {
         int axis = node.getDepth() % this.k;
         double currPos = node.getCartesianPoint().getPositionAlongAxis(axis);
         double rightPos = right.getCartesianPoint().getPositionAlongAxis(axis);
         return Double.compare(currPos, rightPos) <= 0
-            && isValidKDTreeRecursive(right);
+                && isValidKDTreeRecursive(right);
       } else {
         int axis = node.getDepth() % this.k;
         double currPos = node.getCartesianPoint().getPositionAlongAxis(axis);
         double leftPos = left.getCartesianPoint().getPositionAlongAxis(axis);
         double rightPos = right.getCartesianPoint().getPositionAlongAxis(axis);
-        return Double.compare(currPos, rightPos) <= 0 && Double.compare(currPos, leftPos) >= 0
-            && isValidKDTreeRecursive(left)
-            && isValidKDTreeRecursive(right);
+        return Double.compare(currPos, rightPos) <= 0
+                && Double.compare(currPos, leftPos) >= 0
+                && isValidKDTreeRecursive(left)
+                && isValidKDTreeRecursive(right);
       }
     }
   }
@@ -290,18 +306,19 @@ public class KDTree<T extends CartesianPoint> {
   }
 
   /**
-   * Comparator used for the Naive implementation of KNN
+   * Comparator used for the Naive implementation of KNN.
    */
   public class CompareDist implements Comparator<T> {
-    public T target;
-    public CompareDist(T target){
+    private T target;
+
+    public CompareDist(T target) {
       this.target = target;
     }
 
     @Override
     public int compare(T t1, T t2) {
       return Double.compare(t1.getDistance(target.getPosition()),
-          t2.getDistance(target.getPosition()));
+              t2.getDistance(target.getPosition()));
     }
   }
 

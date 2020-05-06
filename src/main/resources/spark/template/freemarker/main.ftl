@@ -55,34 +55,38 @@
      aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header info-header">
                 <div class="modal-title">
-                    <b>About What's in My Fridge</b>
+                    <h2><b>About What's in My Fridge</b></h2>
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body info-body">
                 What's In My Fridge is a personalized web-application that recommends
                 delicious recipes based on what you have in your fridge. Our goal is to
                 maximize yumminess and convenience for the user with minimal pain when
                 deciding what to eat. Enter some ingredients and start cooking!
                 <h3><b>Recipes</b></h3>
-                <div>We get all our delicious recipes from <a href = "https://www.bbcgoodfood.com/" target="_blank">BBC Good Food</a>. We pulled recipes using
-                <b>this person's</b> script, which can be found <a href = "asdf" target="_blank">here</a> </div>
+                <div>All our delicious recipes come from <a href = "https://www.bbcgoodfood.com/" target="_blank">BBC Good Food</a>.
+                    We accessed the recipes through <b>Open Recipe</b>, which can be found
+                    <a href = "https://github.com/dspray95/open-recipe" target="_blank">here.</a> </div>
                 <h3><b>Privacy</b></h3>
                 <h4>Cookies</h4>
-                <div>To optimize your experience, we store limited information about
-                your session using cookies and local storage. You may disable use of
-                cookies in your browser settings.</div>
+                <div>To optimize your experience, we store limited information during
+                your session using HTML web storage. You can disable use of web storage by disabling cookies
+                    in Chrome, Firefox, and Safari.</div>
                 <h4>Personal Information</h4>
                 <div>If you choose to create an account, we store information provided to us
-                by Google Sign-In. This includes your full name and Google profile picture.</div>
-                <h3><b>Who We Are</b></h3>
-                <div> we can do stuff here if we want</div>
+                by Google including your full name and Google profile picture.</div>
+                <h3><b>About Us</b></h3>
+                <div> We are a group of college students from Brown University that all really
+                    love to cook. We decided to make this website to help people feel more inspired
+                    and empowered when it comes to cooking. We hope you enjoy our product and find use
+                    in it!
+                </div>
             </div>
-
 
 
         </div>
@@ -132,6 +136,10 @@ ${content}
 <!-- Again, we're serving up the unminified source for clarity. -->
 <script src="/js/jquery-2.1.1.js"></script>
 <script src="/js/main.js"></script>
+<script src="/js/profile.js"></script>
+<script src="/js/signin.js"></script>
+
+
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"

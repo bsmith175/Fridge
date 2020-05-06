@@ -4,24 +4,29 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import edu.brown.cs.teams.constants.Constants;
 import edu.brown.cs.teams.recipe.Ingredient;
-import edu.brown.cs.teams.recipe.MinimalRecipe;
 import edu.brown.cs.teams.recipe.Recipe;
 import edu.brown.cs.teams.algorithms.AlgUtils;
-import org.json.JSONException;
 import org.json.simple.JSONObject;
 
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.*;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.io.FileWriter;
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import edu.brown.cs.teams.io.CommandException;
 
@@ -32,17 +37,16 @@ public class RecipeDatabase {
 
   private Connection conn;
   private PreparedStatement prep = null;
-  private ResultSet rs = null;
   private String dbFileName;
 
   /**
    * Constructor for a sqlite RecipeDatabase. Establishes a connection to the db and
    * verifies format.
-   *
+   * @param init boolean for if the db needs to be initialized
    * @param dbFileName the path to the database
-   * @throws SQLException
-   * @throws ClassNotFoundException
-   * @throws CommandException
+   * @throws SQLException for invalid query
+   * @throws ClassNotFoundException exception for class not found
+   * @throws CommandException for files not existing
    */
 
   public RecipeDatabase(String dbFileName, Boolean init)
@@ -61,10 +65,10 @@ public class RecipeDatabase {
 //      throw new CommandException(("ERROR: IOException when creating db file"));
 //    }
 
-      this.dbFileName = dbFileName;
-      Class.forName("org.sqlite.JDBC");
-      String urlToDB = "jdbc:sqlite:" + dbFileName;
-      conn = DriverManager.getConnection(urlToDB);
+    this.dbFileName = dbFileName;
+    Class.forName("org.sqlite.JDBC");
+    String urlToDB = "jdbc:sqlite:" + dbFileName;
+    conn = DriverManager.getConnection(urlToDB);
 
     // these two lines tell the database to enforce
     // foreign keys during operations
@@ -81,36 +85,36 @@ public class RecipeDatabase {
   }
 
 
-
   //-------------------------- recipe tables setup --------------------------------
 
 
   /**
    * Dummy method to verify all the columns in the recipe table are there.
    *
-   * @throws SQLException
-   * @throws CommandException
+   * @throws SQLException for invalid query
+   * @throws CommandException for database having no recipes
    */
   public void verifyTables() throws SQLException, CommandException {
     String query =
-        "SELECT recipe.id, recipe.name, recipe.author, recipe.description,"
-            +
-            " recipe.ingredients, recipe.tokens, recipe.time, recipe.servings"
-            + " FROM recipe "
-            + "LIMIT 1;";
+            "SELECT recipe.id, recipe.name, recipe.author, recipe.description,"
+                    +
+                    " recipe.ingredients, recipe.tokens, recipe.time, recipe.servings"
+                    + " FROM recipe "
+                    + "LIMIT 1;";
 
     try (PreparedStatement prep = conn.prepareStatement(query)) {
       try (ResultSet rs = prep.executeQuery()) {
         if (!rs.next()) {
           throw new CommandException(
-              "ERROR: database has no recipes: " + dbFileName);
+                  "ERROR: database has no recipes: " + dbFileName);
         }
       }
     }
   }
 
   /**
-   * Creates the recipe table
+   * Creates the recipe table.
+   *
    * @throws SQLException - if error occurs while creating relation
    */
   public void makeTable() throws SQLException {
@@ -130,11 +134,13 @@ public class RecipeDatabase {
   }
 
 
-  public void parseJson() throws JSONException {
+  /**
+   * method to parse a json object.
+   */
+  public void parseJson() throws CommandException {
     try (FileReader reader = new FileReader("data/recipe.json")) {
       Tokenizer converter = new Tokenizer();
       JSONParser parser = new JSONParser();
-      Gson gson = new Gson();
       JSONArray array = (JSONArray) parser.parse(reader);
       int id = 0;
 
@@ -163,7 +169,7 @@ public class RecipeDatabase {
         JSONArray methodArray = (JSONArray) e.get("method");
 
 
-        List<String> res = new ArrayList<>();
+        List<String> res;
         res = new Gson().fromJson(String.valueOf(recipeArray), ArrayList.class);
         List<String> tokens = converter.parseIngredients(res);
 
@@ -171,9 +177,8 @@ public class RecipeDatabase {
         writeData(tokens, trieWriter, termWriter);
 
 
-
         String jsonToks = new Gson().toJson(tokens);
-        if ((String) e.get("author") != null) {
+        if (e.get("author") != null) {
           prep = conn.prepareStatement(
                   "INSERT INTO recipe VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
           prep.setInt(1, id);
@@ -181,31 +186,26 @@ public class RecipeDatabase {
           prep.setString(3, (String) e.get("author"));
           prep.setString(4, (String) e.get("description"));
           prep.setString(5, recipeArray.toJSONString());
-          prep.setString(6, (String) jsonToks);
-          prep.setString(7, (String) methodArray.toJSONString());
-          prep.setString(8, (String) timeArray.toJSONString());
+          prep.setString(6, jsonToks);
+          prep.setString(7, methodArray.toJSONString());
+          prep.setString(8, timeArray.toJSONString());
           prep.setString(9, (String) e.get("servings"));
           prep.setString(10, (String) e.get("img_url"));
           prep.addBatch();
           prep.executeBatch();
-          id ++;
+          id++;
         }
       }
       termWriter.close();
       trieWriter.close();
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (ParseException e) {
-      e.printStackTrace();
-    } catch (SQLException e) {
-      e.printStackTrace();
+    } catch (SQLException | ParseException | IOException e) {
+      throw new CommandException(e.getMessage());
     }
 
   }
 
-  private void writeData(List<String> ingredients, FileWriter trieFile, FileWriter termFile) throws IOException {
+  private void writeData(List<String> ingredients, FileWriter trieFile,
+                         FileWriter termFile) throws IOException {
 
     for (String ingredient : ingredients) {
       trieFile.write(ingredient.replaceAll("\\s+", "\n") + "\n");
@@ -219,7 +219,7 @@ public class RecipeDatabase {
 
 
   public List<Recipe> getFullRecipes(String vectorFileName)
-      throws CommandException {
+          throws CommandException {
     String query = "SELECT id, tokens FROM recipe";
     JSONParser parser = new JSONParser();
     Gson gson = new Gson();
@@ -230,17 +230,18 @@ public class RecipeDatabase {
         try (ResultSet rs = prep.executeQuery()) {
           while (rs.next()) {
             String[] tokens = rs.getString(2)
-                .substring(1, rs.getString(2).length() - 1)
-                .replaceAll("\"", "")
-                .split(",");
+                    .substring(1, rs.getString(2).length() - 1)
+                    .replaceAll("\"", "")
+                    .split(",");
             Set<Ingredient> newTokens = new HashSet<>();
 
-            for (int i = 0; i < tokens.length; i++) {
-              double[] embedding = gson.fromJson(object.get(tokens[i]).toString(),
-                  double[].class);
-              AlgUtils.getVectorMap().put(tokens[i], embedding);
-              if (tokens[i] != "") {
-                newTokens.add(new Ingredient(tokens[i]));
+            for (String token : tokens) {
+              double[] embedding =
+                      gson.fromJson(object.get(token).toString(),
+                              double[].class);
+              AlgUtils.getVectorMap().put(token, embedding);
+              if (!token.equals("")) {
+                newTokens.add(new Ingredient(token));
               }
             }
             double[] totalEmbedding = AlgUtils.ingredAdd(newTokens);
@@ -250,33 +251,31 @@ public class RecipeDatabase {
           }
         }
       }
-    } catch (FileNotFoundException e) {
-      throw new CommandException(e.getMessage());
-    } catch (IOException e) {
-      throw new CommandException(e.getMessage());
-    } catch (ParseException e) {
-      throw new CommandException(e.getMessage());
-    } catch (SQLException e) {
+    } catch (SQLException | ParseException | IOException e) {
       throw new CommandException(e.getMessage());
     }
     return recipes;
   }
 
+
   /**
-   * Method to get an array of token ingredients for a recipe.
+   * method to get token ingredients for a recipe.
+   *
+   * @param id the id of the recipe.
+   * @return the recipe token ingredients.
+   * @throws CommandException for exceptions
    */
   public String[] getTokenIngredients(int id) throws CommandException {
     try {
       String query = "SELECT tokens FROM recipe WHERE recipe.id= ?";
-      PreparedStatement prep = conn.prepareStatement(query);
-      prep.setInt(1, id);
-      ResultSet rs = prep.executeQuery();
-      if (rs.next()) {
-        String[] tokens = rs.getString(1)
-            .substring(1, rs.getString(1).length() - 1)
-            .replaceAll("\"", "")
-            .split(",");
-        return tokens;
+      PreparedStatement preparedStatement = conn.prepareStatement(query);
+      preparedStatement.setInt(1, id);
+      ResultSet resultSet = preparedStatement.executeQuery();
+      if (resultSet.next()) {
+        return resultSet.getString(1)
+                .substring(1, resultSet.getString(1).length() - 1)
+                .replaceAll("\"", "")
+                .split(",");
       } else {
         throw new CommandException("No such recipe with id " + id);
       }
@@ -288,28 +287,29 @@ public class RecipeDatabase {
 
   /**
    * Gets the content needed to display the recipe in labeled form, given its ID.
-   * @param id  - the recipe ID.
+   *
+   * @param id - the recipe ID.
    * @return - JsonObject of the recipe's content (everything except tokens)
-   *         - null if the recipe was not in the database
+   * - null if the recipe was not in the database
    * @throws SQLException - if exception occurs while querying database
    */
   public JsonObject getRecipeContentFromID(int id) throws SQLException {
     String query = "SELECT * FROM recipe WHERE recipe.id= ?";
-    PreparedStatement prep = conn.prepareStatement(query);
-    prep.setInt(1, id);
-    ResultSet rs = prep.executeQuery();
-    if (rs.next()) {
+    PreparedStatement preparedStatement = conn.prepareStatement(query);
+    preparedStatement.setInt(1, id);
+    ResultSet resultSet = preparedStatement.executeQuery();
+    if (resultSet.next()) {
       JsonObject recipe = new JsonObject();
-      recipe.addProperty("id", rs.getInt(1));
-      recipe.addProperty("name", rs.getString(2));
-      recipe.addProperty("author", rs.getString(3));
-      recipe.addProperty("description", rs.getString(4));
-      recipe.addProperty("ingredients", rs.getString(5));
-      recipe.addProperty("tokens", rs.getString(6));
-      recipe.addProperty("method", rs.getString(7));
-      recipe.addProperty("time", rs.getString(8));
-      recipe.addProperty("servings", rs.getString(9));
-      recipe.addProperty("imageURL", rs.getString(10));
+      recipe.addProperty("id", resultSet.getInt(1));
+      recipe.addProperty("name", resultSet.getString(2));
+      recipe.addProperty("author", resultSet.getString(3));
+      recipe.addProperty("description", resultSet.getString(4));
+      recipe.addProperty("ingredients", resultSet.getString(5));
+      recipe.addProperty("tokens", resultSet.getString(6));
+      recipe.addProperty("method", resultSet.getString(7));
+      recipe.addProperty("time", resultSet.getString(8));
+      recipe.addProperty("servings", resultSet.getString(9));
+      recipe.addProperty("imageURL", resultSet.getString(10));
       return recipe;
     } else {
       return null;
@@ -317,37 +317,33 @@ public class RecipeDatabase {
   }
 
   /**
-   * Gets Recipe from an id
+   * Gets Recipe from an id.
+   *
    * @param id an int
+   * @return the Recipe
    */
   public Recipe getRecipe(int id) throws SQLException, CommandException {
     String query = "SELECT * FROM recipe WHERE recipe.id= ?";
-    PreparedStatement prep = conn.prepareStatement(query);
-    prep.setInt(1, id);
-    ResultSet rs = prep.executeQuery();
-    while (rs.next()) {
-      String[] tokens = rs.getString(6)
-          .substring(1, rs.getString(6).length() - 1)
-          .replaceAll("\"", "")
-          .split(",");
+    PreparedStatement preparedStatement = conn.prepareStatement(query);
+    preparedStatement.setInt(1, id);
+    ResultSet resultSet = preparedStatement.executeQuery();
+    while (resultSet.next()) {
+      String[] tokens = resultSet.getString(6)
+              .substring(1, resultSet.getString(6).length() - 1)
+              .replaceAll("\"", "")
+              .split(",");
       Set<Ingredient> newTokens = new HashSet<>();
 
-      for (int i = 0; i < tokens.length; i++) {
-        if (tokens[i] != "") {
-          newTokens.add(new Ingredient(tokens[i]));
+      for (String token : tokens) {
+        if (!token.equals("")) {
+          newTokens.add(new Ingredient(token));
         }
       }
       double[] totalEmbedding = AlgUtils.ingredAdd(newTokens);
-      Recipe recipe = new Recipe(totalEmbedding, id, newTokens);
-      return recipe;
+      return new Recipe(totalEmbedding, id, newTokens);
     }
     throw new CommandException("No such recipe by id " + id);
   }
-
-
-
-
-
 
 
 }
