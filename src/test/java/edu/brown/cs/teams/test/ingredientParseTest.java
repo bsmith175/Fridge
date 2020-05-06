@@ -3,7 +3,7 @@ package edu.brown.cs.teams.test;
 
 import edu.brown.cs.teams.database.Tokenizer;
 import edu.brown.cs.teams.ingredientParse.IngredientSuggest;
-import edu.brown.cs.teams.ingredientParse.ledComparator;
+import edu.brown.cs.teams.ingredientParse.LedComparator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -53,7 +53,8 @@ public class ingredientParseTest {
     assert (output.get(0).equals("chicken"));
     assert (output.get(1).equals("chickens") || output.get(1).equals("chickpea"));
     assert (output.get(2).equals("chickens") || output.get(1).equals("chickpea"));
-    assert (output.get(3).equals("chickpeas"));
+    assert (output.get(3).equals("chicken kg") || output.get(3).equals(
+            "chickpeas"));
 
     //no results
     output = ig.suggest("fridge");
@@ -64,7 +65,7 @@ public class ingredientParseTest {
 
   @Test
     public void ledComparatorTest() {
-      ledComparator comp= new ledComparator();
+      LedComparator comp= new LedComparator();
       comp.setDest("testing");
 
       assert (comp.compare("testing", "testin") < 0);

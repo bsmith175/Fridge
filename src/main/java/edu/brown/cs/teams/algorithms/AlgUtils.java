@@ -33,7 +33,7 @@ public final class AlgUtils {
   /**
    * Constructor for AlgUtils.
    */
-  private AlgUtils() {
+  public AlgUtils() {
   }
 
   /**
@@ -148,6 +148,7 @@ public final class AlgUtils {
   public static void destroy() {
     rdb = null;
     tree = null;
+    fullRecipes = new ArrayList<>();
   }
 
 

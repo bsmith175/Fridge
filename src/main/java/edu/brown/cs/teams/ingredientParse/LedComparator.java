@@ -2,7 +2,7 @@ package edu.brown.cs.teams.ingredientParse;
 
 import java.util.Comparator;
 
-public class ledComparator implements Comparator<String> {
+public class LedComparator implements Comparator<String> {
     private String dest;
 
     public void setDest(String s) {

@@ -96,7 +96,7 @@ class AutoCorrect {
 
     // Append suggestions to earlier part of phrase.
     List<String> trieOutputAsList = new ArrayList<>(trieOutput);
-    ledComparator comp = new ledComparator();
+    LedComparator comp = new LedComparator();
     comp.setDest(query);
     PriorityQueue<String> suggestions = new PriorityQueue<>(comp);
     for (int i = 0; i < Math.min(5, trieOutputAsList.size()); i++) {
