@@ -1,5 +1,5 @@
 
-What's In My Fridge is a personalized web-application that recommends delicious recipes based on what you have in your fridge. Our goal is to maximize yumminess and convenience for the user with minimal pain when deciding what to eat.
+What's In My Fridge is a personalized web-application that recommends delicious recipes based on what you have in your fridge. Our goal is to maximize yumminess and convenience for the user with minimal pain when deciding what to eat. The website can be found at https://www.whatsinmyfridgeco.com/.
 
 # How to build/run our program from the command line
 In order to build our program, run `mvn package`. To run it, use `./run` The gui will be hosted at http://localhost:4567/.
