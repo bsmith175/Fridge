@@ -46,6 +46,14 @@ p,
   background-image: linear-gradient(#fffceb, #fff8f8);
 }
 
+.info-header{
+    background-image: linear-gradient(#45d071, #b1ddea);
+}
+
+.info-body{
+  background-color: #daf0fd;
+}
+
 p{
   font-size: large;
 }
