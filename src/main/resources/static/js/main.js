@@ -123,6 +123,20 @@ $(document).ready(() => {
 
 });
 
+function perc2color(perc) {
+    var r, g, b = 0;
+    if(perc < 50) {
+        r = 255;
+        g = Math.round(5.1 * perc);
+    }
+    else {
+        g = 255;
+        r = Math.round(510 - 5.10 * perc);
+    }
+    var h = r * 0x10000 + g * 0x100 + b * 0x1;
+    return '#' + ('000000' + h.toString(16)).slice(-6);
+}
+
 /**
  * Makes Bootstrap cards out of recipe data and appends them to selector
  * @param selector jquery selector to append cards too
@@ -147,6 +161,7 @@ function make_cards(selector, results, favBool, limitBool) {
                 heart_shape = "fa-heart";
             }
         }
+        let val = perc2color(res.percentMatch)
 
         //html/bootstrap card for each recipe
         const card = "<div id=" + cards + " class=\"col-md-4 col-sm-6 mb-4 d-flex\">\n" +
@@ -160,6 +175,7 @@ function make_cards(selector, results, favBool, limitBool) {
             "  <div class=\"card-body\">\n" +
             "    <h5 class=\"card-title\">" + res.name + "</h5>\n" +
             "    <p class=\"card-text\">" + res.description + "</p>\n" +
+            "   <p> Similarity score: <span class=\"card-text\" style=\"color:"+val+";\">" + "<b>" + res.percentMatch + "</b>" + "</span></p>\n" +
             "    <button id=" + cards + " type=\"button\" class=\"btn btn-outline-success openBtn\" " +
             "data-toggle=\"modal\" data-target=\"#myModal\">View Recipe</button>\n" +
             "  </div>\n" +

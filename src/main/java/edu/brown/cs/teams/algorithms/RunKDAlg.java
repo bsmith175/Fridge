@@ -26,7 +26,7 @@ public class RunKDAlg {
    * @throws IOException
    * @throws ParseException
    */
-  public double[] extractEmbedding(String[] ingredients) {
+  public static double[] extractEmbedding(String[] ingredients) {
     List<Ingredient> ingredientSet = new ArrayList<>();
     for (int i = 0; i < ingredients.length; i++) {
       Ingredient ing = new Ingredient(ingredients[i]);
