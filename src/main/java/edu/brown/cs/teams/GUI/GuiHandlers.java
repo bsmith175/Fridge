@@ -82,8 +82,11 @@ public class GuiHandlers {
     Spark.post("/remove-pantry", new RemovePantryHandler());
   }
 
-  //Handles a user login. Takes user data from the Google User and adds to the database
-  // if possible.
+
+  /**
+   * Handler class to log a User in.
+   * Takes user data from the Google User and adds to the database
+   */
   private static class UserLoginHandler implements Route {
 
     @Override
@@ -127,8 +130,10 @@ public class GuiHandlers {
     }
   }
 
-  //handles a request to the favorites page. Queries user database for the user's
-  // favorited recipes.
+  /**
+   * Handles a request to the favorites page.
+   * Queries user database for the user's/ favorited recipes.
+   */
   private static class FavoritesPageHandler implements Route {
 
     @Override
@@ -164,6 +169,14 @@ public class GuiHandlers {
   //                          added - true, if recipe was added to favorites list
   //                                  false, if recipe was already in favorites list
   //                          error: true, if SQLException occured, false otherwise
+
+  /**
+   * handles a user "favoriting" a recipe.
+   * returns JSON object with properties:
+   * added - true, if recipe was added to favorites list
+   * false, if recipe was already in favorites list
+   * error: true, if SQLException occured, false otherwise.
+   */
   private static class FavoriteButtonHandler implements Route {
 
     @Override
@@ -193,6 +206,9 @@ public class GuiHandlers {
     }
   }
 
+  /**
+   * Recipe results for Input ingredients.
+   */
   private static class IngredientSuggestHandler implements Route {
 
     //returns a json list of ingredient strings, ordered from most relevant to least relevant
@@ -205,6 +221,9 @@ public class GuiHandlers {
     }
   }
 
+  /**
+   *
+   */
   private static class SuggestedHandler implements Route {
     @Override
     public Object handle(Request request, Response response) {
@@ -219,7 +238,10 @@ public class GuiHandlers {
       return result;
     }
   }
-
+  /**
+   * Recipe results for Input ingredients.
+   * Adds restriction groups to results.
+   */
   private static class RecipeSuggestHandler implements Route {
 
     // Returns the suggested recipes
@@ -242,7 +264,9 @@ public class GuiHandlers {
       return result;
     }
   }
-
+  /**
+   * Renders fridge.ftl, sets google id.
+   */
   private static class FridgeHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request req, Response res) {
@@ -253,6 +277,9 @@ public class GuiHandlers {
     }
   }
 
+  /**
+   * renders home page, sets google id.
+   */
   private static class HomeHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request req, Response res) {
@@ -264,7 +291,10 @@ public class GuiHandlers {
   }
 
 
-  //Handler for adding a list of ingredients to the pantry.
+
+  /**
+   * Handler for adding a list of ingredients to the pantry.
+   */
   private static class PantryAddHandler implements Route {
 
     //Takes in array of ingredients entered by user, just like for a recipe search.
@@ -287,8 +317,13 @@ public class GuiHandlers {
     }
   }
 
-  //removes an ingredient from user's pantry. Takes in parameters "text" - the ingredient to remove
-  // and "uid" - the user ID.
+
+  /**
+   * removes an ingredient from user's pantry.
+   * Takes in parameters:
+   * "text" - the ingredient to remove
+   * "uid" - the user ID.
+   */
   private static class RemovePantryHandler implements Route {
 
     @Override
@@ -309,8 +344,12 @@ public class GuiHandlers {
     }
   }
 
-  //returns a list of ingredient names in the user's pantry. Takes in one parameter
-  //"uid" - the user ID
+
+  /**
+   * returns a list of ingredient names in the user's pantry.
+   * Takes in one parameter:
+   * "uid" - the user ID
+   */
   private static class PantryHandler implements Route {
 
     @Override
