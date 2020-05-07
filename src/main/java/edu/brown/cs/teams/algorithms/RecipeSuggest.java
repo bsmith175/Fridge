@@ -9,10 +9,7 @@ import edu.brown.cs.teams.recipe.MinimalRecipe;
 import edu.brown.cs.teams.recipe.Recipe;
 import edu.brown.cs.teams.recipe.RecipeDistanceComparator;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /**
  * Class to suggest recipe, implements the command interface.
@@ -24,6 +21,7 @@ public class RecipeSuggest implements Command {
   private boolean nuts;
   public static final int NUM_RESULTS_PRE = 400;
   public static final int NUM_RESULTS_FINAL = 100;
+  private Map<Integer, Double> simMap = new HashMap<>();
 
   public RecipeSuggest(boolean meats, boolean dairy, boolean nuts) {
     this.meats = meats;
@@ -39,18 +37,20 @@ public class RecipeSuggest implements Command {
    * @throws CommandException when command is invalid
    */
   @Override
-  public String runCommand(String[] command) throws CommandException {
+  public String runCommand(String[] command)
+          throws CommandException, SQLException {
     if (command.length < 2) {
       throw new CommandException("ERROR: Must enter an ingredient");
     }
-    PriorityQueue<Recipe> recpq = preCommand(command);
+    PriorityQueue<Integer> recpq = preCommand(command);
     StringBuilder output = new StringBuilder();
     for (int i = 0; i < 5; i++) {
-      Recipe first = recpq.poll();
+      int first = recpq.poll();
       output.append("1.\r\n");
-      output.append("ID: ").append(first.getId()).append("\r\n");
+      output.append("ID: ").append(first).append("\r\n");
       output.append("Tokens: ");
-      for (Ingredient ingr : first.getIngredients()) {
+      for (Ingredient ingr :
+              AlgUtils.getRecipeDb().getRecipe(first).getIngredients()) {
         output.append(ingr.getId()).append(", ");
       }
       output.delete(output.length() - 2, output.length()).append("\r\n");
@@ -65,7 +65,7 @@ public class RecipeSuggest implements Command {
    * @param command the user input parsed on whitespace
    * @return the sorted recipes
    */
-  private PriorityQueue<Recipe> preCommand(String[] command)
+  private PriorityQueue<Integer> preCommand(String[] command)
           throws CommandException {
     List<Ingredient> ingredients = new ArrayList<>();
     for (String word : Arrays.copyOfRange(command, 0, command.length)) {
@@ -80,13 +80,14 @@ public class RecipeSuggest implements Command {
     }
 
     for (Recipe recipe : AlgUtils.getFullRecipes()) {
-      recipe.compareToIngredients(ingredients);
+      double sim = recipe.compareToIngredients(ingredients);
+      this.simMap.put(recipe.getId(), sim);
     }
-    List<Recipe> reclist = AlgUtils.getFullRecipes();
-    PriorityQueue<Recipe> recpq =
-            new PriorityQueue<>(new RecipeDistanceComparator());
-
-    recpq.addAll(reclist);
+    PriorityQueue<Integer> recpq =
+            new PriorityQueue<>(new RecipeDistanceComparator(this.simMap));
+    for (int rec : this.simMap.keySet()) {
+      recpq.add(rec);
+    }
     return recpq;
   }
 
@@ -117,13 +118,14 @@ public class RecipeSuggest implements Command {
       notAllowed.deleteCharAt(notAllowed.length() - 1);
     }
     String restrictions = notAllowed.toString();
-    PriorityQueue<Recipe> recpq = preCommand(command);
+    PriorityQueue<Integer> recpq = preCommand(command);
     List<JsonObject> guiResults = new ArrayList<>();
     for (int i = 0; i < NUM_RESULTS_PRE; i++) {
-      Recipe rec = recpq.poll();
-      JsonObject jsonRecipe = rec.getRecipeJson();
+      int rec = recpq.poll();
+      JsonObject jsonRecipe =
+              AlgUtils.getRecipeDb().getRecipeContentFromID(rec);
       Gson gson = new Gson();
-      double match =  Math.floor(rec.getSimilarity() * 100) ;
+      double match =  Math.floor(this.simMap.get(rec) * 100) ;
       jsonRecipe.addProperty("percentMatch", match);
       String tokenList =
               gson.fromJson(jsonRecipe.get("ingredients"), String.class);

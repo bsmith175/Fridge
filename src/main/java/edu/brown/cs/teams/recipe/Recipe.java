@@ -53,7 +53,7 @@ public class Recipe extends CartesianPoint {
    * @throws CommandException
    * @return an approximation of the recipe within the user ingredients
    */
-  public List<Ingredient> compareToIngredients(
+  public double compareToIngredients(
           List<Ingredient> ingreds) throws CommandException {
     try {
       List<Ingredient> candidateList = new ArrayList<>();
@@ -72,10 +72,10 @@ public class Recipe extends CartesianPoint {
         distance = super.getDistance(candidatesVec);
       }
       //penalizing based on number of missing ingredients
-      this.similarity =
+     double similarity =
               distance * ((this.ingredients.size() - candidateList.size()) * -0.001
                   + 1);
-      return candidateList;
+      return similarity;
     } catch (Exception e) {
       throw new CommandException(e.getMessage());
     }

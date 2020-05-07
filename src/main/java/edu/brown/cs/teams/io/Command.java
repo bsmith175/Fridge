@@ -17,7 +17,7 @@ public interface Command {
    * @throws CommandException if there is an error in the command format
    * @return output of the command to be printed to the repl
    */
-  String runCommand(String[] command) throws CommandException;
+  String runCommand(String[] command) throws CommandException, SQLException;
   /**
    * Executes the command received from the GUI.
    * @param command a command to be executed from the gui

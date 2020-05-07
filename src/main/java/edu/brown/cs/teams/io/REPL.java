@@ -3,6 +3,7 @@ package edu.brown.cs.teams.io;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +48,7 @@ public class REPL {
             throw new CommandException("ERROR: Command not found: " + input[0]);
           }
         }
-      } catch (CommandException e) {
+      } catch (CommandException | SQLException e) {
         System.out.println(e.getMessage());
       }
     }
