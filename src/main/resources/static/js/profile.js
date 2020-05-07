@@ -17,7 +17,7 @@ $(document).ready(() => {
 function profilePage(e, results, favBool) {
     console.log("profile");
     e.empty();
-    make_cards(e, results, favBool, false);
+    make_cards(e, results, favBool, false, false);
 }
 
 function initProfilePage(fav, enjoy) {

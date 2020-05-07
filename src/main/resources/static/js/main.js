@@ -31,12 +31,12 @@ $(document).ready(() => {
         $('#numresults')
             .val(sessionStorage.getItem("numresults"))
             .trigger('change');
-        make_cards(result_cards, r, false, true)
+        make_cards(result_cards, r, false, true, true)
     }
 
     $("#numresults").change(function () {
         console.log(current_response.length)
-        make_cards(result_cards, current_response, false, true);
+        make_cards(result_cards, current_response, false, true, true);
 
     })
 
@@ -102,7 +102,7 @@ $(document).ready(() => {
                         //cache results and numresults
                         sessionStorage.setItem("results", response);
                         sessionStorage.setItem("numresults", document.getElementById("numresults").value);
-                        make_cards(result_cards, r, false, true);
+                        make_cards(result_cards, r, false, true, true);
                         current_response = r;
                         $("#cookSpinner").css("display", "none");
                     }
@@ -142,7 +142,7 @@ function perc2color(perc) {
  * @param selector jquery selector to append cards too
  * @param results array with recipes
  */
-function make_cards(selector, results, favBool, limitBool) {
+function make_cards(selector, results, favBool, limitBool, resbool) {
     console.log(results);
     let limit = results.length
     if (limitBool) {
@@ -161,6 +161,10 @@ function make_cards(selector, results, favBool, limitBool) {
                 heart_shape = "fa-heart";
             }
         }
+        let similarity = "";
+        if (resbool){
+            similarity =  "<p> Similarity score: <span class=\"card-text\" style=\"color:"+val+";\">" + "<b>" + res.percentMatch + "</b>" + "</span></p>\n";
+        }
         let val = perc2color(res.percentMatch)
 
         //html/bootstrap card for each recipe
@@ -175,7 +179,7 @@ function make_cards(selector, results, favBool, limitBool) {
             "  <div class=\"card-body\">\n" +
             "    <h5 class=\"card-title\">" + res.name + "</h5>\n" +
             "    <p class=\"card-text\">" + res.description + "</p>\n" +
-            "   <p> Similarity score: <span class=\"card-text\" style=\"color:"+val+";\">" + "<b>" + res.percentMatch + "</b>" + "</span></p>\n" +
+            similarity +
             "    <button id=" + cards + " type=\"button\" class=\"btn btn-outline-success openBtn\" " +
             "data-toggle=\"modal\" data-target=\"#myModal\">View Recipe</button>\n" +
             "  </div>\n" +
