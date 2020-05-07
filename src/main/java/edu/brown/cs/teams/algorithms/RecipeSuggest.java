@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import edu.brown.cs.teams.io.Command;
 import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.recipe.Ingredient;
+import edu.brown.cs.teams.recipe.MinimalRecipe;
 import edu.brown.cs.teams.recipe.Recipe;
 import edu.brown.cs.teams.recipe.RecipeDistanceComparator;
 import java.sql.SQLException;
@@ -122,7 +123,8 @@ public class RecipeSuggest implements Command {
       Recipe rec = recpq.poll();
       JsonObject jsonRecipe = rec.getRecipeJson();
       Gson gson = new Gson();
-
+      double match =  Math.floor(rec.getSimilarity() * 100) ;
+      jsonRecipe.addProperty("percentMatch", match);
       String tokenList =
               gson.fromJson(jsonRecipe.get("ingredients"), String.class);
       if (tokenList.replaceFirst(restrictions, "").length()
@@ -135,4 +137,6 @@ public class RecipeSuggest implements Command {
     return guiResults;
 
   }
+
+
 }
