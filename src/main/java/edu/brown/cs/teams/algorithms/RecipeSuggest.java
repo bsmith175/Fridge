@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import edu.brown.cs.teams.io.Command;
 import edu.brown.cs.teams.io.CommandException;
 import edu.brown.cs.teams.recipe.Ingredient;
-import edu.brown.cs.teams.recipe.MinimalRecipe;
 import edu.brown.cs.teams.recipe.Recipe;
 import edu.brown.cs.teams.recipe.RecipeDistanceComparator;
 import java.sql.SQLException;
@@ -49,8 +48,8 @@ public class RecipeSuggest implements Command {
       output.append("1.\r\n");
       output.append("ID: ").append(first).append("\r\n");
       output.append("Tokens: ");
-      for (Ingredient ingr :
-              AlgUtils.getRecipeDb().getRecipe(first).getIngredients()) {
+      for (Ingredient ingr
+              : AlgUtils.getRecipeDb().getRecipe(first).getIngredients()) {
         output.append(ingr.getId()).append(", ");
       }
       output.delete(output.length() - 2, output.length()).append("\r\n");
@@ -85,9 +84,7 @@ public class RecipeSuggest implements Command {
     }
     PriorityQueue<Integer> recpq =
             new PriorityQueue<>(new RecipeDistanceComparator(this.simMap));
-    for (int rec : this.simMap.keySet()) {
-      recpq.add(rec);
-    }
+    recpq.addAll(this.simMap.keySet());
     return recpq;
   }
 
@@ -125,7 +122,7 @@ public class RecipeSuggest implements Command {
       JsonObject jsonRecipe =
               AlgUtils.getRecipeDb().getRecipeContentFromID(rec);
       Gson gson = new Gson();
-      double match =  Math.floor(this.simMap.get(rec) * 100) ;
+      double match =  Math.floor(this.simMap.get(rec) * 100);
       jsonRecipe.addProperty("percentMatch", match);
       String tokenList =
               gson.fromJson(jsonRecipe.get("ingredients"), String.class);
