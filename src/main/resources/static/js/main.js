@@ -361,7 +361,6 @@ function createTypeahead($els) {
     $els.typeahead({
         source: function (query, process) {
             return $.post('/suggest', {input: query}, function (data) {
-                consol
                 data = JSON.parse(data);
                 return process(data);
             });
