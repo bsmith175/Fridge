@@ -123,6 +123,11 @@ $(document).ready(() => {
 
 });
 
+/**
+ * Calculates a color from green to red based on a percentage.
+ * @param perc percentage
+ * @returns {string} color
+ */
 function perc2color(perc) {
     var r, g, b = 0;
     if(perc < 50) {
@@ -141,6 +146,7 @@ function perc2color(perc) {
  * Makes Bootstrap cards out of recipe data and appends them to selector
  * @param selector jquery selector to append cards too
  * @param results array with recipes
+ * @param true only if search is for recipe results
  */
 function make_cards(selector, results, favBool, limitBool, resbool) {
     console.log(results);
@@ -162,10 +168,10 @@ function make_cards(selector, results, favBool, limitBool, resbool) {
             }
         }
         let similarity = "";
+        let val = perc2color(res.percentMatch);
         if (resbool){
             similarity =  "<p> Similarity score: <span class=\"card-text\" style=\"color:"+val+";\">" + "<b>" + res.percentMatch + "</b>" + "</span></p>\n";
         }
-        let val = perc2color(res.percentMatch)
 
         //html/bootstrap card for each recipe
         const card = "<div id=" + cards + " class=\"col-md-4 col-sm-6 mb-4 d-flex\">\n" +
@@ -355,6 +361,7 @@ function createTypeahead($els) {
     $els.typeahead({
         source: function (query, process) {
             return $.post('/suggest', {input: query}, function (data) {
+                consol
                 data = JSON.parse(data);
                 return process(data);
             });
